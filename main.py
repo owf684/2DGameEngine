@@ -7,6 +7,7 @@ sys.path.append('./UIEngine')
 sys.path.append('./PhysicsEngine')
 sys.path.append('./MechanicsEngine/PlayerEngine')
 sys.path.append('./MechanicsEngine/PlatformsEngine')
+sys.path.append('./GameObjects')
 
 import GraphicsEngine
 import GraphicsEngineData
@@ -15,7 +16,7 @@ import UIEngine
 import PhysicsEngine
 import PlayerEngine
 import PlatformsEngine
-
+import GameObject
 
 #Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -34,8 +35,15 @@ PfE  = PlatformsEngine._PlatformsEngine()
 #Initialize Graphics Engine
 GE = GraphicsEngine._GraphicsEngine()
 GE._setScreenSize(800,800)
-#GE._setScreenTitle(('Hello World!'))
-GE._addImage2Buffer('./Assets/PlayerSprites/mario.png')
+
+#This will have to change
+#Initialize GameObjects
+GameObjects = list()
+PlayerObject = GameObject._GameObject()
+PlayerObject._set_sub_class('player')
+PlayerObject._set_image_path('./Assets/PlayerSprites/idle.png')
+PlayerObject._set_image()
+GameObjects.append(PlayerObject)
 
 #main loop
 running = True
@@ -47,7 +55,8 @@ while running:
 			running = False
 
 		#Inputs Engine
-		IE.main_loop()
+		IE.main_loop(GameObjects)
+
 		#UI Engine
 		UIE.main_loop()
 
@@ -60,7 +69,7 @@ while running:
 		#PlatformMechanics Engine
 		PfE.main_loop()
 
-		GE.main_loop()
+		GE.main_loop(GameObjects)
 
 		#GraphicsEngine._updateGraphics(GED,PSD)
 

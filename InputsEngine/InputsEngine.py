@@ -1,4 +1,4 @@
-
+import pygame
 class _InputsEngine:
 
 	def __init__(self):
@@ -7,6 +7,26 @@ class _InputsEngine:
 		
 
 
-	def main_loop(self):
+	def main_loop(self,GameObjects):
 
-		print("inputsEngine")
+		for objects in GameObjects:
+
+			#inputs geared toward player sprite
+			if objects.subClass == 'player':
+
+				#awsd
+				keys = pygame.key.get_pressed()
+
+				#update player position based on key states
+				if keys[pygame.K_a]:
+					objects.position[0] -= objects._get_max_horizontal_velocity()
+
+				if keys[pygame.K_d]:
+					objects.position[0] += objects._get_max_horizontal_velocity()
+
+    		
+    			#if keys[pygame.K_w]:
+        		#	player_y -= player_speed
+    			#if keys[pygame.K_s]:
+        		#	player_y += player_speed
+

@@ -31,15 +31,15 @@ class _GraphicsEngine:
 		self.imageBuffer.append(pygame.image.load(image_path))
 
 
-	def main_loop(self):
+	def main_loop(self,GameObjects):
 
 		#clear the screen
 		self.screen.fill((0,0,0))
 
 		#Update Graphics Here
-		for images in self.imageBuffer:
+		for objects in GameObjects:
 
-			self.screen.blit(images,(0,0))
+			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
 
 		#Update the display
 		pygame.display.flip()
