@@ -1,6 +1,8 @@
 import sys
 import os
 import pygame
+import time
+import math
 sys.path.append('./GraphicsEngine')
 sys.path.append('./InputsEngine')
 sys.path.append('./UIEngine')
@@ -41,9 +43,14 @@ GE._setScreenSize(800,800)
 GameObjects = list()
 PlayerObject = GameObject._GameObject()
 PlayerObject._set_sub_class('player')
-PlayerObject._set_image_path('./Assets/PlayerSprites/idle.png')
+PlayerObject._set_image_path('./Assets/PlayerSprites/LJ.png')
 PlayerObject._set_image()
 GameObjects.append(PlayerObject)
+
+#simulation runtime variables
+delta1 = 0
+delta2 = 0
+delta = 0
 
 #main loop
 running = True
@@ -54,8 +61,10 @@ while running:
 		if event.type == pygame.QUIT:
 			running = False
 
+		delta1 = time.time()
+
 		#Inputs Engine
-		IE.main_loop(GameObjects)
+		IE.main_loop(GameObjects,delta)
 
 		#UI Engine
 		UIE.main_loop()
@@ -69,9 +78,15 @@ while running:
 		#PlatformMechanics Engine
 		PfE.main_loop()
 
+		#Graphics Engine
 		GE.main_loop(GameObjects)
 
-		#GraphicsEngine._updateGraphics(GED,PSD)
+		#limit game to 60 fps
+		time.sleep(0.016)
+
+		delta2 = time.time()
+
+		delta = abs(delta2-delta1)
 
 
 pygame.quit()

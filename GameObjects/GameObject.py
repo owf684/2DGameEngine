@@ -17,7 +17,8 @@ class _GameObject:
 
 		#Physics Data
 		self.weight = 10
-		self.maxHorizontalVelocity = 10
+		self.maxHorizontalVelocity = 1000
+		self.horizontalVelocity = 10
 		self.jumpForce = 10
 		self.maxJumpHeight = 10
 
@@ -52,6 +53,9 @@ class _GameObject:
 
 	def _set_sub_class(self,subClass):
 		self.subClass = subClass
+	
+	def _set_horizontal_velocity(self,horizontalVelocity):
+		self.horizontalVelocity = horizontalVelocity
 
 	'''GETTERS'''
 	def _get_weight(self):
@@ -76,3 +80,5 @@ class _GameObject:
 
 	def _get_sub_class(self):
 		return self.subClass
+	def _get_horizontal_velocity(self):
+		return self.horizontalVelocity
