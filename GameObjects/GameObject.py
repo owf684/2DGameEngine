@@ -34,7 +34,7 @@ class _GameObject:
 		self.forceY = 0
 		self.mass = 100
 		self.jumpForce = 10
-		self.jupming = False
+		self.jumping = False
 		self.maxJumpHeight = 10
 
 		#Collision Data

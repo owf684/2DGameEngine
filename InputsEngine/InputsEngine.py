@@ -28,6 +28,6 @@ class _InputsEngine:
 				#Jump
 				if keys[pygame.K_w] and objects.collisionDetected:
 					objects.jumping = True
-				else:
+				elif not keys[pygame.K_w]:
 					objects.jumping = False		
 				

@@ -3,7 +3,7 @@ import math
 class _PhysicsEngine:
 
 	def __init__(self):
-		self.gravity = 9.8*100
+		self.gravity = 9.8*125
 		self.y_displacement = 0
 		self.jump_displacement = 0
 		self.x_displacement = 0
@@ -87,13 +87,14 @@ class _PhysicsEngine:
 		for objects in GameObjects:
 
 			if objects.jumping:
-				objects.jump_velocity_1 = 500
+				objects.jump_velocity_1 = 300
+			elif objects.jump_velocity_1 > 0:
+				objects.jump_velocity_1 -= 20
 			
-			if not objects.jumping and objects.jump_velocity_1 > 0 and not objects.collisionDetected :
-				objects.jump_velocity_1 -= 10
+			if delta_t != 0:
+				objects.position[1] -= objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
 			
-			objects.position[1] -= objects.jump_velocity_1*delta_t
-			self.jump_height += objects.jump_velocity_1*delta_t
+			print ("objects.jumping: " + str(objects.jumping))
 			
 
 
