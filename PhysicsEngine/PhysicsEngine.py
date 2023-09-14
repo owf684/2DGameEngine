@@ -3,7 +3,7 @@ import math
 class _PhysicsEngine:
 
 	def __init__(self):
-		self.gravity = 9.8
+		self.gravity = 9.8*100
 		self.y_displacement = 0
 		self.jump_displacement = 0
 		self.x_displacement = 0
@@ -13,7 +13,8 @@ class _PhysicsEngine:
 		self.uc = 0
 		self.highestUc = -1
 		self.total_jump_displacement = 0
-		self.max_jump_height = 50
+		self.jump_height = 0
+		self.max_jump_height = 500
 		self.time_tracker =0
 		self.seconds = 0
 	def main_loop(self,GameObjects, delta_t):
@@ -34,7 +35,6 @@ class _PhysicsEngine:
 		for objects in GameObjects:
 
 
-
 			objects.velocity_Y1 += self.gravity * delta_t
 
 			objects.position[1] += objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
@@ -42,17 +42,10 @@ class _PhysicsEngine:
 			if objects.collisionDetected:
 				objects.velocity_Y1 = 0
 
-			#if not objects.collisionDetected and not self.jumping:
-			#	objects.position[1] += self.y_displacement
-		 	
-
 		self.time_tracker += delta_t
 		if self.time_tracker >= 1:
-			print("seconds: " + str(self.seconds))
 			self.seconds += 1
 			self.time_tracker = 0
-			print("objects.velocity_Y1: " + str(objects.velocity_Y1) )		
-			print("objects.position: " + str(objects.position))
 
 
 	def horizontal_acceleration(self,GameObjects,delta_t):
@@ -93,23 +86,15 @@ class _PhysicsEngine:
 
 		for objects in GameObjects:
 
-			if objects.forceY > 0 and not self.jumping and objects.collisionDetected:
-				self.jumping = True
-				self.uc = -3.14
-
-			if self.jumping:
-				objects.position[1] += objects.forceY*math.cos(self.uc)
-				self.uc += 0.1
-
-				if self.uc >= 0:
-					objects.forceY = 0
-					self.jumping = False
-
-			if self.uc > self.highestUc:
-				self.highestUc = self.uc
-			#print("jumping: " + str(self.jumping))
-			#print("forceY: " + str(objects.forceY))
-			#print("self.highestUc: "+ str(self.highestUc))
+			if objects.jumping:
+				objects.jump_velocity_1 = 500
+			
+			if not objects.jumping and objects.jump_velocity_1 > 0 and not objects.collisionDetected :
+				objects.jump_velocity_1 -= 10
+			
+			objects.position[1] -= objects.jump_velocity_1*delta_t
+			self.jump_height += objects.jump_velocity_1*delta_t
+			
 
 
 
