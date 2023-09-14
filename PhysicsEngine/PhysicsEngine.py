@@ -3,20 +3,12 @@ import math
 class _PhysicsEngine:
 
 	def __init__(self):
-		self.gravity = 9.8*125
+		self.gravity = 9.8*150
 		self.y_displacement = 0
 		self.jump_displacement = 0
 		self.x_displacement = 0
 		self.x_direction = 0
 		self.x_decelleration = 0.01
-		self.jumping = False
-		self.uc = 0
-		self.highestUc = -1
-		self.total_jump_displacement = 0
-		self.jump_height = 0
-		self.max_jump_height = 500
-		self.time_tracker =0
-		self.seconds = 0
 	def main_loop(self,GameObjects, delta_t):
 
 
@@ -42,11 +34,7 @@ class _PhysicsEngine:
 			if objects.collisionDetected:
 				objects.velocity_Y1 = 0
 
-		self.time_tracker += delta_t
-		if self.time_tracker >= 1:
-			self.seconds += 1
-			self.time_tracker = 0
-
+		
 
 	def horizontal_acceleration(self,GameObjects,delta_t):
 
@@ -69,7 +57,10 @@ class _PhysicsEngine:
 
 			#set direction	
 			if objects.accelerationX != 0:
-				self.x_direction = objects.accelerationX/abs(objects.accelerationX)
+
+				if self.x_direction != objects.accelerationX/abs(objects.accelerationX):
+					self.x_direction = objects.accelerationX/abs(objects.accelerationX)
+					objects.velocity_X2 = 0
 			else:
 				#deccelerate 
 				if self.x_direction > 0:
