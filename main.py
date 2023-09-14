@@ -37,7 +37,7 @@ PfE  = PlatformsEngine._PlatformsEngine()
 
 #Initialize Graphics Engine
 GE = GraphicsEngine._GraphicsEngine()
-GE._setScreenSize(800,800)
+GE._setScreenSize(1280,720)
 
 #Initialize Collision Engine
 CE = CollisionEngine._CollisionEngine()
