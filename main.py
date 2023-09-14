@@ -10,7 +10,7 @@ sys.path.append('./PhysicsEngine')
 sys.path.append('./MechanicsEngine/PlayerEngine')
 sys.path.append('./MechanicsEngine/PlatformsEngine')
 sys.path.append('./GameObjects')
-
+sys.path.append('./CollisionEngine')
 import GraphicsEngine
 import GraphicsEngineData
 import InputsEngine
@@ -19,6 +19,7 @@ import PhysicsEngine
 import PlayerEngine
 import PlatformsEngine
 import GameObject
+import CollisionEngine
 
 #Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -38,6 +39,9 @@ PfE  = PlatformsEngine._PlatformsEngine()
 GE = GraphicsEngine._GraphicsEngine()
 GE._setScreenSize(800,800)
 
+#Initialize Collision Engine
+CE = CollisionEngine._CollisionEngine()
+
 #This will have to change
 #Initialize GameObjects
 GameObjects = list()
@@ -45,13 +49,41 @@ PlayerObject = GameObject._GameObject()
 PlayerObject._set_sub_class('player')
 PlayerObject._set_image_path('./Assets/PlayerSprites/LJ.png')
 PlayerObject._set_image()
+PlayerObject._set_sprite_size(PlayerObject.image)
+PlayerObject._set_rect(PlayerObject.sprite_size)
 GameObjects.append(PlayerObject)
 
-#simulation runtime variables
-delta1 = 0
-delta2 = 0
-delta = 0
 
+
+levelObjects = list()
+#add first platform
+PlatformObject = GameObject._GameObject()
+PlatformObject._set_sub_class('platform')
+PlatformObject._set_image_path('./Assets/Platforms/large_platform.png')
+PlatformObject._set_image()
+PlatformObject.position = [400,450]
+PlatformObject._set_sprite_size(PlatformObject.image)
+PlatformObject._set_rect(PlatformObject.sprite_size)
+levelObjects.append(PlatformObject)
+
+#add first platform
+PlatformObject2 = GameObject._GameObject()
+PlatformObject2._set_sub_class('platform')
+PlatformObject2._set_image_path('./Assets/Platforms/large_platform.png')
+PlatformObject2._set_image()
+PlatformObject2.position = [200,200]
+PlatformObject2._set_sprite_size(PlatformObject.image)
+PlatformObject2._set_rect(PlatformObject.sprite_size)
+levelObjects.append(PlatformObject2)
+clock = pygame.time.Clock()
+
+collisionList = list()
+collisionList.extend(GameObjects)
+collisionList.extend(levelObjects)
+
+#simulation runtime variables
+delta_t = 0
+FPS = 60
 #main loop
 running = True
 while running:
@@ -61,32 +93,34 @@ while running:
 		if event.type == pygame.QUIT:
 			running = False
 
-		delta1 = time.time()
 
-		#Inputs Engine
-		IE.main_loop(GameObjects,delta)
+	#Inputs Engine
+	IE.main_loop(GameObjects,delta_t)
 
-		#UI Engine
-		UIE.main_loop()
+	#UI Engine
+	#UIE.main_loop()
 
-		#Physics Engine
-		PE.main_loop()
+	#Physics Engine
+	PE.main_loop(GameObjects,delta_t)
 
-		#PlayerMechanics Engine
-		PlE.main_loop()
+	#Collision Engine
+	CE.main_loop(collisionList)
 
-		#PlatformMechanics Engine
-		PfE.main_loop()
+	#PlayerMechanics Engine
+	#PlE.main_loop()
 
-		#Graphics Engine
-		GE.main_loop(GameObjects)
+	#PlatformMechanics Engine
+	#PfE.main_loop()
 
-		#limit game to 60 fps
-		time.sleep(0.016)
+	#Graphics Engine
+	GE.main_loop(GameObjects,levelObjects)
 
-		delta2 = time.time()
+	#limit game to 60 fps
+	#time.sleep(0.0033)
 
-		delta = abs(delta2-delta1)
+	
+	clock.tick(FPS)
 
+	delta_t = clock.tick(FPS)/1000
 
 pygame.quit()

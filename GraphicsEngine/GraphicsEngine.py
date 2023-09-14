@@ -31,10 +31,16 @@ class _GraphicsEngine:
 		self.imageBuffer.append(pygame.image.load(image_path))
 
 
-	def main_loop(self,GameObjects):
+	def main_loop(self,GameObjects,levelObjects):
 
 		#clear the screen
 		self.screen.fill((0,0,0))
+
+	
+		#Update Graphics Here
+		for objects in levelObjects:
+
+			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
 
 		#Update Graphics Here
 		for objects in GameObjects:

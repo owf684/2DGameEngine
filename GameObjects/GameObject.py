@@ -11,16 +11,33 @@ class _GameObject:
 
 		#Sprite Data
 		self.image = None
+		self.sprite_size = [0,0]
+		self.rect = None
 		self.imagePath=''
 		self.animation_state = 0
-		self.position = [0,0]
+		self.position = pygame.math.Vector2(0,0)
+		self.lerpPosition = pygame.math.Vector2(0,0)
+		self.framceCounter = 0
 
 		#Physics Data
 		self.weight = 10
-		self.maxHorizontalVelocity = 1000
-		self.horizontalVelocity = 10
+		self.maxHorizontalVelocity = 10
+		self.velocity_Y2 = 0
+		self.velocity_Y1 = 0
+		self.jump_velocity_1 = 0
+		self.jump_velocity_2 = 0
+		self.velocityX = 0
+		self.velocity_X2 = 0
+		self.velocity_X1 = 0
+		self.accelerationX = 0
+		self.accelerationY = 0
+		self.forceY = 0
+		self.mass = 100
 		self.jumpForce = 10
 		self.maxJumpHeight = 10
+
+		#Collision Data
+		self.collisionDetected = False
 
 		#Audio Data
 		self.audioFootSteep = None
@@ -54,8 +71,17 @@ class _GameObject:
 	def _set_sub_class(self,subClass):
 		self.subClass = subClass
 	
-	def _set_horizontal_velocity(self,horizontalVelocity):
-		self.horizontalVelocity = horizontalVelocity
+	def _set_velocityX(self,velocityX):
+		self.velocityX = velocityX
+
+	def _set_accelerationX(self,accelerationX):
+		self.accelerationX = accelerationX
+
+	def _set_sprite_size(self,image):
+		self.sprite_size = image.get_size()
+
+	def _set_rect(self,sprite_size):
+		self.rect = pygame.Rect(self.position[0],self.position[1],sprite_size[0],sprite_size[1])
 
 	'''GETTERS'''
 	def _get_weight(self):
@@ -80,5 +106,9 @@ class _GameObject:
 
 	def _get_sub_class(self):
 		return self.subClass
-	def _get_horizontal_velocity(self):
-		return self.horizontalVelocity
+
+	def _get_velocityX(self):
+		return self.velocityX
+
+	def _get_accelerationX(self):
+		return self.accelerationX
