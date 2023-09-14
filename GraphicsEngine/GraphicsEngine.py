@@ -61,6 +61,7 @@ class _GraphicsEngine:
 
 		#===========================================================================================================
     		# Draw the square
+
 		square_rect = pygame.Rect(self.scan_block_position[0], self.scan_block_position[1], self.scan_block_size, self.scan_block_size)
 		placement_coords = [0,0]
 		if self.scan_block_position[0] < self.screen_width:

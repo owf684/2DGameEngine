@@ -11,6 +11,8 @@ sys.path.append('./MechanicsEngine/PlayerEngine')
 sys.path.append('./MechanicsEngine/PlatformsEngine')
 sys.path.append('./GameObjects')
 sys.path.append('./CollisionEngine')
+sys.path.append('./LevelBuilder')
+
 import GraphicsEngine
 import GraphicsEngineData
 import InputsEngine
@@ -20,6 +22,7 @@ import PlayerEngine
 import PlatformsEngine
 import GameObject
 import CollisionEngine
+import LevelBuilder
 
 #Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -41,6 +44,9 @@ GE._setScreenSize(1280,720)
 
 #Initialize Collision Engine
 CE = CollisionEngine._CollisionEngine()
+
+#Initialize Level Builder
+LB = LevelBuilder._LevelBuilder()
 
 #This will have to change
 #Initialize GameObjects
@@ -95,7 +101,7 @@ while running:
 
 
 	#Inputs Engine
-	IE.main_loop(GameObjects,delta_t)
+	input_dict = IE.main_loop(GameObjects,delta_t)
 
 	#UI Engine
 	#UIE.main_loop()
@@ -115,6 +121,8 @@ while running:
 	#Graphics Engine
 	GE.main_loop(GameObjects,levelObjects)
 
+	#Level Builer
+	LB.main_loop(input_dict)
 	#limit game to 60 fps
 	#time.sleep(0.0033)
 
