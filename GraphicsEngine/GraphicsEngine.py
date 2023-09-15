@@ -17,6 +17,11 @@ class _GraphicsEngine:
 		self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
 		self.imageBuffer = list()
 
+
+		#render buffer
+		self.render_buffer = list()
+		self.objects_to_render = 0
+		self.rendered_objects = 0
 		pygame.display.set_caption("my PyGame Graphics")
 
 
@@ -53,11 +58,10 @@ class _GraphicsEngine:
 
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
 
+	
 		#Update Graphics Here
 		for objects in GameObjects:
-
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
-
 
 		#===========================================================================================================
     		# Draw the square
@@ -69,6 +73,11 @@ class _GraphicsEngine:
 		#Update the display
 		pygame.display.flip()
 		return self.screen
+
+	def load_render_buffer(self, levelObjects):
+
+		self.render_buffer.extend(levelObjects)
+		self.objects_to_render = len(self.render_buffer)
 
 
 	

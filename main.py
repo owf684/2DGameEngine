@@ -3,6 +3,7 @@ import os
 import pygame
 import time
 import math
+import cProfile
 sys.path.append('./GraphicsEngine')
 sys.path.append('./InputsEngine')
 sys.path.append('./UIEngine')
@@ -102,8 +103,8 @@ while running:
 
 
 	#Inputs Engine
+	#cProfile.run('IE.main_loop(GameObjects,delta_t)',sort='cumulative')
 	input_dict = IE.main_loop(GameObjects,delta_t)
-
 	#UI Engine
 	#UIE.main_loop()
 
@@ -120,10 +121,12 @@ while running:
 	#PfE.main_loop()
 
 	#Graphics Engine
+	#cProfile.run('GE.main_loop(GameObjects,levelObjects)',sort='cumulative')
+
 	screen = GE.main_loop(GameObjects,levelObjects)
 
 	#Level Builer
-	LB.main_loop(input_dict,screen)
+	LB.main_loop(input_dict,screen,levelObjects,collisionList)
 	#limit game to 60 fps
 	#time.sleep(0.0033)
 
