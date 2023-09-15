@@ -25,7 +25,9 @@ class _InputsEngine:
 					objects.accelerationX = 5000
 				else:
 					objects.accelerationX = 0.0
-	
-				if keys[pygame.K_w]:
-					objects.forceY = 10			
+				#Jump
+				if keys[pygame.K_w] and objects.collisionDetected:
+					objects.jumping = True
+				elif not keys[pygame.K_w]:
+					objects.jumping = False		
 				
