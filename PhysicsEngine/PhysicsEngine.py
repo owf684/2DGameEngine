@@ -85,7 +85,10 @@ class _PhysicsEngine:
 			if delta_t != 0:
 				objects.position[1] -= objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
 			
+<<<<<<< HEAD
+=======
 			print ("objects.jumping: " + str(objects.jumping))
+>>>>>>> main
 			
 
 
