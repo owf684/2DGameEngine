@@ -3,19 +3,12 @@ import math
 class _PhysicsEngine:
 
 	def __init__(self):
-		self.gravity = 9.8
+		self.gravity = 9.8*150
 		self.y_displacement = 0
 		self.jump_displacement = 0
 		self.x_displacement = 0
 		self.x_direction = 0
 		self.x_decelleration = 0.01
-		self.jumping = False
-		self.uc = 0
-		self.highestUc = -1
-		self.total_jump_displacement = 0
-		self.max_jump_height = 50
-		self.time_tracker =0
-		self.seconds = 0
 	def main_loop(self,GameObjects, delta_t):
 
 
@@ -34,7 +27,6 @@ class _PhysicsEngine:
 		for objects in GameObjects:
 
 
-
 			objects.velocity_Y1 += self.gravity * delta_t
 
 			objects.position[1] += objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
@@ -42,18 +34,7 @@ class _PhysicsEngine:
 			if objects.collisionDetected:
 				objects.velocity_Y1 = 0
 
-			#if not objects.collisionDetected and not self.jumping:
-			#	objects.position[1] += self.y_displacement
-		 	
-
-		self.time_tracker += delta_t
-		if self.time_tracker >= 1:
-			print("seconds: " + str(self.seconds))
-			self.seconds += 1
-			self.time_tracker = 0
-			print("objects.velocity_Y1: " + str(objects.velocity_Y1) )		
-			print("objects.position: " + str(objects.position))
-
+		
 
 	def horizontal_acceleration(self,GameObjects,delta_t):
 
@@ -76,7 +57,10 @@ class _PhysicsEngine:
 
 			#set direction	
 			if objects.accelerationX != 0:
-				self.x_direction = objects.accelerationX/abs(objects.accelerationX)
+
+				if self.x_direction != objects.accelerationX/abs(objects.accelerationX):
+					self.x_direction = objects.accelerationX/abs(objects.accelerationX)
+					objects.velocity_X2 = 0
 			else:
 				#deccelerate 
 				if self.x_direction > 0:
@@ -93,23 +77,15 @@ class _PhysicsEngine:
 
 		for objects in GameObjects:
 
-			if objects.forceY > 0 and not self.jumping and objects.collisionDetected:
-				self.jumping = True
-				self.uc = -3.14
-
-			if self.jumping:
-				objects.position[1] += objects.forceY*math.cos(self.uc)
-				self.uc += 0.1
-
-				if self.uc >= 0:
-					objects.forceY = 0
-					self.jumping = False
-
-			if self.uc > self.highestUc:
-				self.highestUc = self.uc
-			#print("jumping: " + str(self.jumping))
-			#print("forceY: " + str(objects.forceY))
-			#print("self.highestUc: "+ str(self.highestUc))
+			if objects.jumping:
+				objects.jump_velocity_1 = 300
+			elif objects.jump_velocity_1 > 0:
+				objects.jump_velocity_1 -= 20
+			
+			if delta_t != 0:
+				objects.position[1] -= objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
+			
+			
 
 
 

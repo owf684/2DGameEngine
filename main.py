@@ -3,6 +3,7 @@ import os
 import pygame
 import time
 import math
+import cProfile
 sys.path.append('./GraphicsEngine')
 sys.path.append('./InputsEngine')
 sys.path.append('./UIEngine')
@@ -11,6 +12,8 @@ sys.path.append('./MechanicsEngine/PlayerEngine')
 sys.path.append('./MechanicsEngine/PlatformsEngine')
 sys.path.append('./GameObjects')
 sys.path.append('./CollisionEngine')
+sys.path.append('./LevelBuilder')
+
 import GraphicsEngine
 import GraphicsEngineData
 import InputsEngine
@@ -20,6 +23,7 @@ import PlayerEngine
 import PlatformsEngine
 import GameObject
 import CollisionEngine
+import LevelBuilder
 
 #Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -37,10 +41,13 @@ PfE  = PlatformsEngine._PlatformsEngine()
 
 #Initialize Graphics Engine
 GE = GraphicsEngine._GraphicsEngine()
-GE._setScreenSize(800,800)
+GE._setScreenSize(1280,720)
 
 #Initialize Collision Engine
 CE = CollisionEngine._CollisionEngine()
+
+#Initialize Level Builder
+LB = LevelBuilder._LevelBuilder()
 
 #This will have to change
 #Initialize GameObjects
@@ -84,6 +91,7 @@ collisionList.extend(levelObjects)
 #simulation runtime variables
 delta_t = 0
 FPS = 60
+
 #main loop
 running = True
 while running:
@@ -95,8 +103,8 @@ while running:
 
 
 	#Inputs Engine
-	IE.main_loop(GameObjects,delta_t)
-
+	#cProfile.run('IE.main_loop(GameObjects,delta_t)',sort='cumulative')
+	input_dict = IE.main_loop(GameObjects,delta_t)
 	#UI Engine
 	#UIE.main_loop()
 
@@ -113,8 +121,12 @@ while running:
 	#PfE.main_loop()
 
 	#Graphics Engine
-	GE.main_loop(GameObjects,levelObjects)
+	#cProfile.run('GE.main_loop(GameObjects,levelObjects)',sort='cumulative')
 
+	screen = GE.main_loop(GameObjects,levelObjects)
+
+	#Level Builer
+	LB.main_loop(input_dict,screen,levelObjects,collisionList)
 	#limit game to 60 fps
 	#time.sleep(0.0033)
 

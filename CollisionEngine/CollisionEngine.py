@@ -12,6 +12,7 @@ class _CollisionEngine:
 		i = 0
 		numObjects = len(collisionList)
 		currentObject = 0
+
 		while currentObject < numObjects:
 			self.updateRectPosition(collisionList[currentObject])
 			collisionList[currentObject].collisionDetected = False
@@ -24,8 +25,7 @@ class _CollisionEngine:
 					collisionList[currentObject].collisionDetected = True
 					if collisionList[currentObject].subClass == 'player' and collisionList[currentObject].rect.centery < objects.rect.centery:
 						collisionList[currentObject].position[1] = objects.rect.top - collisionList[currentObject].rect.height
-				#else:
-				#	collisionList[currentObject].collisionDetected = False
+				
 
 			currentObject += 1
 
