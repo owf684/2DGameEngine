@@ -13,6 +13,7 @@ sys.path.append('./MechanicsEngine/PlatformsEngine')
 sys.path.append('./GameObjects')
 sys.path.append('./CollisionEngine')
 sys.path.append('./LevelBuilder')
+sys.path.append('./LevelHandler')
 
 import GraphicsEngine
 import GraphicsEngineData
@@ -24,6 +25,7 @@ import PlatformsEngine
 import GameObject
 import CollisionEngine
 import LevelBuilder
+import LevelHandler
 
 #Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -48,6 +50,9 @@ CE = CollisionEngine._CollisionEngine()
 
 #Initialize Level Builder
 LB = LevelBuilder._LevelBuilder()
+
+#Intialize Level Handler
+LH = LevelHandler._LevelHandler()
 
 #This will have to change
 #Initialize GameObjects
@@ -115,7 +120,7 @@ while running:
 	CE.main_loop(collisionList)
 
 	#PlayerMechanics Engine
-	#PlE.main_loop()
+	PlE.main_loop(GameObjects,delta_t)
 
 	#PlatformMechanics Engine
 	#PfE.main_loop()
@@ -123,10 +128,13 @@ while running:
 	#Graphics Engine
 	#cProfile.run('GE.main_loop(GameObjects,levelObjects)',sort='cumulative')
 
-	screen = GE.main_loop(GameObjects,levelObjects)
+	screen = GE.main_loop(GameObjects,levelObjects,LH)
 
 	#Level Builer
-	LB.main_loop(input_dict,screen,levelObjects,collisionList)
+	LB.main_loop(input_dict,screen,levelObjects,collisionList,LH,PlE)
+
+	LH.main_loop(levelObjects,PlE)
+
 	#limit game to 60 fps
 	#time.sleep(0.0033)
 

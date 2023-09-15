@@ -31,7 +31,7 @@ class _GraphicsEngine:
 	def _setScreenSize(self,screen_width,screen_height):
 		self.screen_width = screen_width
 		self.screen_height = screen_height
-		self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
+		self.screen = pygame.display.set_mode((self.screen_width,self.screen_height),pygame.DOUBLEBUF)
 
 	
 	def _setScreenTitle(title):
@@ -43,22 +43,29 @@ class _GraphicsEngine:
 		self.imageBuffer.append(pygame.image.load(image_path))
 
 
-	def main_loop(self,GameObjects,levelObjects):
+	def main_loop(self,GameObjects,levelObjects,levelHandler):
 
 		#clear the screen
 		self.screen.fill((0,0,0))
 
-		for x in range(0, self.screen_width, self.grid_size):
+		'''for x in range(0, self.screen_width, self.grid_size):
 			pygame.draw.line(self.screen, self.grid_color, (x, 0), (x, self.screen_height))
 		for y in range(0, self.screen_height, self.grid_size):
-			pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
+			pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))'''
 	
+		for x in range(0, self.screen_width+int(abs(levelHandler.scroll_offset)), self.grid_size):
+			pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
+		for y in range(0, self.screen_height, self.grid_size):
+			pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
+
+		self.load_render_buffer(levelObjects)
+
 		#Update Graphics Here
-		for objects in levelObjects:
+		for objects in self.render_buffer:
 
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
 
-	
+		print(len(self.render_buffer))
 		#Update Graphics Here
 		for objects in GameObjects:
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
@@ -76,8 +83,15 @@ class _GraphicsEngine:
 
 	def load_render_buffer(self, levelObjects):
 
-		self.render_buffer.extend(levelObjects)
-		self.objects_to_render = len(self.render_buffer)
+		for objects in levelObjects:
+			if objects not in self.render_buffer:
+		
+				if not objects.position[0] < -objects.sprite_size[0] and not objects.position[0] > self.screen_width:
+					self.render_buffer.append(objects)
 
+			if objects in self.render_buffer:
+
+					if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
+						self.render_buffer.remove(objects)
 
 	
