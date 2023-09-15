@@ -38,7 +38,7 @@ class _InputsEngine:
 					objects.accelerationX = 5000
 				else:
 					objects.accelerationX = 0.0
-<<<<<<< HEAD
+
 					self.input_dict["left"] = '0'
 					self.input_dict["right"] = '0'
 
@@ -68,11 +68,7 @@ class _InputsEngine:
 
 
 		return self.input_dict
-=======
-				#Jump
-				if keys[pygame.K_w] and objects.collisionDetected:
-					objects.jumping = True
-				elif not keys[pygame.K_w]:
-					objects.jumping = False		
->>>>>>> main
+
+						
+
 				
