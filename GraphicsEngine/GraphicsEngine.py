@@ -62,34 +62,13 @@ class _GraphicsEngine:
 		#===========================================================================================================
     		# Draw the square
 
-		square_rect = pygame.Rect(self.scan_block_position[0], self.scan_block_position[1], self.scan_block_size, self.scan_block_size)
-		placement_coords = [0,0]
-		if self.scan_block_position[0] < self.screen_width:
-			self.scan_block_position[0] += self.scan_block_size
-		else:
-			self.scan_block_position[0] = 0
-			if self.scan_block_position[1] < self.screen_height:
-				self.scan_block_position[1] += self.scan_block_size
-			else:
-				self.scan_block_position[1] = 0
 
-
-		#check if cursor is in contact with mouse
- 		# Check for collision with the mouse cursor
-		mouse_x, mouse_y = pygame.mouse.get_pos()
-		if square_rect.collidepoint(mouse_x, mouse_y):
-			self.block_color = (0, 255, 0)  # Change block color when cursor touches it
-			placement_coords = copy.deepcopy(self.scan_block_position)
-			print ("placement_coords: " + str(placement_coords))
-		else:
-			self.block_color = (255,255,255)
-
-		pygame.draw.rect(self.screen, self.block_color, square_rect)
 
 		#============================================================================================================
 
 		#Update the display
 		pygame.display.flip()
+		return self.screen
 
 
 	

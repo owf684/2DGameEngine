@@ -90,6 +90,7 @@ collisionList.extend(levelObjects)
 #simulation runtime variables
 delta_t = 0
 FPS = 60
+
 #main loop
 running = True
 while running:
@@ -119,10 +120,10 @@ while running:
 	#PfE.main_loop()
 
 	#Graphics Engine
-	GE.main_loop(GameObjects,levelObjects)
+	screen = GE.main_loop(GameObjects,levelObjects)
 
 	#Level Builer
-	LB.main_loop(input_dict)
+	LB.main_loop(input_dict,screen)
 	#limit game to 60 fps
 	#time.sleep(0.0033)
 
