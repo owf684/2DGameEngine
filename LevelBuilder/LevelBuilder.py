@@ -21,37 +21,32 @@ class _LevelBuilder:
 		self.can_place_block = True
 		self.list_of_placed_objects = list()
 
-	def main_loop(self,input_dict,screen,levelObjects,collisionList):
+	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine):
 		
+		self.update_screen_width(levelHandler,PlayerEngine)
+		self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler)
 
-		self.poll_mouse(input_dict,screen,levelObjects,collisionList)
-		self.draw_grid(input_dict,screen)
 
-
-	def draw_grid(self,input_dict,screen):
-
-		for x in range(0, self.screen_width, self.grid_size):
-			pygame.draw.line(screen, self.grid_color, (x, 0), (x, self.screen_height))
-		for y in range(0, self.screen_height, self.grid_size):
-			pygame.draw.line(screen, self.grid_color, (0, y), (self.screen_width, y))
-		
-
-	def poll_mouse(self,input_dict,screen,levelObjects,collisionList):
+	def update_screen_width(self,levelHandler,PlayerEngine):
+		if PlayerEngine.scroll_level:
+			self.screen_width += levelHandler.scroll_offset
+	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler):
 
 
 		if input_dict['left-click'] == '1':
 			self.mouse_position = pygame.mouse.get_pos()
-			self.get_snap_values(input_dict,screen,levelObjects)
+			
+			self.get_snap_values(input_dict,screen,levelObjects,levelHandler)
 
 			if self.can_place_block:
 
-				self.place_block(input_dict,screen,levelObjects,collisionList)
+				self.place_block(input_dict,screen,levelObjects,collisionList,levelHandler)
 
 
-	def get_snap_values(self,input_dict,screen,levelObjects):
+	def get_snap_values(self,input_dict,screen,levelObjects,levelHandler):
 		self.can_place_block = True
 		#get x snap value
-		self.snap_position[0] = int(self.mouse_position[0]/self.grid_size)*self.grid_size
+		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size
 		#get y snap value
 		self.snap_position[1] = int(self.mouse_position[1]/self.grid_size)*self.grid_size
 
@@ -67,7 +62,7 @@ class _LevelBuilder:
 		pygame.display.flip()
 
 		
-	def place_block(self,input_dict,screen,levelObjects,collisionList):
+	def place_block(self,input_dict,screen,levelObjects,collisionList,levelHandler):
 
 		#add first platform
 		levelObjects.append(GameObject._GameObject())
@@ -75,6 +70,7 @@ class _LevelBuilder:
 		levelObjects[-1]._set_image_path('./Assets/Platforms/mario_brick.png')
 		levelObjects[-1]._set_image()
 		levelObjects[-1].position = copy.deepcopy(self.snap_position)
+		temp_position = copy.deepcopy(self.snap_position)
 		self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
 		levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 		levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
