@@ -8,8 +8,8 @@ class _LevelHandler:
 
 	def __init__(self):
 		self.scroll_offset = 0
-
-		
+		self.scroll_delta = 0
+		self.eox = 0
 
 
 	def main_loop(self,levelObjects,PlayerEngine):
@@ -24,6 +24,3 @@ class _LevelHandler:
 
 			for objects in levelObjects:
 				objects.position[0] -= PlayerEngine.x_displacement
-		print(self.scroll_offset)
-	def _get_scroll_offset(self):
-		return self.scroll_offset

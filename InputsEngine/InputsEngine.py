@@ -4,6 +4,7 @@ import pygame
 class _InputsEngine:
 
 	def __init__(self):
+		self.hold_create =False
 		self.horizontal = 0
 		self.vertical = 0
 		self.input_dict = {
@@ -12,7 +13,8 @@ class _InputsEngine:
 			"right"			: "0",
 			"down" 			: "0",
 			"left-click"	: "0",
-			"right-click" 	: "0"
+			"right-click" 	: "0",
+			"create-level" 	: "0"
 		}
 
 	def main_loop(self,GameObjects,delta):
@@ -53,7 +55,15 @@ class _InputsEngine:
 				elif not keys[pygame.K_w]:
 					objects.jumping = False	
 
-		
+				if keys[pygame.K_c] and not self.hold_create:
+					self.input_dict['create-level'] = '1'
+					self.hold_create = True
+				else:
+					self.input_dict['create-level'] = '0'
+
+				if self.hold_create and not keys[pygame.K_c]:
+					self.hold_create = False
+
 		mouse_buttons = pygame.mouse.get_pressed()
 		if mouse_buttons[0]:
 			self.input_dict["left-click"] = '1'

@@ -12,9 +12,9 @@ class _PlayerEngine:
 		self.x_decelleration = 0.01
 		self.screen_width = 1280
 		self.scroll_level = False
-	def main_loop(self,GameObjects,delta_t):
+	def main_loop(self,GameObjects,delta_t,input_dict):
 
-		self.horizontal_movement(GameObjects,delta_t)
+		self.horizontal_movement(GameObjects,delta_t,input_dict)
 		self.jump(GameObjects,delta_t)
 		
 
@@ -36,7 +36,7 @@ class _PlayerEngine:
 
 		#print ("objects.jumping: " + str(objects.jumping))
 
-	def horizontal_movement(self,GameObjects,delta_t):
+	def horizontal_movement(self,GameObjects,delta_t,input_dict):
 
 		'''KINEMATIC EQUATIONS
 		delta_x = v_initial * delta_t + 0.5 * a * delta_t^2
@@ -49,11 +49,11 @@ class _PlayerEngine:
 
 			self.x_displacement = (objects.velocity_X1 * delta_t) + (0.5 * objects.accelerationX * math.pow(delta_t,2))
 			#handle level scrolling left
-			if objects.position[0] >= self.screen_width/2 and self.x_direction > 0:
+			if objects.position[0] >= self.screen_width/2 and self.x_direction > 0 and input_dict['right'] == '1':
 				self.scroll_level = True
 	
 			#handle level scrolling right
-			elif objects.position[0] <= self.screen_width/8 and self.x_direction < 0:
+			elif objects.position[0] <= self.screen_width/8 and self.x_direction < 0 and input_dict['left'] == '1':
 
 				self.scroll_level = True
 

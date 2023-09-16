@@ -47,14 +47,17 @@ class _GraphicsEngine:
 
 		#clear the screen
 		self.screen.fill((0,0,0))
-
-		'''for x in range(0, self.screen_width, self.grid_size):
-			pygame.draw.line(self.screen, self.grid_color, (x, 0), (x, self.screen_height))
-		for y in range(0, self.screen_height, self.grid_size):
-			pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))'''
 	
+
 		for x in range(0, self.screen_width+int(abs(levelHandler.scroll_offset)), self.grid_size):
+
 			pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
+			
+			levelHandler.eox = x - abs(levelHandler.scroll_offset)
+
+			levelHandler.scroll_delta = 1248 - levelHandler.eox
+
+
 		for y in range(0, self.screen_height, self.grid_size):
 			pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
 
@@ -65,7 +68,6 @@ class _GraphicsEngine:
 
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
 
-		print(len(self.render_buffer))
 		#Update Graphics Here
 		for objects in GameObjects:
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))

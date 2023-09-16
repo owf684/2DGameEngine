@@ -20,16 +20,13 @@ class _LevelBuilder:
 		self.snap_position = [0,0]
 		self.can_place_block = True
 		self.list_of_placed_objects = list()
-
+		self.scroll_offset_magnitude = 1
+		self.scroll_offset_fudge = 0.5
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine):
 		
-		self.update_screen_width(levelHandler,PlayerEngine)
 		self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler)
 
-
-	def update_screen_width(self,levelHandler,PlayerEngine):
-		if PlayerEngine.scroll_level:
-			self.screen_width += levelHandler.scroll_offset
+				
 	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler):
 
 
@@ -44,9 +41,18 @@ class _LevelBuilder:
 
 
 	def get_snap_values(self,input_dict,screen,levelObjects,levelHandler):
+
 		self.can_place_block = True
 		#get x snap value
-		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size
+		if levelHandler.scroll_offset != 0:
+			self.scroll_offset_magnitude = levelHandler.scroll_offset/levelHandler.scroll_offset
+		else:
+			self.scroll_offset_magnitude = 1
+			self.scroll_offset_fudge = 0
+
+
+		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size-(levelHandler.scroll_delta*self.scroll_offset_magnitude)
+		#print(self.snap_position[0])
 		#get y snap value
 		self.snap_position[1] = int(self.mouse_position[1]/self.grid_size)*self.grid_size
 
@@ -70,10 +76,9 @@ class _LevelBuilder:
 		levelObjects[-1]._set_image_path('./Assets/Platforms/mario_brick.png')
 		levelObjects[-1]._set_image()
 		levelObjects[-1].position = copy.deepcopy(self.snap_position)
-		temp_position = copy.deepcopy(self.snap_position)
+		print(self.snap_position)
 		self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
 		levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 		levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
 		collisionList.append(levelObjects[-1])
-		print("levelObjects: " + str( len(levelObjects) ) )
 	
