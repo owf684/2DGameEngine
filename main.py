@@ -4,6 +4,7 @@ import pygame
 import time
 import math
 import cProfile
+import pickle
 sys.path.append('./GraphicsEngine')
 sys.path.append('./InputsEngine')
 sys.path.append('./UIEngine')
@@ -97,6 +98,11 @@ collisionList.extend(levelObjects)
 delta_t = 0
 FPS = 60
 
+def save_level(levelObjects):
+	with open("level.pkl","wb") as file:
+		pickle.dump(levelObjects,file)
+		
+
 #main loop
 running = True
 while running:
@@ -120,14 +126,12 @@ while running:
 	CE.main_loop(collisionList)
 
 	#PlayerMechanics Engine
-	PlE.main_loop(GameObjects,delta_t)
+	PlE.main_loop(GameObjects,delta_t,input_dict)
 
 	#PlatformMechanics Engine
 	#PfE.main_loop()
 
 	#Graphics Engine
-	#cProfile.run('GE.main_loop(GameObjects,levelObjects)',sort='cumulative')
-
 	screen = GE.main_loop(GameObjects,levelObjects,LH)
 
 	#Level Builer
@@ -137,10 +141,12 @@ while running:
 
 	#limit game to 60 fps
 	#time.sleep(0.0033)
-
+	#if (input_dict['create-level'] == '1'):
+	#	save_level(levelObjects)
 	
 	clock.tick(FPS)
 
 	delta_t = clock.tick(FPS)/1000
+
 
 pygame.quit()
