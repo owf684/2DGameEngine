@@ -14,10 +14,12 @@ class _InputsEngine:
 			"down" 			: "0",
 			"left-click"	: "0",
 			"right-click" 	: "0",
-			"create-level" 	: "0"
+			"create-level" 	: "0",
+			"arrow_vert"	: "0",
+			"arrow_hori"	: "0"
 		}
 
-	def main_loop(self,GameObjects,delta):
+	def main_loop(self,GameObjects,delta,pygame_events):
 		posVector = pygame.math.Vector2()
 		for objects in GameObjects:
 
@@ -64,7 +66,16 @@ class _InputsEngine:
 				if self.hold_create and not keys[pygame.K_c]:
 					self.hold_create = False
 
+				if keys[pygame.K_UP]:
+					self.input_dict["arrow_vert"] = "1"
+				elif keys[pygame.K_DOWN]:
+					self.input_dict["arrow_vert"] = "-1"
+				else:
+					self.input_dict["arrow_vert"] = "0"
+
+
 		mouse_buttons = pygame.mouse.get_pressed()
+
 		if mouse_buttons[0]:
 			self.input_dict["left-click"] = '1'
 		else:
@@ -75,7 +86,7 @@ class _InputsEngine:
 		else:
 			self.input_dict["right-click"] = '0'
 
-
+	
 
 		return self.input_dict
 
