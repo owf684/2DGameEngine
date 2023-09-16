@@ -66,34 +66,16 @@ PlayerObject._set_sprite_size(PlayerObject.image)
 PlayerObject._set_rect(PlayerObject.sprite_size)
 GameObjects.append(PlayerObject)
 
-
-
 levelObjects = list()
-#add first platform
-PlatformObject = GameObject._GameObject()
-PlatformObject._set_sub_class('platform')
-PlatformObject._set_image_path('./Assets/Platforms/large_platform.png')
-PlatformObject._set_image()
-PlatformObject.position = [400,450]
-PlatformObject._set_sprite_size(PlatformObject.image)
-PlatformObject._set_rect(PlatformObject.sprite_size)
-levelObjects.append(PlatformObject)
 
-#add first platform
-PlatformObject2 = GameObject._GameObject()
-PlatformObject2._set_sub_class('platform')
-PlatformObject2._set_image_path('./Assets/Platforms/large_platform.png')
-PlatformObject2._set_image()
-PlatformObject2.position = [200,200]
-PlatformObject2._set_sprite_size(PlatformObject.image)
-PlatformObject2._set_rect(PlatformObject.sprite_size)
-levelObjects.append(PlatformObject2)
 clock = pygame.time.Clock()
 
 collisionList = list()
 collisionList.extend(GameObjects)
 collisionList.extend(levelObjects)
 
+
+pygame_events = None
 #simulation runtime variables
 delta_t = 0
 FPS = 60
@@ -112,10 +94,11 @@ while running:
 		if event.type == pygame.QUIT:
 			running = False
 
-
+	pygame_events = pygame.event.get()
+	
 	#Inputs Engine
-	#cProfile.run('IE.main_loop(GameObjects,delta_t)',sort='cumulative')
-	input_dict = IE.main_loop(GameObjects,delta_t)
+	input_dict = IE.main_loop(GameObjects,delta_t,pygame_events)
+
 	#UI Engine
 	#UIE.main_loop()
 

@@ -12,6 +12,8 @@ class _PlayerEngine:
 		self.x_decelleration = 0.01
 		self.screen_width = 1280
 		self.scroll_level = False
+
+		
 	def main_loop(self,GameObjects,delta_t,input_dict):
 
 		self.horizontal_movement(GameObjects,delta_t,input_dict)
