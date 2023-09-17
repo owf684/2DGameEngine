@@ -9,6 +9,7 @@ class _LevelHandler:
 	def __init__(self):
 		self.scroll_offset = 0
 		self.scroll_delta = 0
+		self.clear_render_buffer = False
 		self.eox = 0
 
 

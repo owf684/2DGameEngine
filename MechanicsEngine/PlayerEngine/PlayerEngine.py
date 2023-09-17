@@ -6,14 +6,13 @@ class _PlayerEngine:
 	def __init__(self):
 		self.gravity = 9.8*150
 		self.y_displacement = 0
-		self.jump_displacement = 0
 		self.x_displacement = 0
 		self.x_direction = 0
 		self.x_decelleration = 0.01
 		self.screen_width = 1280
 		self.scroll_level = False
 
-		
+		self.x_acceleration = 0
 	def main_loop(self,GameObjects,delta_t,input_dict):
 
 		self.horizontal_movement(GameObjects,delta_t,input_dict)
@@ -27,13 +26,15 @@ class _PlayerEngine:
 
 		for objects in GameObjects:
 
-			if objects.jumping:
-				objects.jump_velocity_1 = 300
-			elif objects.jump_velocity_1 > 0:
-				objects.jump_velocity_1 -= 20
+			if objects.subClass == "player":
+
+				if objects.jumping:
+					objects.jump_velocity_1 = objects.jump_velocity
+				elif objects.jump_velocity_1 > 0:
+					objects.jump_velocity_1 -= objects.jump_decelleration
 			
-			if delta_t != 0:
-				objects.position[1] -= objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
+				if delta_t != 0:
+					objects.position[1] -= objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
 			
 
 		#print ("objects.jumping: " + str(objects.jumping))
@@ -48,43 +49,59 @@ class _PlayerEngine:
 
 		for objects in GameObjects:
 
+			if objects.subClass == "player":
 
-			self.x_displacement = (objects.velocity_X1 * delta_t) + (0.5 * objects.accelerationX * math.pow(delta_t,2))
-			#handle level scrolling left
-			if objects.position[0] >= self.screen_width/2 and self.x_direction > 0 and input_dict['right'] == '1':
-				self.scroll_level = True
-	
-			#handle level scrolling right
-			elif objects.position[0] <= self.screen_width/8 and self.x_direction < 0 and input_dict['left'] == '1':
+				self.set_x_acceleration(objects,input_dict)
 
-				self.scroll_level = True
+				self.set_scroll_state(objects,input_dict)
 
+				self.x_displacement = (objects.velocity_X1 * delta_t) + (0.5 * self.x_acceleration * math.pow(delta_t,2))
+
+				if not self.scroll_level:
+					objects.position[0] += self.x_displacement
+
+				try:
+
+					objects.velocity_X2 = math.sqrt( math.pow(objects.velocity_X1,2) + 2*abs(self.x_acceleration) + self.x_displacement)
+				except:
+					None
+
+				self.set_x_direction(objects,input_dict)
+
+				#update velocity
+				objects.velocity_X1 = objects.velocity_X2*self.x_direction
+
+	def set_x_acceleration(self,objects,input_dict):
+		if input_dict['right'] == '1':
+			self.x_acceleration = objects.accelerationX
+		elif input_dict['left'] == '-1':
+			self.x_acceleration  = objects.accelerationX*int( input_dict['left'] )
+		else:
+			self.x_acceleration = 0 
+
+	def set_x_direction(self,objects,input_dict):
+		if self.x_acceleration != 0:
+
+			if self.x_direction != self.x_acceleration/abs(self.x_acceleration):
+				self.x_direction = self.x_acceleration/abs(self.x_acceleration)
+				objects.velocity_X2 = 0
+		else:
+			#deccelerate 
+			if self.x_direction > 0:
+				self.x_direction -= self.x_decelleration
 			else:
-			 
-				self.scroll_level = False
+				self.x_direction += self.x_decelleration
 
 
-			if not self.scroll_level:
-				objects.position[0] += self.x_displacement
+	def set_scroll_state(self,objects,input_dict):
 
-			try:
+		
+		#handle level scrolling left
+		if objects.position[0] >= self.screen_width/2 and self.x_direction > 0 and input_dict['right'] == '1':
+			self.scroll_level = True
 
-				objects.velocity_X2 = math.sqrt( math.pow(objects.velocity_X1,2) + 2*abs(objects.accelerationX) + self.x_displacement)
-			except:
-				None
-
-			#set direction	
-			if objects.accelerationX != 0:
-
-				if self.x_direction != objects.accelerationX/abs(objects.accelerationX):
-					self.x_direction = objects.accelerationX/abs(objects.accelerationX)
-					objects.velocity_X2 = 0
-			else:
-				#deccelerate 
-				if self.x_direction > 0:
-					self.x_direction -= self.x_decelleration
-				else:
-					self.x_direction += self.x_decelleration
-
-			#update velocity
-			objects.velocity_X1 = objects.velocity_X2*self.x_direction
+		#handle level scrolling right
+		elif objects.position[0] <= self.screen_width/8 and self.x_direction < 0 and input_dict['left'] == '-1':
+			self.scroll_level = True
+		else:
+			self.scroll_level = False

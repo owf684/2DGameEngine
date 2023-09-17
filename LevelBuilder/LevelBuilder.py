@@ -5,6 +5,7 @@ import GameObject
 import copy
 import glob
 import os
+import xml.etree.ElementTree as ET
 class _LevelBuilder:
 
 
@@ -29,6 +30,10 @@ class _LevelBuilder:
 		self.block_select_key = False
 		self.selected_block_index = 0
 
+		self.create_level_select = False
+
+		self.load_level_select = False
+
 		self.initialize_building_blocks()
 
 	def initialize_building_blocks(self):
@@ -46,9 +51,10 @@ class _LevelBuilder:
 
 	
 
-	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine):
+	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects):
 		
 		self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler)
+		self.handle_user_input(input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler)
 		self.ui(input_dict,screen,levelObjects,collisionList,levelHandler)
 				
 	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler):
@@ -101,6 +107,7 @@ class _LevelBuilder:
 		levelObjects[-1]._set_image_path(self.building_blocks[self.selected_block_index]._get_image_path())
 		levelObjects[-1]._set_image()
 		levelObjects[-1].position = copy.deepcopy(self.snap_position)
+		levelObjects[-1].initial_position = copy.deepcopy(self.snap_position)
 		self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
 		levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 		levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
@@ -110,7 +117,6 @@ class _LevelBuilder:
 
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler):
 			
-		self.handle_user_input(input_dict)
 
 		self.limit_selection_index()
 
@@ -118,16 +124,34 @@ class _LevelBuilder:
 		pygame.display.flip()
 
 
-	def handle_user_input(self,input_dict):
+	def handle_user_input(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):
 
+		#handles block selection 
 		if input_dict["arrow_vert"] == "1" and not self.block_select_key:
 			self.block_select_key = True
 			self.selected_block_index += 1
 		elif input_dict["arrow_vert"] == "-1" and not self.block_select_key:
 			self.block_select_key = True
 			self.selected_block_index -= 1
-		else:
+		elif input_dict["arrow_vert"] == "0":
 			self.block_select_key = False	
+		#write category selection here
+
+		#handles save data
+		if input_dict["create-level"] == "1" and not self.create_level_select:
+			self.create_level_select = True
+
+			self.save_level(levelObjects,GameObjects)
+		
+		elif input_dict["create-level"] == "0":
+			self.create_level_select = 0
+
+		#handle load data
+		if input_dict["load-level"] == "1" and not self.load_level_select:
+			self.load_level_select = True
+			self.load_level(GameObjects,levelObjects,collisionList,"level_1",screen,levelHandler)
+		elif input_dict["load-level"] == "0":
+			self.load_level_select = False
 
 	def limit_selection_index(self):
 
@@ -138,3 +162,140 @@ class _LevelBuilder:
 			self.selected_block_index = len(self.building_blocks)-1	
 
 		#print(self.selected_block_index)
+
+
+	def save_level(self,levelObjects,GameObjects):
+		new_level = len(glob.glob("./WorldData/level*")) + 1
+		level_string = "level_" + str(new_level)
+		os.mkdir("./WorldData/" + level_string)
+
+		self.save_level_objects(levelObjects,level_string)
+		self.save_game_objects(GameObjects,level_string)
+
+	def save_level_objects(self,levelObjects,level_string):
+
+		#get level number
+
+		root = ET.Element("objects")
+		obj = list()
+		for objects in levelObjects:
+			obj.append(ET.SubElement(root,"object"))
+
+			sub_class = ET.SubElement(obj[-1],"subClass")
+			sub_class.text = objects.subClass
+
+			image_path = ET.SubElement(obj[-1],"imagePath")
+			image_path.text = objects.imagePath
+
+			position_x = ET.SubElement(obj[-1],"position_x")
+			position_x.text = str(objects.initial_position[0])
+
+			position_y = ET.SubElement(obj[-1],"position_y")
+			position_y.text = str(objects.initial_position[1])
+
+
+		tree = ET.ElementTree(root)
+		
+		tree.write("./WorldData/"+level_string+"/levelObjects.xml" )
+
+	def save_game_objects(slef,GameObjects,level_string):
+
+		root = ET.Element("objects")
+		obj = list()
+		for objects in GameObjects:
+			obj.append(ET.SubElement(root,"object"))
+			sub_class = ET.SubElement(obj[-1],"subClass")
+			sub_class.text = objects.subClass 
+
+			image_path = ET.SubElement(obj[-1],"imagePath")
+			image_path.text = objects.imagePath
+
+			position_x = ET.SubElement(obj[-1],"position_x")
+			position_x.text = str(objects.initial_position[0])
+
+			position_y = ET.SubElement(obj[-1],"position_y")
+			position_y.text = str(objects.initial_position[1])
+
+			accelerationX = ET.SubElement(obj[-1],"accelerationX")
+			accelerationX.text = str(objects.accelerationX)
+
+			jump_velocity = ET.SubElement(obj[-1],"jump_velocity")
+			jump_velocity.text = str(objects.jump_velocity)
+
+			jump_decelleration = ET.SubElement(obj[-1],"jump_decelleration")
+			jump_decelleration.text = str(objects.jump_decelleration)
+
+			mass = ET.SubElement(obj[-1],"mass")
+			mass.text = str(objects.mass)
+
+
+		tree = ET.ElementTree(root)
+		tree.write("./WorldData/"+level_string+"/GameObjects.xml")
+
+	def load_level(self,GameObjects,levelObjects,collisionList,level_string,screen,levelHandler):
+		levelHandler.scroll_offset = 0
+		levelHandler.clear_render_buffer =True
+		screen.fill((0,0,0))
+	
+
+		self.load_level_objects(levelObjects,collisionList,level_string)
+		self.load_game_objects(GameObjects,collisionList,level_string)
+
+	def load_level_objects(self,levelObjects,collisionList,level_string):
+		levelObjects.clear()
+		collisionList.clear()
+		print("loading level objects...")
+
+		#clear levelObjects list
+		#levelObjects = list()
+		tree = ET.parse("./WorldData/" + level_string +"/levelObjects.xml")
+		root = tree.getroot()
+
+		for object_elem in root.findall("object"):
+			levelObjects.append(GameObject._GameObject())
+			levelObjects[-1].subClass = object_elem.find("subClass").text
+			levelObjects[-1].imagePath = object_elem.find("imagePath").text
+			x_position = float(object_elem.find("position_x").text)
+			y_position = float(object_elem.find("position_y").text)
+			levelObjects[-1].position[0] = x_position
+			levelObjects[-1].position[1] = y_position
+			levelObjects[-1].initial_position = copy.deepcopy(levelObjects[-1].position)
+			levelObjects[-1]._set_image_path(levelObjects[-1]._get_image_path())
+			levelObjects[-1]._set_image()		
+			self.list_of_placed_objects.append(copy.deepcopy(levelObjects[-1].initial_position))
+			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
+			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
+			collisionList.append(levelObjects[-1])
+		
+
+	def load_game_objects(self,GameObjects,collisionList,level_string):
+		GameObjects.clear()
+
+		print("loading GameObjects...")
+		GameObjects.clear()
+		#clear levelObjects list
+		#levelObjects = list()
+		tree = ET.parse("./WorldData/"+level_string+"/GameObjects.xml")
+		root = tree.getroot()
+
+		for object_elem in root.findall("object"):
+			GameObjects.append(GameObject._GameObject())
+			GameObjects[-1].subClass = object_elem.find("subClass").text
+			GameObjects[-1].imagePath = object_elem.find("imagePath").text
+			x_position = float(object_elem.find("position_x").text)
+			y_position = float(object_elem.find("position_y").text)
+			GameObjects[-1].position[0] = x_position
+			GameObjects[-1].position[1] = y_position
+			GameObjects[-1].initial_position = copy.deepcopy(GameObjects[-1].position)
+			GameObjects[-1]._set_image_path(GameObjects[-1]._get_image_path())
+			GameObjects[-1]._set_image()		
+			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
+			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
+
+			GameObjects[-1].jump_velocity = float(object_elem.find("jump_velocity").text)
+			GameObjects[-1].jump_decelleration = float(object_elem.find('jump_decelleration').text)
+			GameObjects[-1].accelerationX = float(object_elem.find("accelerationX").text)
+			GameObjects[-1].mass = float(object_elem.find("mass").text)
+
+			collisionList.append(GameObjects[-1])
+	
