@@ -44,7 +44,6 @@ class _GraphicsEngine:
 
 
 	def main_loop(self,GameObjects,levelObjects,levelHandler):
-
 		#clear the screen
 		self.screen.fill((0,0,0))
 	
@@ -61,8 +60,10 @@ class _GraphicsEngine:
 		for y in range(0, self.screen_height, self.grid_size):
 			pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
 
+		if levelHandler.clear_render_buffer:
+			self.render_buffer.clear()
+			levelHandler.clear_render_buffer = False
 		self.load_render_buffer(levelObjects)
-
 		#Update Graphics Here
 		for objects in self.render_buffer:
 
@@ -95,5 +96,7 @@ class _GraphicsEngine:
 
 					if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
 						self.render_buffer.remove(objects)
+
+
 
 	

@@ -16,8 +16,7 @@ class _GameObject:
 		self.imagePath=''
 		self.animation_state = 0
 		self.position = pygame.math.Vector2(0,0)
-		self.lerpPosition = pygame.math.Vector2(0,0)
-		self.framceCounter = 0
+		self.initial_position = pygame.math.Vector2(0,0)
 
 		#Physics Data
 		self.weight = 10
@@ -26,16 +25,16 @@ class _GameObject:
 		self.velocity_Y1 = 0
 		self.jump_velocity_1 = 0
 		self.jump_velocity_2 = 0
+		self.jump_velocity = 400
+		self.jump_decelleration = 20
 		self.velocityX = 0
 		self.velocity_X2 = 0
 		self.velocity_X1 = 0
-		self.accelerationX = 0
+		self.accelerationX = 1500
 		self.accelerationY = 0
 		self.forceY = 0
 		self.mass = 100
-		self.jumpForce = 10
 		self.jumping = False
-		self.maxJumpHeight = 10
 
 		#Collision Data
 		self.collisionDetected = False
@@ -83,6 +82,12 @@ class _GameObject:
 
 	def _set_rect(self,sprite_size):
 		self.rect = pygame.Rect(self.position[0],self.position[1],sprite_size[0],sprite_size[1])
+
+	def _set_init_xPos(self,x_position):
+		self.initial_position[0] = x_position
+
+	def _set_init_yPos(self,y_position):
+		self.initial_position[1] = y_position	
 
 	'''GETTERS'''
 	def _get_weight(self):

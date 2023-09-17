@@ -15,6 +15,7 @@ class _InputsEngine:
 			"left-click"	: "0",
 			"right-click" 	: "0",
 			"create-level" 	: "0",
+			"load-level"	: "0",
 			"arrow_vert"	: "0",
 			"arrow_hori"	: "0"
 		}
@@ -31,18 +32,14 @@ class _InputsEngine:
 
 				#update player position based on key states
 				if keys[pygame.K_a]:
-					self.input_dict["left"] = '1'
+					self.input_dict["left"] = '-1'
 					self.input_dict["right"] = '0'
-					objects.accelerationX = -5000
 
 				elif keys[pygame.K_d]:
 					self.input_dict["right"] = '1'
 					self.input_dict["left"] = '0'
 
-					objects.accelerationX = 5000
 				else:
-					objects.accelerationX = 0.0
-
 					self.input_dict["left"] = '0'
 					self.input_dict["right"] = '0'
 
@@ -65,6 +62,11 @@ class _InputsEngine:
 
 				if self.hold_create and not keys[pygame.K_c]:
 					self.hold_create = False
+
+				if keys[pygame.K_l]:
+					self.input_dict["load-level"] = '1'
+				else:
+					self.input_dict["load-level"] = '0'
 
 				if keys[pygame.K_UP]:
 					self.input_dict["arrow_vert"] = "1"

@@ -5,6 +5,7 @@ import time
 import math
 import cProfile
 import pickle
+import copy
 sys.path.append('./GraphicsEngine')
 sys.path.append('./InputsEngine')
 sys.path.append('./UIEngine')
@@ -15,7 +16,7 @@ sys.path.append('./GameObjects')
 sys.path.append('./CollisionEngine')
 sys.path.append('./LevelBuilder')
 sys.path.append('./LevelHandler')
-
+#Custom Libraries Kinda
 import GraphicsEngine
 import GraphicsEngineData
 import InputsEngine
@@ -80,11 +81,8 @@ pygame_events = None
 delta_t = 0
 FPS = 60
 
-def save_level(levelObjects):
-	with open("level.pkl","wb") as file:
-		pickle.dump(levelObjects,file)
-		
 
+		
 #main loop
 running = True
 while running:
@@ -95,7 +93,7 @@ while running:
 			running = False
 
 	pygame_events = pygame.event.get()
-	
+
 	#Inputs Engine
 	input_dict = IE.main_loop(GameObjects,delta_t,pygame_events)
 
@@ -118,14 +116,13 @@ while running:
 	screen = GE.main_loop(GameObjects,levelObjects,LH)
 
 	#Level Builer
-	LB.main_loop(input_dict,screen,levelObjects,collisionList,LH,PlE)
+	LB.main_loop(input_dict,screen,levelObjects,collisionList,LH,PlE,GameObjects)
 
 	LH.main_loop(levelObjects,PlE)
 
 	#limit game to 60 fps
 	#time.sleep(0.0033)
-	#if (input_dict['create-level'] == '1'):
-	#	save_level(levelObjects)
+	
 	
 	clock.tick(FPS)
 
