@@ -49,7 +49,7 @@ class _InputsEngine:
 				else:
 					self.input_dict["up"] = '0'
 
-				if keys[pygame.K_w] and objects.collisionDetected:
+				if keys[pygame.K_w] and objects.collisionDown:
 					objects.jumping = True
 				elif not keys[pygame.K_w]:
 					objects.jumping = False	

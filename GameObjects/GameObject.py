@@ -37,8 +37,10 @@ class _GameObject:
 		self.jumping = False
 
 		#Collision Data
-		self.collisionDetected = False
-
+		self.collisionDown = False
+		self.collisionLeft = False
+		self.collisionRight= False
+		self.collisionUp = False
 		#Audio Data
 		self.audioFootSteep = None
 		self.audioAttack = None
