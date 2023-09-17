@@ -13,9 +13,9 @@ class _PlayerEngine:
 		self.scroll_level = False
 
 		self.x_acceleration = 0
-	def main_loop(self,GameObjects,delta_t,input_dict):
+	def main_loop(self,GameObjects,delta_t,input_dict,CollisionEngine):
 
-		self.horizontal_movement(GameObjects,delta_t,input_dict)
+		self.horizontal_movement(GameObjects,delta_t,input_dict,CollisionEngine)
 		self.jump(GameObjects,delta_t)
 		
 
@@ -39,7 +39,7 @@ class _PlayerEngine:
 
 		#print ("objects.jumping: " + str(objects.jumping))
 
-	def horizontal_movement(self,GameObjects,delta_t,input_dict):
+	def horizontal_movement(self,GameObjects,delta_t,input_dict,CollisionEngine):
 
 		'''KINEMATIC EQUATIONS
 		delta_x = v_initial * delta_t + 0.5 * a * delta_t^2
@@ -51,11 +51,15 @@ class _PlayerEngine:
 
 			if objects.subClass == "player":
 
-				self.set_x_acceleration(objects,input_dict)
+				self.set_x_acceleration(objects,input_dict,CollisionEngine)
 
 				self.set_scroll_state(objects,input_dict)
 
 				self.x_displacement = (objects.velocity_X1 * delta_t) + (0.5 * self.x_acceleration * math.pow(delta_t,2))
+
+				if objects.collisionLeft and input_dict['right'] != '1' or objects.collisionRight and input_dict['left'] != '-1':
+					self.x_displacement= 0
+
 
 				if not self.scroll_level:
 					objects.position[0] += self.x_displacement
@@ -71,10 +75,10 @@ class _PlayerEngine:
 				#update velocity
 				objects.velocity_X1 = objects.velocity_X2*self.x_direction
 
-	def set_x_acceleration(self,objects,input_dict):
-		if input_dict['right'] == '1':
+	def set_x_acceleration(self,objects,input_dict,CollisionEngine):
+		if input_dict['right'] == '1' and not CollisionEngine.collisionRight:
 			self.x_acceleration = objects.accelerationX
-		elif input_dict['left'] == '-1':
+		elif input_dict['left'] == '-1' and not CollisionEngine.collisionLeft:
 			self.x_acceleration  = objects.accelerationX*int( input_dict['left'] )
 		else:
 			self.x_acceleration = 0 

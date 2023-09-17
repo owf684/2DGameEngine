@@ -30,10 +30,13 @@ class _PhysicsEngine:
 
 			objects.position[1] += objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
 
-			if objects.collisionDetected:
+			if objects.collisionDown:
+				
+
+				objects.position[1] -= objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
+
 				objects.velocity_Y1 = 0
 
-		
 
 
 
