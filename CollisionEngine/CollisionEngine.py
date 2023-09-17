@@ -7,24 +7,32 @@ class _CollisionEngine:
 		self.collision = False
 
 
-	def main_loop(self,collisionList):
+	def main_loop(self,collisionBuffer,GraphicsEngine):
 
 		i = 0
-		numObjects = len(collisionList)
 		currentObject = 0
 
+		#only process collisions with objects that are rendered
+		if len(GraphicsEngine.render_buffer) > 0:
+			collisionBuffer = GraphicsEngine.render_buffer
+
+
+		numObjects = len(collisionBuffer)
+	
 		while currentObject < numObjects:
-			self.updateRectPosition(collisionList[currentObject])
-			collisionList[currentObject].collisionDetected = False
-			for objects in collisionList:
+			print(numObjects)
+			print (currentObject)
+			self.updateRectPosition(collisionBuffer[currentObject])
+			collisionBuffer[currentObject].collisionDetected = False
+			for objects in collisionBuffer:
 
 				self.updateRectPosition(objects)
 				
-				if collisionList[currentObject] != objects and collisionList[currentObject].rect.colliderect(objects.rect):
+				if collisionBuffer[currentObject] != objects and collisionBuffer[currentObject].rect.colliderect(objects.rect):
 
-					collisionList[currentObject].collisionDetected = True
-					if collisionList[currentObject].subClass == 'player' and collisionList[currentObject].rect.centery < objects.rect.centery:
-						collisionList[currentObject].position[1] = objects.rect.top - collisionList[currentObject].rect.height
+					collisionBuffer[currentObject].collisionDetected = True
+					if collisionBuffer[currentObject].subClass == 'player' and collisionBuffer[currentObject].rect.centery < objects.rect.centery:
+						collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
 				
 
 			currentObject += 1

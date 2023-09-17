@@ -63,7 +63,7 @@ class _GraphicsEngine:
 		if levelHandler.clear_render_buffer:
 			self.render_buffer.clear()
 			levelHandler.clear_render_buffer = False
-		self.load_render_buffer(levelObjects)
+		self.load_render_buffer(levelObjects,GameObjects)
 		#Update Graphics Here
 		for objects in self.render_buffer:
 
@@ -84,7 +84,7 @@ class _GraphicsEngine:
 		pygame.display.flip()
 		return self.screen
 
-	def load_render_buffer(self, levelObjects):
+	def load_render_buffer(self, levelObjects,GameObjects):
 
 		for objects in levelObjects:
 			if objects not in self.render_buffer:
@@ -97,6 +97,9 @@ class _GraphicsEngine:
 					if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
 						self.render_buffer.remove(objects)
 
-
+		for objects in GameObjects:
+			if objects.subClass == "player":
+				if objects not in self.render_buffer:
+					self.render_buffer.append(objects)
 
 	

@@ -104,7 +104,7 @@ while running:
 	PE.main_loop(GameObjects,delta_t)
 
 	#Collision Engine
-	CE.main_loop(collisionList)
+	CE.main_loop(collisionList,GE)
 
 	#PlayerMechanics Engine
 	PlE.main_loop(GameObjects,delta_t,input_dict)
