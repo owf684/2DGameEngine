@@ -38,13 +38,15 @@ class _CollisionEngine:
 					if collisionBuffer[currentObject].subClass == 'player':
 
 						
-						self.handle_down_collisions(collisionBuffer,objects,currentObject)
 		
-						self.handle_left_collisions(collisionBuffer,objects,currentObject)
+						#self.handle_left_collisions(collisionBuffer,objects,currentObject)
 						
-						self.handle_right_collisions(collisionBuffer,objects,currentObject)
+						#self.handle_right_collisions(collisionBuffer,objects,currentObject)
 
 						self.handle_up_collisions(collisionBuffer,objects,currentObject)
+						
+						self.handle_down_collisions(collisionBuffer,objects,currentObject)
+
 
 
 			currentObject += 1
@@ -52,32 +54,38 @@ class _CollisionEngine:
 	def handle_down_collisions(self,collisionBuffer,objects,currentObject):
 
 		if collisionBuffer[currentObject].rect.colliderect(objects.rect) :
+			if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
 
-			if collisionBuffer[currentObject].rect.midbottom[0] > objects.rect.topleft[0] and collisionBuffer[currentObject].rect.midbottom[0] < objects.rect.topright[0]:
+				if collisionBuffer[currentObject].rect.centery < objects.rect.top:
 
-				if collisionBuffer[currentObject].rect.midtop[1] < objects.rect.centery:
+					collisionBuffer[currentObject].collisionDown = True
+
+			'''if collisionBuffer[currentObject].rect.midbottom[0] > objects.rect.topleft[0] and collisionBuffer[currentObject].rect.midbottom[0] < objects.rect.topright[0]:
+
+				if collisionBuffer[currentObject].rect.centery < objects.rect.midbottom[1]:
 
 					if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
-
+						print("scenario 1: down collision")
 						collisionBuffer[currentObject].collisionDown = True
 
 
-			#if collisionBuffer[currentObject].rect.bottomright[0] > objects.rect.topleft[0] and collisionBuffer[currentObject].rect.bottomright[0] < objects.rect.midtop[0]:
+			if collisionBuffer[currentObject].rect.bottomright[0] > objects.rect.topleft[0] and collisionBuffer[currentObject].rect.bottomright[0] < objects.rect.midtop[0]:
 
-			#	if collisionBuffer[currentObject].rect.midtop[1] < objects.rect.midbottom[1]:
+				if collisionBuffer[currentObject].rect.midtop[1] < objects.rect.midbottom[1]:
 
-			#		if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
+					if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
+						print("scenario 2: down collision")
+						collisionBuffer[currentObject].collisionDown = True
 
-			#			collisionBuffer[currentObject].collisionDown = True
 
-
-			#if collisionBuffer[currentObject].rect.bottomleft[0] > objects.rect.midtop[0] and collisionBuffer[currentObject].rect.bottomleft[0] < objects.rect.topright[0]:
-			#	if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
-
-			#		collisionBuffer[currentObject].collisionDown = True
+			if collisionBuffer[currentObject].rect.bottomleft[0] > objects.rect.midtop[0] and collisionBuffer[currentObject].rect.bottomleft[0] < objects.rect.topright[0]:
+				if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
+					print("scenario 3: down collision")
+					collisionBuffer[currentObject].collisionDown = True'''
 
 			if collisionBuffer[currentObject].collisionDown:
-						collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+					
+				collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
 
 
 	def handle_left_collisions(self,collisionBuffer,objects,currentObject):
@@ -99,7 +107,7 @@ class _CollisionEngine:
 
 					if collisionBuffer[currentObject].rect.left < objects.rect.right:
 						collisionBuffer[currentObject].collisionLeft = True
-						return None
+						print("scenario 1: left collision")
 			'''d
 			scenario 2	 __    ___
 			object 	--> |	| |   |  <-- player 
@@ -112,9 +120,8 @@ class _CollisionEngine:
 					if collisionBuffer[currentObject].rect.left > objects.rect.left:
 					
 						if collisionBuffer[currentObject].rect.left < objects.rect.right:
-
+							print("scenario 2: left collision")
 							collisionBuffer[currentObject].collisionLeft = True
-							return None
 
 			'''
 			scenario 3		   ___
@@ -127,8 +134,8 @@ class _CollisionEngine:
 				if collisionBuffer[currentObject].rect.midright[0] > objects.rect.centerx:
 
 					if collisionBuffer[currentObject].rect.left < objects.rect.right:
+						print("scenario 3: left collision")
 						collisionBuffer[currentObject].collisionLeft = True
-						return None
 
 	def handle_right_collisions(self,collisionBuffer,objects,currentObject):
 
@@ -146,6 +153,7 @@ class _CollisionEngine:
 			if collisionBuffer[currentObject].rect.bottomright[1] > objects.rect.topleft[1] + 10 and collisionBuffer[currentObject].rect.bottomright[1] < objects.rect.bottomleft[1]:
 				if collisionBuffer[currentObject].rect.midleft[0] < objects.rect.midright[0]:
 					if collisionBuffer[currentObject].rect.midright[0] > objects.rect.centerx:
+						print("scenario 1: right collision")
 						collisionBuffer[currentObject].collisionRight = True
 			'''
 			scenario 2	 __    ___
@@ -156,10 +164,10 @@ class _CollisionEngine:
 			if objects.rect.topleft[1] < collisionBuffer[currentObject].rect.midright[1] and collisionBuffer[currentObject].rect.midright[1] < objects.rect.bottomleft[1]:
 
 				if collisionBuffer[currentObject].rect.midleft[0] < objects.rect.centerx:
-					print(collisionBuffer[currentObject].rect.midleft)
-					print(objects.rect.midright)
+					
 					if collisionBuffer[currentObject].rect.right > objects.rect.left:
 						collisionBuffer[currentObject].collisionRight = True
+						print("scenario 2: right collision")
 
 			'''
 			scenario 3		   ___
@@ -170,6 +178,7 @@ class _CollisionEngine:
 			if collisionBuffer[currentObject].rect.topright[1] > objects.rect.midleft[1] and collisionBuffer[currentObject].rect.topright[1] < objects.rect.bottomleft[1]:
 				if collisionBuffer[currentObject].rect.midleft[0] < objects.rect.centerx:
 					if collisionBuffer[currentObject].rect.right > objects.rect.left:
+						print("scenario 3: right collision")
 						collisionBuffer[currentObject].collisionRight = True
 
 	def handle_up_collisions(self,collisionBuffer,objects,currentObject):
