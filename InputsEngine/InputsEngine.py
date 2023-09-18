@@ -43,16 +43,10 @@ class _InputsEngine:
 					self.input_dict["left"] = '0'
 					self.input_dict["right"] = '0'
 
-				#Jump
 				if keys[pygame.K_w]:
 					self.input_dict["up"] = '1'
 				else:
 					self.input_dict["up"] = '0'
-
-				if keys[pygame.K_w] and objects.collisionDown:
-					objects.jumping = True
-				elif not keys[pygame.K_w]:
-					objects.jumping = False	
 
 				if keys[pygame.K_c] and not self.hold_create:
 					self.input_dict['create-level'] = '1'
