@@ -9,6 +9,7 @@ class _PhysicsEngine:
 		self.x_displacement = 0
 		self.x_direction = 0
 		self.x_decelleration = 0.01
+		self.y_displacement = 0
 	def main_loop(self,GameObjects, delta_t):
 
 
@@ -28,14 +29,15 @@ class _PhysicsEngine:
 
 			objects.velocity_Y1 += self.gravity * delta_t
 
-			objects.position[1] += objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
 
 			if objects.collisionDown:
-				
+				self.y_displacement = 0
+				objects.velocity_Y1 =0
+			else:
+				self.y_displacement = objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
+			
+			objects.position[1] += self.y_displacement
 
-				objects.position[1] -= objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
-
-				objects.velocity_Y1 = 0
 
 
 

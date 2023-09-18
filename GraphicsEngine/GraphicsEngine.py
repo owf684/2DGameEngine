@@ -28,18 +28,18 @@ class _GraphicsEngine:
 
 
 
-	def _setScreenSize(self,screen_width,screen_height):
+	def _setScreenSize(self, screen_width, screen_height):
 		self.screen_width = screen_width
 		self.screen_height = screen_height
 		self.screen = pygame.display.set_mode((self.screen_width,self.screen_height),pygame.DOUBLEBUF)
 
 	
-	def _setScreenTitle(title):
+	def _setScreenTitle(self, title):
 		pygame.display.set_caption(title)
 
 
 
-	def _addImage2Buffer(self,image_path):
+	def _addImage2Buffer(self, image_path):
 		self.imageBuffer.append(pygame.image.load(image_path))
 
 
@@ -63,14 +63,12 @@ class _GraphicsEngine:
 		if levelHandler.clear_render_buffer:
 			self.render_buffer.clear()
 			levelHandler.clear_render_buffer = False
-		self.load_render_buffer(levelObjects,GameObjects)
+
+		self.load_render_buffer(levelObjects, GameObjects)
+
 		#Update Graphics Here
 		for objects in self.render_buffer:
 
-			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
-
-		#Update Graphics Here
-		for objects in GameObjects:
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
 
 		#===========================================================================================================

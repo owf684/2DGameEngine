@@ -32,20 +32,20 @@ class _PlayerEngine:
 
 				#Handle jump velocity
 				if input_dict['up'] == '1' and not self.reached_max_height:
-
-					objects.jump_velocity_1 += 2*self.gravity*delta_t #objects.jump_velocity
+					objects.jumping = True
+					objects.jump_velocity_1 += 2*self.gravity*delta_t 
 					
 
 				if objects.jump_velocity_1 > 0 and self.reached_max_height:
-
+					#objects.jump_velocity_1 = 0
 					objects.jump_velocity_1 -= self.gravity*delta_t
 
 				if objects.collisionDown: 
-					
+					objects.jumping = False
 					objects.jump_velocity_1 = 0
 
 					if self.reached_max_height: 
-						
+	
 						if input_dict['up'] == '0':
 
 							self.reached_max_height = False
@@ -66,11 +66,12 @@ class _PlayerEngine:
 					if self.total_y_displacement < 0 or objects.collisionDown:
 						self.total_y_displacement = 0
 
+				if objects.collisionUp:
+ 					self.reached_max_height = True
 
 
 
 
-			print (self.total_y_displacement)
 
 
 	def horizontal_movement(self,GameObjects,delta_t,input_dict,CollisionEngine):
