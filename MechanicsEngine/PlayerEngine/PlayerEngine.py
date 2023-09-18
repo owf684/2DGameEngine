@@ -16,6 +16,7 @@ class _PlayerEngine:
 		self.start_jump = False
 		self.total_y_displacement = 0
 		self.reached_max_height = False
+
 	def main_loop(self,GameObjects,delta_t,input_dict,CollisionEngine):
 
 		self.horizontal_movement(GameObjects,delta_t,input_dict,CollisionEngine)
@@ -27,55 +28,50 @@ class _PlayerEngine:
 
 		for objects in GameObjects:
 
-			if objects.subClass == "player":
+			if objects.subClass == 'player':
 
-				#start the jump
-				if objects.collisionDown and input_dict["up"] == '1' and not self.start_jump:
-					self.start_jump = True
+				#Handle jump velocity
+				if input_dict['up'] == '1' and not self.reached_max_height:
 
-				#stops the jump if jump key released
-				elif input_dict["up"] == '0' and not objects.collisionDown:
-					self.stop_jump = True
+					objects.jump_velocity_1 += 2*self.gravity*delta_t #objects.jump_velocity
+					
 
-				if objects.collisionUp:
-					self.stop_jump = True
-					self.reached_max_height = True
+				if objects.jump_velocity_1 > 0 and self.reached_max_height:
+
+					objects.jump_velocity_1 -= self.gravity*delta_t
+
+				if objects.collisionDown: 
+					
 					objects.jump_velocity_1 = 0
 
-					print("bring me down!!")
+					if self.reached_max_height: 
+						
+						if input_dict['up'] == '0':
 
+							self.reached_max_height = False
 
-				#jump physics 
-				if not self.stop_jump and self.start_jump and not self.reached_max_height:
-
-					objects.jump_velocity_1 += 3*self.gravity*delta_t #objects.jump_velocity
-
-				#decelleration physics here
-				if objects.jump_velocity_1 > 0 and not objects.collisionDown and self.start_jump:
-					
-					objects.jump_velocity_1 -= self.gravity*delta_t #objects.jump_decelleration
-				
-				#calculate posistion and total y displacement
+				#handle position calculations
 				if delta_t != 0:
+
 					self.y_displacement			 = objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
+				
 					objects.position[1] 		-= self.y_displacement
-					self.total_y_displacement 	+= self.y_displacement
-			
-				#track y travel and stop jump when max jump is reached
-				if self.total_y_displacement >= 115: #pixels
-					self.stop_jump = True
-					self.reached_max_height = True
 
-				#reset stop jump
-				if objects.collisionDown:
+					self.total_y_displacement += self.y_displacement
 
-					self.total_y_displacement = 0
-					self.stop_jump = False
+					#reset total displacement calculations
+					if self.total_y_displacement >= 115:
+						self.reached_max_height = True
 
-				if objects.collisionDown and input_dict['up'] =='0'and self.reached_max_height:
-					self.reached_max_height = False
+					if self.total_y_displacement < 0 or objects.collisionDown:
+						self.total_y_displacement = 0
 
-		#print ("objects.jumping: " + str(objects.jumping))
+
+
+
+
+			print (self.total_y_displacement)
+
 
 	def horizontal_movement(self,GameObjects,delta_t,input_dict,CollisionEngine):
 
