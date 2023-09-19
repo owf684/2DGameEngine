@@ -20,8 +20,9 @@ class _GraphicsEngine:
 
 		#render buffer
 		self.render_buffer = list()
-		self.objects_to_render = 0
-		self.rendered_objects = 0
+		self.levelObjectsIndex = 0
+		self.GameObjectsIndex = 0
+
 		pygame.display.set_caption("my PyGame Graphics")
 
 
@@ -64,19 +65,13 @@ class _GraphicsEngine:
 			self.render_buffer.clear()
 			levelHandler.clear_render_buffer = False
 
-		self.load_render_buffer(levelObjects, GameObjects)
-
+		self.load_render_buffer(levelObjects,GameObjects)
+	
+		
 		#Update Graphics Here
 		for objects in self.render_buffer:
 
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
-
-		#===========================================================================================================
-    		# Draw the square
-
-
-
-		#============================================================================================================
 
 		#Update the display
 		pygame.display.flip()

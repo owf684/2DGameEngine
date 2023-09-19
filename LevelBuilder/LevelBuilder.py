@@ -29,10 +29,12 @@ class _LevelBuilder:
 
 		self.block_select_key = False
 		self.selected_block_index = 0
-
+		self.last_selected_index = 0
 		self.create_level_select = False
 
 		self.load_level_select = False
+
+		self.patch_level_select = False
 
 		self.initialize_building_blocks()
 
@@ -46,20 +48,22 @@ class _LevelBuilder:
 			new_block._set_image()
 			new_block.position = [self.screen_width/2,self.screen_height/20]
 			new_block._set_sprite_size(new_block.image)
+			new_block._set_rect(new_block.sprite_size)
+
 			self.building_blocks.append(new_block)
 	
 
 	
 
-	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects):
+	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
 		
 		self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler)
 		self.handle_user_input(input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler)
-		self.ui(input_dict,screen,levelObjects,collisionList,levelHandler)
+		self.ui(input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine)
 				
 	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler):
 
-
+		#add block
 		if input_dict['left-click'] == '1':
 
 			self.mouse_position = pygame.mouse.get_pos()
@@ -69,7 +73,20 @@ class _LevelBuilder:
 			if self.can_place_block:
 
 				self.place_block(input_dict,screen,levelObjects,collisionList,levelHandler)
+		#remove block
+		if input_dict['right-click'] == '1':
+			self.mouse_position = pygame.mouse.get_pos()
+			print(self.mouse_position)
+			for objects in levelObjects:
 
+				if objects.rect.collidepoint(self.mouse_position):
+					for points in self.list_of_placed_objects:
+						if objects.rect.collidepoint(points):
+							self.list_of_placed_objects.remove(points)
+
+					levelObjects.remove(objects)
+					levelHandler.clear_render_buffer = True
+					
 
 	def get_snap_values(self,input_dict,screen,levelObjects,levelHandler):
 
@@ -82,7 +99,7 @@ class _LevelBuilder:
 			self.scroll_offset_fudge = 0
 
 
-		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size-(levelHandler.scroll_delta*self.scroll_offset_magnitude)
+		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size-(levelHandler.scroll_delta*self.scroll_offset_magnitude) 
 		#print(self.snap_position[0])
 		#get y snap value
 		self.snap_position[1] = int(self.mouse_position[1]/self.grid_size)*self.grid_size
@@ -107,21 +124,29 @@ class _LevelBuilder:
 		levelObjects[-1]._set_image_path(self.building_blocks[self.selected_block_index]._get_image_path())
 		levelObjects[-1]._set_image()
 		levelObjects[-1].position = copy.deepcopy(self.snap_position)
-		levelObjects[-1].initial_position = copy.deepcopy(self.snap_position)
+		levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
 		self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
 		levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 		levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
 		collisionList.append(levelObjects[-1])
-	
+		print(levelObjects[-1].initial_position)
 
 
-	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler):
+	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
 			
 
 		self.limit_selection_index()
 
-		screen.blit(self.building_blocks[self.selected_block_index].image,(self.building_blocks[self.selected_block_index].position[0],self.building_blocks[self.selected_block_index].position[1]))
-		pygame.display.flip()
+		if self.building_blocks[self.selected_block_index] in GraphicsEngine.render_buffer and self.selected_block_index != self.last_selected_index:
+			GraphicsEngine.render_buffer.remove(self.building_blocks[self.selected_block_index])
+			print("removing from buffer 2 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index))
+		
+			
+		if self.building_blocks[self.selected_block_index] not in GraphicsEngine.render_buffer:
+
+			GraphicsEngine.render_buffer.append(self.building_blocks[self.selected_block_index])
+			self.last_selected_index = self.selected_block_index
+			print("adding to buffer 1 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index) )
 
 
 	def handle_user_input(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):
@@ -144,8 +169,17 @@ class _LevelBuilder:
 			self.save_level(levelObjects,GameObjects)
 		
 		elif input_dict["create-level"] == "0":
-			self.create_level_select = 0
+			self.create_level_select = False
 
+		if input_dict["patch-level"] == "1" and not self.patch_level_select:
+			
+			self.patch_level_select = True
+			self.patch_level(levelObjects,GameObjects)
+
+		elif input_dict["patch-level"] == "0":
+			
+			self.patch_level_select = False
+		
 		#handle load data
 		if input_dict["load-level"] == "1" and not self.load_level_select:
 			self.load_level_select = True
@@ -163,6 +197,11 @@ class _LevelBuilder:
 
 		#print(self.selected_block_index)
 
+	def patch_level(self,levelObjects,GameObjects):
+		selected_level = 1
+		level_string = "level_" + str(selected_level)
+		self.save_level_objects(levelObjects,level_string)
+		self.save_game_objects(GameObjects,level_string)
 
 	def save_level(self,levelObjects,GameObjects):
 		new_level = len(glob.glob("./WorldData/level*")) + 1
