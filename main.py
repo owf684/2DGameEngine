@@ -78,7 +78,7 @@ collisionList.extend(levelObjects)
 pygame_events = None
 #simulation runtime variables
 delta_t = 0
-FPS = 120
+FPS = 30
 
 
 		
@@ -115,7 +115,7 @@ while running:
 	screen = GE.main_loop(GameObjects, levelObjects, LH)
 
 	#Level Builer
-	LB.main_loop(input_dict, screen, levelObjects, collisionList, LH, PlE, GameObjects)
+	LB.main_loop(input_dict, screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
 
 	LH.main_loop(levelObjects, PlE)
 

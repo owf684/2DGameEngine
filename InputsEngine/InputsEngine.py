@@ -15,6 +15,7 @@ class _InputsEngine:
 			"left-click"	: "0",
 			"right-click" 	: "0",
 			"create-level" 	: "0",
+			"patch-level"	: "0",
 			"load-level"	: "0",
 			"arrow_vert"	: "0",
 			"arrow_hori"	: "0"
@@ -69,6 +70,10 @@ class _InputsEngine:
 				else:
 					self.input_dict["arrow_vert"] = "0"
 
+				if keys[pygame.K_p]:
+					self.input_dict["patch-level"] = '1'
+				else:
+					self.input_dict["patch-level"] = '0'
 
 		mouse_buttons = pygame.mouse.get_pressed()
 
