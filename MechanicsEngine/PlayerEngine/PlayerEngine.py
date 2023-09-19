@@ -27,11 +27,11 @@ class _PlayerEngine:
 	def jump(self,GameObjects,delta_t,input_dict):
 
 		for objects in GameObjects:
-
+			print("collisionUp: " + str(objects.collisionUp) )
 			if objects.subClass == 'player':
 
 				#Handle jump velocity
-				if input_dict['up'] == '1' and not self.reached_max_height:
+				if input_dict['up'] == '1' and not self.reached_max_height and not objects.collisionUp:
 					objects.jumping = True
 					objects.jump_velocity_1 += 2*self.gravity*delta_t 
 					
@@ -40,7 +40,7 @@ class _PlayerEngine:
 					#objects.jump_velocity_1 = 0
 					objects.jump_velocity_1 -= self.gravity*delta_t
 
-				if objects.collisionDown: 
+				if objects.collisionDown or objects.collisionUp: 
 					objects.jumping = False
 					objects.jump_velocity_1 = 0
 
@@ -53,22 +53,18 @@ class _PlayerEngine:
 				#handle position calculations
 				if delta_t != 0:
 
-					self.y_displacement			 = objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
+					self.y_displacement	= objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
 				
-					objects.position[1] 		-= self.y_displacement
+					objects.position[1] -= self.y_displacement
 
 					self.total_y_displacement += self.y_displacement
 
 					#reset total displacement calculations
-					if self.total_y_displacement >= 115:
+					if self.total_y_displacement >= 100 or objects.collisionUp:
 						self.reached_max_height = True
 
 					if self.total_y_displacement < 0 or objects.collisionDown:
 						self.total_y_displacement = 0
-
-				if objects.collisionUp:
- 					self.reached_max_height = True
-
 
 
 

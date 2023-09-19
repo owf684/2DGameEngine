@@ -78,7 +78,7 @@ collisionList.extend(levelObjects)
 pygame_events = None
 #simulation runtime variables
 delta_t = 0
-FPS = 30
+FPS = 120
 
 
 		
