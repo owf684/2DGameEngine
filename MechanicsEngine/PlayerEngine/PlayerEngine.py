@@ -16,6 +16,8 @@ class _PlayerEngine:
 		self.start_jump = False
 		self.total_y_displacement = 0
 		self.reached_max_height = False
+		self.max_walk_velocity = 250
+		self.max_run_velocity = 500
 
 	def main_loop(self,GameObjects,delta_t,input_dict,CollisionEngine):
 
@@ -87,7 +89,6 @@ class _PlayerEngine:
 				if objects.collisionLeft and input_dict['right'] != '1' or objects.collisionRight and input_dict['left'] != '-1':
 					self.x_displacement= 0
 
-
 				if not self.scroll_level:
 					objects.position[0] += self.x_displacement
 
@@ -100,7 +101,14 @@ class _PlayerEngine:
 				self.set_x_direction(objects,input_dict)
 
 				#update velocity
+
 				objects.velocity_X1 = objects.velocity_X2*self.x_direction
+
+				#cap velocity
+				if abs(objects.velocity_X1) > self.max_walk_velocity and input_dict['l-shift'] == '0':
+					objects.velocity_X1 = self.max_walk_velocity*self.x_direction
+				elif abs(objects.velocity_X1) > self.max_run_velocity and input_dict['l-shift'] == '1':
+					objects.velocity_X1 = self.max_run_velocity*self.x_direction
 
 	def set_x_acceleration(self,objects,input_dict,CollisionEngine):
 		if input_dict['right'] == '1' and not CollisionEngine.collisionRight:

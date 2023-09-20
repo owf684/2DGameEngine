@@ -18,7 +18,8 @@ class _InputsEngine:
 			"patch-level"	: "0",
 			"load-level"	: "0",
 			"arrow_vert"	: "0",
-			"arrow_hori"	: "0"
+			"arrow_hori"	: "0",
+			"l_shift"		: "0"
 		}
 
 	def main_loop(self,GameObjects,delta,pygame_events):
@@ -74,6 +75,11 @@ class _InputsEngine:
 					self.input_dict["patch-level"] = '1'
 				else:
 					self.input_dict["patch-level"] = '0'
+
+				if keys[pygame.K_LSHIFT]:
+					self.input_dict["l-shift"] = '1'
+				else:
+					self.input_dict["l-shift"] = '0'
 
 		mouse_buttons = pygame.mouse.get_pressed()
 
