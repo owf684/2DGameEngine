@@ -36,7 +36,7 @@ class _PlayerEngine:
 				if input_dict['up'] == '1' and not objects.collisionUp and not self.reached_max_height:
 
 					objects.jumping = True
-					objects.jump_velocity_1 = 500
+					objects.jump_velocity_1 = 450
 
 				elif input_dict['up'] == '0' or self.reached_max_height and not objects.collisionDown:
 
