@@ -139,14 +139,14 @@ class _LevelBuilder:
 
 		if self.building_blocks[self.selected_block_index] in GraphicsEngine.render_buffer and self.selected_block_index != self.last_selected_index:
 			GraphicsEngine.render_buffer.remove(self.building_blocks[self.selected_block_index])
-			print("removing from buffer 2 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index))
+			#print("removing from buffer 2 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index))
 		
 			
 		if self.building_blocks[self.selected_block_index] not in GraphicsEngine.render_buffer:
 
 			GraphicsEngine.render_buffer.append(self.building_blocks[self.selected_block_index])
 			self.last_selected_index = self.selected_block_index
-			print("adding to buffer 1 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index) )
+			#print("adding to buffer 1 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index) )
 
 
 	def handle_user_input(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):

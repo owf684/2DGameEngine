@@ -1,4 +1,4 @@
-
+import copy
 
 class _CollisionEngine:
 
@@ -39,54 +39,85 @@ class _CollisionEngine:
 
 						
 		
-						self.handle_left_collisions(collisionBuffer,objects,currentObject)
-						
-						self.handle_right_collisions(collisionBuffer,objects,currentObject)
-
-						self.handle_up_collisions(collisionBuffer,objects,currentObject)
-						
-						self.handle_down_collisions(collisionBuffer,objects,currentObject)
-
+						#self.handle_left_collisions(collisionBuffer,objects,currentObject)
+						self.ray_scan_left(collisionBuffer,objects,currentObject)
+						self.ray_scan_right(collisionBuffer,objects,currentObject)
+						self.ray_scan_up(collisionBuffer,objects,currentObject)						
+						self.ray_scan_down(collisionBuffer,objects,currentObject)
 
 
 			currentObject += 1
 
-	def handle_down_collisions(self,collisionBuffer,objects,currentObject):
+
+	def ray_scan_down(self,collisionBuffer,objects,currentObject):
+		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
+		scan_resolution = copy.deepcopy(width)
+		scan_step = width/scan_resolution
+		scan_point = 0
+		scan_depth = 2
+
+		while scan_point <= width:
+
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] + scan_point,collisionBuffer[currentObject].rect.bottom + scan_depth ):
+
+				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
+
+					collisionBuffer[currentObject].collisionDown = True
+					collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+
+			scan_point += scan_step
+
+	def ray_scan_left(self,collisionBuffer,objects,currentObject):
+
+		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
+		scan_resolution = copy.deepcopy(height)
+		scan_step = height/scan_resolution
+		scan_point = 0
+		scan_depth = 5
+		scan_offset = 5
+		while scan_point <= height - scan_offset:
+
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] - scan_depth,collisionBuffer[currentObject].rect.top + scan_point ):
+
+				collisionBuffer[currentObject].collisionLeft = True
+
+			scan_point += scan_step
 
 
-		if collisionBuffer[currentObject].rect.colliderect(objects.rect) :
+	def ray_scan_right(self,collisionBuffer,objects,currentObject):
 
-			if 	( 	objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0]+5, collisionBuffer[currentObject].rect.bottomleft[1] 	+ 1) or
-					objects.rect.collidepoint(collisionBuffer[currentObject].rect.midbottom[0], collisionBuffer[currentObject].rect.midbottom[1] 	+ 1 ) or
-					objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomright[0]-5, collisionBuffer[currentObject].rect.bottomright[1]+ 1) 
+		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
+		scan_resolution = copy.deepcopy(height)
+		scan_step = height/scan_resolution
+		scan_point = 0
+		scan_depth = 5
+		scan_offset = 5
 
-				):	
+		while scan_point <= height - scan_offset:
 
-				collisionBuffer[currentObject].collisionDown = True
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomright[0] + scan_depth ,  collisionBuffer[currentObject].rect.top + scan_point ):
 
-			if collisionBuffer[currentObject].collisionDown and not collisionBuffer[currentObject].collisionLeft and not collisionBuffer[currentObject].collisionRight:
+				collisionBuffer[currentObject].collisionRight = True
 
-				collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+			scan_point += scan_step
 
-	def handle_left_collisions(self,collisionBuffer,objects,currentObject):
+	def ray_scan_up(self,collisionBuffer,objects,currentObject):
 
-		if 	(	objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] - collisionBuffer[currentObject].rect.width/20,collisionBuffer[currentObject].rect.topleft[1]) or
-				objects.rect.collidepoint(collisionBuffer[currentObject].rect.midleft[0] - collisionBuffer[currentObject].rect.width/20,collisionBuffer[currentObject].rect.midleft[1]) or
-				( objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] - 5,collisionBuffer[currentObject].rect.bottomleft[1]) and 
-				collisionBuffer[currentObject].rect.collidepoint(objects.rect.midright[0]-5, objects.rect.midright[1] ) ) 
-			):
-			collisionBuffer[currentObject].collisionLeft = True
+		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
+		scan_resolution = copy.deepcopy(width)
+		scan_step = width/scan_resolution
+		scan_point = 0
+		scan_depth = 2
 
-	def handle_right_collisions(self,collisionBuffer,objects,currentObject):
+		while scan_point <= width:
 
-		if 	(	objects.rect.collidepoint(collisionBuffer[currentObject].rect.topright[0] + collisionBuffer[currentObject].rect.width/20,collisionBuffer[currentObject].rect.topright[1]) or
-				objects.rect.collidepoint(collisionBuffer[currentObject].rect.midright[0] + collisionBuffer[currentObject].rect.width/20,collisionBuffer[currentObject].rect.midright[1]) or
-				( objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomright[0] + 5,collisionBuffer[currentObject].rect.bottomright[1]) and 
-				collisionBuffer[currentObject].rect.collidepoint(objects.rect.midleft[0]+5, objects.rect.midleft[1] ) )
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
 
-			):
+				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
 
-			collisionBuffer[currentObject].collisionRight = True		
+					collisionBuffer[currentObject].collisionUp = True
+
+			scan_point += scan_step		
 
 	def handle_up_collisions(self,collisionBuffer,objects,currentObject):
 		if 	(	objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0]+5,collisionBuffer[currentObject].rect.topleft[1] - 1) or 
