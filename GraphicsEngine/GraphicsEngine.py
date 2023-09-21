@@ -83,16 +83,34 @@ class _GraphicsEngine:
 			if objects not in self.render_buffer:
 		
 				if not objects.position[0] < -objects.sprite_size[0] and not objects.position[0] > self.screen_width:
+					objects.isRendered = True
 					self.render_buffer.append(objects)
 
 			if objects in self.render_buffer:
 
 					if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
+						objects.isRendered = False
 						self.render_buffer.remove(objects)
 
 		for objects in GameObjects:
 			if objects.subClass == "player":
 				if objects not in self.render_buffer:
 					self.render_buffer.append(objects)
+
+			if objects.subClass == 'enemy':
+				
+				if objects not in self.render_buffer:
+
+					if not objects.position[0] < -objects.sprite_size[0] and not objects.position[0] > self.screen_width:
+						objects.isRendered = True
+						self.render_buffer.append(objects)
+
+				if objects in self.render_buffer:
+
+					if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
+						objects.isRendered = False
+						self.render_buffer.remove(objects)
+
+
 
 	

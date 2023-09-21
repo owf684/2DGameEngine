@@ -36,11 +36,27 @@ class _LevelBuilder:
 
 		self.patch_level_select = False
 
+
+		self.category_selection_index = 0
+		self.category_select_key = False
+		'''
+		0 = Basic Platform Blocks
+		1 = Enemies
+		2 = Environment 
+		3 = Moving Platforms
+		4 = Collectibles
+		'''
+
+
 		self.initialize_building_blocks()
 
 		self.enemy_sprites = list()
 
 		self.initialize_enemy_sprites()
+
+		self.category_container = list()
+		self.category_container.append(self.building_blocks)
+		self.category_container.append(self.enemy_sprites)
 
 	def initialize_building_blocks(self):
 		block_list = glob.glob('./Assets/Platforms/*.png')
@@ -59,25 +75,29 @@ class _LevelBuilder:
 	def initialize_enemy_sprites(self):
 
 		enemy_list = glob.glob('./Assets/EnemySprites/*.png')
-		for enemies in enemy_list:
+		for enemy in enemy_list:
 			new_enemy = GameObject._GameObject()
 			new_enemy._set_sub_class('enemy')
-			new_enemy._set_image_path(enemies)
+			new_enemy._set_image_path(enemy)
 			new_enemy._set_image()
 			new_enemy.position = [self.screen_width/2,self.screen_height/20]
 			new_enemy._set_sprite_size(new_enemy.image)
-			new_enemy._set_rect(new_enemy.sprite_size)
+			print("scaling")
+			if new_enemy.sprite_size[0] == 16 and new_enemy.sprite_size[1] == 16:
 
-			self.enemy_sprites.append(enemies)
-	
+				new_enemy.image = pygame.transform.scale(new_enemy.image,(new_enemy.sprite_size[0]*2,new_enemy.sprite_size[1]*2))
+			
+			new_enemy._set_rect(new_enemy.sprite_size)
+			print(new_enemy.position)
+			self.enemy_sprites.append(new_enemy)
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
 		
-		self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler)
+		self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects)
 		self.handle_user_input(input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler)
 		self.ui(input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine)
 				
-	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler):
+	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects):
 
 		#add block
 		if input_dict['left-click'] == '1':
@@ -88,7 +108,7 @@ class _LevelBuilder:
 
 			if self.can_place_block:
 
-				self.place_block(input_dict,screen,levelObjects,collisionList,levelHandler)
+				self.place_block(input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects)
 		#remove block
 		if input_dict['right-click'] == '1':
 			self.mouse_position = pygame.mouse.get_pos()
@@ -102,8 +122,16 @@ class _LevelBuilder:
 
 					levelObjects.remove(objects)
 					levelHandler.clear_render_buffer = True
-					
 
+			for objects in GameObjects:
+				if objects.subClass == 'enemy':
+					if objects.rect.collidepoint(self.mouse_position):
+						for points in self.list_of_placed_objects:
+							if objects.rect.collidepoint(points):
+								self.list_of_placed_objects.remove(points)
+
+						GameObjects.remove(objects)
+						levelHandler.clear_render_buffer = True		
 	def get_snap_values(self,input_dict,screen,levelObjects,levelHandler):
 
 		self.can_place_block = True
@@ -132,20 +160,41 @@ class _LevelBuilder:
 		pygame.display.flip()
 
 		
-	def place_block(self,input_dict,screen,levelObjects,collisionList,levelHandler):
+	def place_block(self,input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects):
+		selected_block = self.category_container[self.category_selection_index][self.selected_block_index]
 
-		#add first platform
-		levelObjects.append(GameObject._GameObject())
-		levelObjects[-1]._set_sub_class('platform')
-		levelObjects[-1]._set_image_path(self.building_blocks[self.selected_block_index]._get_image_path())
-		levelObjects[-1]._set_image()
-		levelObjects[-1].position = copy.deepcopy(self.snap_position)
-		levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
-		self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
-		levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
-		levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
-		collisionList.append(levelObjects[-1])
-		print(levelObjects[-1].initial_position)
+		if selected_block._get_sub_class() == 'platform':
+
+			#add first platform
+			levelObjects.append(GameObject._GameObject())
+			levelObjects[-1]._set_sub_class(selected_block._get_sub_class())
+			levelObjects[-1]._set_image_path(selected_block._get_image_path())
+			levelObjects[-1]._set_image()
+			levelObjects[-1].position = copy.deepcopy(self.snap_position)
+			levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
+			self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
+			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
+			if levelObjects[-1].sprite_size[0] == 16 and levelObjects[-1].sprite_size[1] == 16:
+				levelObjects[-1].image = pygame.transform.scale(levelObjects[-1].image, (levelObjects[-1].sprite_size[0]*2,levelObjects[-1].sprite_size[1]*2))
+			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
+			collisionList.append(levelObjects[-1])
+
+	
+		if selected_block._get_sub_class() == 'enemy':
+			#add GameObjects
+			GameObjects.append(GameObject._GameObject())
+			GameObjects[-1]._set_sub_class(copy.deepcopy(selected_block._get_sub_class()))
+			GameObjects[-1]._set_image_path(copy.deepcopy(selected_block._get_image_path()))
+			GameObjects[-1]._set_image()
+			GameObjects[-1].position = copy.deepcopy(self.snap_position)
+			GameObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
+			self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
+			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
+
+			if GameObjects[-1].sprite_size[0] == 16 and GameObjects[-1].sprite_size[1] == 16:
+				GameObjects[-1].image = pygame.transform.scale(GameObjects[-1].image, (GameObjects[-1].sprite_size[0]*2,GameObjects[-1].sprite_size[1]*2))
+			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
+			collisionList.append(GameObjects[-1])	
 
 
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
@@ -153,7 +202,14 @@ class _LevelBuilder:
 
 		self.limit_selection_index()
 
-		if self.building_blocks[self.selected_block_index] in GraphicsEngine.render_buffer and self.selected_block_index != self.last_selected_index:
+		selected_category = self.category_container[self.category_selection_index]
+		#print (selected_category)
+		#print(selected_category[self.selected_block_index].position)
+
+		if selected_category[self.selected_block_index] not in GraphicsEngine.render_buffer:
+			GraphicsEngine.render_buffer.append(selected_category[self.selected_block_index])
+
+		'''if self.building_blocks[self.selected_block_index] in GraphicsEngine.render_buffer and self.selected_block_index != self.last_selected_index:
 			GraphicsEngine.render_buffer.remove(self.building_blocks[self.selected_block_index])
 			#print("removing from buffer 2 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index))
 		
@@ -162,7 +218,7 @@ class _LevelBuilder:
 
 			GraphicsEngine.render_buffer.append(self.building_blocks[self.selected_block_index])
 			self.last_selected_index = self.selected_block_index
-			#print("adding to buffer 1 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index) )
+			#print("adding to buffer 1 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index) )'''
 
 
 	def handle_user_input(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):
@@ -177,7 +233,18 @@ class _LevelBuilder:
 		elif input_dict["arrow_vert"] == "0":
 			self.block_select_key = False	
 		#write category selection here
+		if input_dict['arrow_hori'] == '1' and not self.category_select_key:
+			self.category_select_key = True
+			self.category_selection_index += 1
+		elif input_dict['arrow_hori'] == '-1' and not self.category_select_key:
+			self.category_select_key = True
+			self.category_selection_index -= 1
+		elif input_dict['arrow_vert'] == '0':
+			self.category_select_key = False
 
+
+		if self.block_select_key or self.category_select_key:
+			levelHandler.clear_render_buffer = True
 		#handles save data
 		if input_dict["create-level"] == "1" and not self.create_level_select:
 			self.create_level_select = True
@@ -203,13 +270,25 @@ class _LevelBuilder:
 		elif input_dict["load-level"] == "0":
 			self.load_level_select = False
 
+
+
+		#
+
 	def limit_selection_index(self):
+
+
+		if self.category_selection_index < 0:
+			self.category_selection_index = 0
+		elif self.category_selection_index >= len(self.category_container):
+			self.category_selection_index = len(self.category_container) - 1
 
 		if self.selected_block_index < 0:
 			self.selected_block_index = 0
 
-		elif self.selected_block_index >= len(self.building_blocks):
-			self.selected_block_index = len(self.building_blocks)-1	
+		elif self.selected_block_index >= len(self.category_container[self.category_selection_index]):
+			self.selected_block_index = len(self.category_container[self.category_selection_index])-1	
+
+
 
 		#print(self.selected_block_index)
 
