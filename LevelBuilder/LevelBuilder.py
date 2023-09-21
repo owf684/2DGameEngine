@@ -38,6 +38,10 @@ class _LevelBuilder:
 
 		self.initialize_building_blocks()
 
+		self.enemy_sprites = list()
+
+		self.initialize_enemy_sprites()
+
 	def initialize_building_blocks(self):
 		block_list = glob.glob('./Assets/Platforms/*.png')
 
@@ -52,7 +56,19 @@ class _LevelBuilder:
 
 			self.building_blocks.append(new_block)
 	
+	def initialize_enemy_sprites(self):
 
+		enemy_list = glob.glob('./Assets/EnemySprites/*.png')
+		for enemies in enemy_list:
+			new_enemy = GameObject._GameObject()
+			new_enemy._set_sub_class('enemy')
+			new_enemy._set_image_path(enemies)
+			new_enemy._set_image()
+			new_enemy.position = [self.screen_width/2,self.screen_height/20]
+			new_enemy._set_sprite_size(new_enemy.image)
+			new_enemy._set_rect(new_enemy.sprite_size)
+
+			self.enemy_sprites.append(enemies)
 	
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
