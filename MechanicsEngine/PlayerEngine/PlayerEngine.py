@@ -76,7 +76,6 @@ class _PlayerEngine:
 
 
 
-				print(objects.jump_velocity_1)
 				
 	def horizontal_movement(self,GameObjects,delta_t,input_dict,CollisionEngine):
 

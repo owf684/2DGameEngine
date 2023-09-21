@@ -17,7 +17,7 @@ class _GameObject:
 		self.animation_state = 0
 		self.position = pygame.math.Vector2(0,0)
 		self.initial_position = pygame.math.Vector2(0,0)
-
+		self.isRendered = False
 		#Physics Data
 		self.weight = 10
 		self.maxHorizontalVelocity = 10

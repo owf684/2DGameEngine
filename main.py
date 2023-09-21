@@ -12,6 +12,7 @@ sys.path.append('./UIEngine')
 sys.path.append('./PhysicsEngine')
 sys.path.append('./MechanicsEngine/PlayerEngine')
 sys.path.append('./MechanicsEngine/PlatformsEngine')
+sys.path.append('./MechanicsEngine/EnemyEngine')
 sys.path.append('./GameObjects')
 sys.path.append('./CollisionEngine')
 sys.path.append('./LevelBuilder')
@@ -27,7 +28,7 @@ import GameObject
 import CollisionEngine
 import LevelBuilder
 import LevelHandler
-
+import EnemyEngine
 #Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
 #Initialize UI Engine
@@ -38,6 +39,9 @@ PE = PhysicsEngine._PhysicsEngine()
 
 #Initialize Player Engine
 PlE  = PlayerEngine._PlayerEngine()
+
+#Initialize Enemy Engine
+EE = EnemyEngine._EnemyEngine()
 
 #Initialize Platforms Engine
 PfE  = PlatformsEngine._PlatformsEngine()
@@ -75,6 +79,7 @@ collisionList.extend(GameObjects)
 collisionList.extend(levelObjects)
 
 
+
 pygame_events = None
 #simulation runtime variables
 delta_t = 0
@@ -108,6 +113,8 @@ while running:
 	#PlayerMechanics Engine
 	PlE.main_loop(GameObjects, delta_t, input_dict, CE)
 
+	#Enemy Engine
+	EE.main_loop(GameObjects,PlE)
 	#PlatformMechanics Engine
 	#PfE.main_loop()
 

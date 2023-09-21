@@ -35,7 +35,7 @@ class _CollisionEngine:
 				
 				if collisionBuffer[currentObject] != objects:
 
-					if collisionBuffer[currentObject].subClass == 'player':
+					if collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy':
 
 						
 		
@@ -74,7 +74,11 @@ class _CollisionEngine:
 		scan_step = height/scan_resolution
 		scan_point = 0
 		scan_depth = 5
-		scan_offset = 5
+		if collisionBuffer[currentObject].subClass == 'enemy':
+			scan_offset = 10
+		else:
+
+			scan_offset = 5
 		while scan_point <= height - scan_offset:
 
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] - scan_depth,collisionBuffer[currentObject].rect.top + scan_point ):
@@ -91,7 +95,11 @@ class _CollisionEngine:
 		scan_step = height/scan_resolution
 		scan_point = 0
 		scan_depth = 5
-		scan_offset = 5
+		if collisionBuffer[currentObject].subClass == 'enemy':
+			scan_offset = 10
+		else:
+
+			scan_offset = 5
 
 		while scan_point <= height - scan_offset:
 
@@ -130,7 +138,6 @@ class _CollisionEngine:
 
 
 	def updateRectPosition(self,collisionObject):
-
 		collisionObject.rect.x = collisionObject.position[0]
 		
 		collisionObject.rect.y = collisionObject.position[1]
