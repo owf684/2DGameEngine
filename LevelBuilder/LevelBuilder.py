@@ -22,7 +22,6 @@ class _LevelBuilder:
 		self.placement_coords = [0,0]
 		self.snap_position = [0,0]
 		self.can_place_block = True
-		self.list_of_placed_objects = list()
 		self.scroll_offset_magnitude = 1
 		self.scroll_offset_fudge = 0.5
 		self.building_blocks = list()
@@ -104,7 +103,7 @@ class _LevelBuilder:
 
 			self.mouse_position = pygame.mouse.get_pos()
 			
-			self.get_snap_values(input_dict,screen,levelObjects,levelHandler)
+			self.get_snap_values(input_dict,screen,levelObjects,levelHandler,GameObjects)
 
 			if self.can_place_block:
 
@@ -113,26 +112,19 @@ class _LevelBuilder:
 		if input_dict['right-click'] == '1':
 			self.mouse_position = pygame.mouse.get_pos()
 			print(self.mouse_position)
-			for objects in levelObjects:
-
-				if objects.rect.collidepoint(self.mouse_position):
-					for points in self.list_of_placed_objects:
-						if objects.rect.collidepoint(points):
-							self.list_of_placed_objects.remove(points)
-
-					levelObjects.remove(objects)
-					levelHandler.clear_render_buffer = True
-
 			for objects in GameObjects:
 				if objects.subClass == 'enemy':
 					if objects.rect.collidepoint(self.mouse_position):
-						for points in self.list_of_placed_objects:
-							if objects.rect.collidepoint(points):
-								self.list_of_placed_objects.remove(points)
 
 						GameObjects.remove(objects)
-						levelHandler.clear_render_buffer = True		
-	def get_snap_values(self,input_dict,screen,levelObjects,levelHandler):
+						levelHandler.clear_render_buffer = True
+						break
+			for objects in levelObjects:
+				if objects.subClass == 'platform':
+					if objects.rect.collidepoint(self.mouse_position):
+						levelObjects.remove(objects)
+						levelHandler.clear_render_buffer = True
+	def get_snap_values(self,input_dict,screen,levelObjects,levelHandler,GameObjects):
 
 		self.can_place_block = True
 		#get x snap value
@@ -152,8 +144,13 @@ class _LevelBuilder:
 		square_rect = pygame.Rect(self.snap_position[0], self.snap_position[1], self.scan_block_size, self.scan_block_size)
 		
 		#check if block already exists
-		if self.snap_position in self.list_of_placed_objects:
-			self.can_place_block = False
+		for objects in GameObjects:
+			if objects.rect.collidepoint(self.snap_position):
+				self.can_place_block = False
+		for objects in levelObjects:
+			if objects.rect.collidepoint(self.snap_position):
+				self.can_place_block = False
+
 
 		pygame.draw.rect(screen, self.block_color, square_rect)
 		#update the screen
@@ -172,7 +169,6 @@ class _LevelBuilder:
 			levelObjects[-1]._set_image()
 			levelObjects[-1].position = copy.deepcopy(self.snap_position)
 			levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
-			self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			if levelObjects[-1].sprite_size[0] == 16 and levelObjects[-1].sprite_size[1] == 16:
 				levelObjects[-1].image = pygame.transform.scale(levelObjects[-1].image, (levelObjects[-1].sprite_size[0]*2,levelObjects[-1].sprite_size[1]*2))
@@ -188,7 +184,6 @@ class _LevelBuilder:
 			GameObjects[-1]._set_image()
 			GameObjects[-1].position = copy.deepcopy(self.snap_position)
 			GameObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
-			self.list_of_placed_objects.append(copy.deepcopy(self.snap_position))
 			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
 
 			if GameObjects[-1].sprite_size[0] == 16 and GameObjects[-1].sprite_size[1] == 16:
@@ -203,22 +198,9 @@ class _LevelBuilder:
 		self.limit_selection_index()
 
 		selected_category = self.category_container[self.category_selection_index]
-		#print (selected_category)
-		#print(selected_category[self.selected_block_index].position)
 
 		if selected_category[self.selected_block_index] not in GraphicsEngine.render_buffer:
 			GraphicsEngine.render_buffer.append(selected_category[self.selected_block_index])
-
-		'''if self.building_blocks[self.selected_block_index] in GraphicsEngine.render_buffer and self.selected_block_index != self.last_selected_index:
-			GraphicsEngine.render_buffer.remove(self.building_blocks[self.selected_block_index])
-			#print("removing from buffer 2 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index))
-		
-			
-		if self.building_blocks[self.selected_block_index] not in GraphicsEngine.render_buffer:
-
-			GraphicsEngine.render_buffer.append(self.building_blocks[self.selected_block_index])
-			self.last_selected_index = self.selected_block_index
-			#print("adding to buffer 1 | selected_block_index: " + str(self.selected_block_index) + " | last_selected_index: " + str(self.last_selected_index) )'''
 
 
 	def handle_user_input(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):
@@ -396,7 +378,6 @@ class _LevelBuilder:
 			levelObjects[-1].initial_position = copy.deepcopy(levelObjects[-1].position)
 			levelObjects[-1]._set_image_path(levelObjects[-1]._get_image_path())
 			levelObjects[-1]._set_image()		
-			self.list_of_placed_objects.append(copy.deepcopy(levelObjects[-1].initial_position))
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
 			collisionList.append(levelObjects[-1])

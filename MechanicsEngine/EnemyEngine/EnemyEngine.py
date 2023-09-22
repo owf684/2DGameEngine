@@ -28,13 +28,17 @@ class _EnemyEngine:
 					self.change_direction(objects)
 					self.change_position(objects,PlayerEngine)
 
-
+				self.track_scroll(objects,PlayerEngine)
 
 
 	def change_position(self,objects,PlayerEngine):
 		position = copy.deepcopy(objects.position)
 		position[0] -= objects.x_speed*objects.x_direction
 		objects.position = position
+		print(position)
+
+
+	def track_scroll(self,objects,PlayerEngine):
 		if PlayerEngine.scroll_level:
 			objects.position[0] -= PlayerEngine.x_displacement
 	def change_direction(self,objects):
