@@ -1,5 +1,5 @@
 import copy
-
+import threading
 class _CollisionEngine:
 
 	def __init__(self):
@@ -8,7 +8,8 @@ class _CollisionEngine:
 		self.collisionLeft = False
 		self.collisionRight = False
 		self.collisionDown = False
-
+		self.threadStarted = False
+		self.collisionThread = list()
 	def main_loop(self,collisionBuffer,GraphicsEngine,input_dict):
 
 		i = 0
@@ -31,15 +32,14 @@ class _CollisionEngine:
 			collisionBuffer[currentObject].collisionUp = False
 
 			for objects in collisionBuffer:
+
 				self.updateRectPosition(objects)
 				
 				if collisionBuffer[currentObject] != objects:
 
 					if collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy':
 
-						
-		
-						#self.handle_left_collisions(collisionBuffer,objects,currentObject)
+								
 						self.ray_scan_left(collisionBuffer,objects,currentObject)
 						self.ray_scan_right(collisionBuffer,objects,currentObject)
 						self.ray_scan_up(collisionBuffer,objects,currentObject)						
@@ -47,7 +47,7 @@ class _CollisionEngine:
 
 
 			currentObject += 1
-
+	
 
 	def ray_scan_down(self,collisionBuffer,objects,currentObject):
 		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
