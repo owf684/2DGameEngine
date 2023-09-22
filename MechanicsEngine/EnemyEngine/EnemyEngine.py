@@ -24,31 +24,12 @@ class _EnemyEngine:
 			if objects._get_sub_class() == 'enemy':
 
 				if objects.isRendered:
-					self.t1.append(threading.Thread(target=self.change_direction,args=(objects,)))
-					self.t2.append(threading.Thread(target=self.change_position,args=(objects,PlayerEngine,)))
 
-					self.t1[-1].start()
-					self.t2[-1].start()
-					
-					self.thread_started = True
-				#self.change_direction(objects)
-				#self.change_position(objects)
+					self.change_direction(objects)
+					self.change_position(objects,PlayerEngine)
 
-		if self.thread_started:
-			self.thread_started = False
-			for threads in self.t1:
-				threads.join()
-			for threads in self.t2:
-				threads.join()
 
-			
 
-		for threads in self.t1:
-			threads.join()
-		for thread in self.t2:
-			thread.join()
-		self.t1.clear()
-		self.t2.clear()	
 
 	def change_position(self,objects,PlayerEngine):
 		position = copy.deepcopy(objects.position)

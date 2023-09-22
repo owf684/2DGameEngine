@@ -1,5 +1,7 @@
 import copy
+import pygame
 import threading
+from multiprocessing import Process
 class _CollisionEngine:
 
 	def __init__(self):
@@ -40,13 +42,18 @@ class _CollisionEngine:
 					if collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy':
 
 		
-						self.detectCollisions(collisionBuffer,objects,currentObject)					
+						self.detectCollisions(collisionBuffer,objects,currentObject)
+						#self.collisionThread.append(threading.Thread(target=self.detectCollisions, args=(collisionBuffer,objects,currentObject,)))
+						#self.collisionThread[-1].start()
 
 		
 			currentObject += 1
+			#for processes in self.collisionThread:
+				#processes.join()
+			#self.collisionThread.clear()
 	
 	def detectCollisions(self,collisionBuffer,objects,currentObject):
-
+		
 		self.ray_scan_left(collisionBuffer,objects,currentObject)
 		self.ray_scan_right(collisionBuffer,objects,currentObject)
 		self.ray_scan_up(collisionBuffer,objects,currentObject)
@@ -56,7 +63,7 @@ class _CollisionEngine:
 	def ray_scan_down(self,collisionBuffer,objects,currentObject):
 		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
 		if collisionBuffer[currentObject].subClass == 'enemy':
-			scan_resolution = 12
+			scan_resolution = 3
 		else:
 			scan_resolution = copy.deepcopy(width)/2
 		scan_step = width/scan_resolution
@@ -71,6 +78,7 @@ class _CollisionEngine:
 
 					collisionBuffer[currentObject].collisionDown = True
 					collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+					break
 
 			scan_point += scan_step
 
@@ -78,7 +86,7 @@ class _CollisionEngine:
 		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
 
 		if collisionBuffer[currentObject].subClass == 'enemy':
-			scan_resolution = 12
+			scan_resolution = 3
 			scan_offset = 10
 		else:
 
@@ -94,6 +102,7 @@ class _CollisionEngine:
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] - scan_depth,collisionBuffer[currentObject].rect.top + scan_point ):
 
 				collisionBuffer[currentObject].collisionLeft = True
+				break
 
 			scan_point += scan_step
 
@@ -103,7 +112,7 @@ class _CollisionEngine:
 		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
 		if collisionBuffer[currentObject].subClass == 'enemy':
 			scan_offset = 10
-			scan_resolution = 12
+			scan_resolution = 3
 		else:
 
 			scan_offset = 5
@@ -114,17 +123,17 @@ class _CollisionEngine:
 
 		while scan_point <= height - scan_offset:
 
-			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomright[0] + scan_depth ,  collisionBuffer[currentObject].rect.top + scan_point ):
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomright[0] + scan_depth,  collisionBuffer[currentObject].rect.top + scan_point ):
 
 				collisionBuffer[currentObject].collisionRight = True
-
+				break
 			scan_point += scan_step
 
 	def ray_scan_up(self,collisionBuffer,objects,currentObject):
 
 		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
 		if collisionBuffer[currentObject].subClass == 'enemy':
-			scan_resolution = 12
+			scan_resolution = 3
 		else:
 			scan_resolution = copy.deepcopy(width)/2
 		scan_step = width/scan_resolution
@@ -138,7 +147,7 @@ class _CollisionEngine:
 				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
 
 					collisionBuffer[currentObject].collisionUp = True
-
+					break
 			scan_point += scan_step		
 
 	def handle_up_collisions(self,collisionBuffer,objects,currentObject):
