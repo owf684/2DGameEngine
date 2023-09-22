@@ -65,7 +65,7 @@ class _CollisionEngine:
 		if collisionBuffer[currentObject].subClass == 'enemy':
 			scan_resolution = 3
 		else:
-			scan_resolution = copy.deepcopy(width)/2
+			scan_resolution = copy.deepcopy(width)/8
 		scan_step = width/scan_resolution
 		scan_point = 0
 		scan_depth = 2
@@ -91,7 +91,7 @@ class _CollisionEngine:
 		else:
 
 			scan_offset = 5
-			scan_resolution = copy.deepcopy(height)/2
+			scan_resolution = copy.deepcopy(height)/8
 
 		scan_step = height/scan_resolution
 		scan_point = 0
@@ -116,7 +116,7 @@ class _CollisionEngine:
 		else:
 
 			scan_offset = 5
-			scan_resolution = copy.deepcopy(height)/2
+			scan_resolution = copy.deepcopy(height)/8
 		scan_step = height/scan_resolution
 		scan_point = 0
 		scan_depth = 5
@@ -135,7 +135,7 @@ class _CollisionEngine:
 		if collisionBuffer[currentObject].subClass == 'enemy':
 			scan_resolution = 3
 		else:
-			scan_resolution = copy.deepcopy(width)/2
+			scan_resolution = copy.deepcopy(width)/8
 		scan_step = width/scan_resolution
 		scan_point = 0
 		scan_depth = 2
