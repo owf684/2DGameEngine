@@ -11,7 +11,7 @@ class _EnemyEngine:
 		self.t1 = list()
 		self.t2 = list()
 
-
+		self.thread_started = False
 	def main_loop(self,GameObjects,PlayerEngine):
 
 
@@ -25,19 +25,23 @@ class _EnemyEngine:
 
 				if objects.isRendered:
 					self.t1.append(threading.Thread(target=self.change_direction,args=(objects,)))
-					self.t2.append(threading.Thread(target=self.change_position,args=(objects,)))
+					self.t2.append(threading.Thread(target=self.change_position,args=(objects,PlayerEngine,)))
 
 					self.t1[-1].start()
 					self.t2[-1].start()
-					self.t1[-1].join()
-					self.t2[-1].join()
+					
+					self.thread_started = True
 				#self.change_direction(objects)
 				#self.change_position(objects)
-					
 
-				if PlayerEngine.scroll_level:
+		if self.thread_started:
+			self.thread_started = False
+			for threads in self.t1:
+				threads.join()
+			for threads in self.t2:
+				threads.join()
 
-					objects.position[0] -= PlayerEngine.x_displacement
+			
 
 		for threads in self.t1:
 			threads.join()
@@ -46,10 +50,12 @@ class _EnemyEngine:
 		self.t1.clear()
 		self.t2.clear()	
 
-	def change_position(self,objects):
+	def change_position(self,objects,PlayerEngine):
 		position = copy.deepcopy(objects.position)
 		position[0] -= objects.x_speed*objects.x_direction
 		objects.position = position
+		if PlayerEngine.scroll_level:
+			objects.position[0] -= PlayerEngine.x_displacement
 	def change_direction(self,objects):
 
 		if objects.collisionLeft:
