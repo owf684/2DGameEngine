@@ -39,19 +39,26 @@ class _CollisionEngine:
 
 					if collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy':
 
-								
-						self.ray_scan_left(collisionBuffer,objects,currentObject)
-						self.ray_scan_right(collisionBuffer,objects,currentObject)
-						self.ray_scan_up(collisionBuffer,objects,currentObject)						
-						self.ray_scan_down(collisionBuffer,objects,currentObject)
+		
+						self.detectCollisions(collisionBuffer,objects,currentObject)					
 
-
+		
 			currentObject += 1
 	
+	def detectCollisions(self,collisionBuffer,objects,currentObject):
+
+		self.ray_scan_left(collisionBuffer,objects,currentObject)
+		self.ray_scan_right(collisionBuffer,objects,currentObject)
+		self.ray_scan_up(collisionBuffer,objects,currentObject)
+		self.ray_scan_down(collisionBuffer,objects,currentObject)
+
 
 	def ray_scan_down(self,collisionBuffer,objects,currentObject):
 		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
-		scan_resolution = copy.deepcopy(width)
+		if collisionBuffer[currentObject].subClass == 'enemy':
+			scan_resolution = 12
+		else:
+			scan_resolution = copy.deepcopy(width)/2
 		scan_step = width/scan_resolution
 		scan_point = 0
 		scan_depth = 2
@@ -68,17 +75,20 @@ class _CollisionEngine:
 			scan_point += scan_step
 
 	def ray_scan_left(self,collisionBuffer,objects,currentObject):
-
 		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
-		scan_resolution = copy.deepcopy(height)
-		scan_step = height/scan_resolution
-		scan_point = 0
-		scan_depth = 5
+
 		if collisionBuffer[currentObject].subClass == 'enemy':
+			scan_resolution = 12
 			scan_offset = 10
 		else:
 
 			scan_offset = 5
+			scan_resolution = copy.deepcopy(height)/2
+
+		scan_step = height/scan_resolution
+		scan_point = 0
+		scan_depth = 5
+
 		while scan_point <= height - scan_offset:
 
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] - scan_depth,collisionBuffer[currentObject].rect.top + scan_point ):
@@ -91,15 +101,16 @@ class _CollisionEngine:
 	def ray_scan_right(self,collisionBuffer,objects,currentObject):
 
 		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
-		scan_resolution = copy.deepcopy(height)
-		scan_step = height/scan_resolution
-		scan_point = 0
-		scan_depth = 5
 		if collisionBuffer[currentObject].subClass == 'enemy':
 			scan_offset = 10
+			scan_resolution = 12
 		else:
 
 			scan_offset = 5
+			scan_resolution = copy.deepcopy(height)/2
+		scan_step = height/scan_resolution
+		scan_point = 0
+		scan_depth = 5
 
 		while scan_point <= height - scan_offset:
 
@@ -112,7 +123,10 @@ class _CollisionEngine:
 	def ray_scan_up(self,collisionBuffer,objects,currentObject):
 
 		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
-		scan_resolution = copy.deepcopy(width)
+		if collisionBuffer[currentObject].subClass == 'enemy':
+			scan_resolution = 12
+		else:
+			scan_resolution = copy.deepcopy(width)/2
 		scan_step = width/scan_resolution
 		scan_point = 0
 		scan_depth = 2
