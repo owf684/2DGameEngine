@@ -27,6 +27,7 @@ class _PlayerEngine:
 
 
 	def onEnemy(self,GameObjects):
+
 		for objects in GameObjects:
 			if objects.subClass =='player':
 				if objects.onEnemy:
@@ -155,7 +156,7 @@ class _PlayerEngine:
 			self.scroll_level = True
 
 		#handle level scrolling right
-		elif objects.position[0] <= self.screen_width/8 and self.x_direction < 0 and input_dict['left'] == '-1':
+		elif objects.position[0] < self.screen_width/2 and self.x_direction < 0 and input_dict['left'] == '-1':
 			self.scroll_level = True
 		else:
 			self.scroll_level = False

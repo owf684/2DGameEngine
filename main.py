@@ -12,6 +12,8 @@ sys.path.append('./GameObjects')
 sys.path.append('./CollisionEngine')
 sys.path.append('./LevelBuilder')
 sys.path.append('./LevelHandler')
+sys.path.append('./AnimationSystem')
+
 #Custom Libraries Kinda
 import GraphicsEngine
 import InputsEngine
@@ -24,6 +26,8 @@ import CollisionEngine
 import LevelBuilder
 import LevelHandler
 import EnemyEngine
+import AnimationSystem
+
 #Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
 #Initialize UI Engine
@@ -54,12 +58,16 @@ LB = LevelBuilder._LevelBuilder()
 #Intialize Level Handler
 LH = LevelHandler._LevelHandler()
 
+#Initialize Animation System
+AS = AnimationSystem._AnimationSystem()
+
+
 #This will have to change
 #Initialize GameObjects
 GameObjects = list()
 PlayerObject = GameObject._GameObject()
 PlayerObject._set_sub_class('player')
-PlayerObject._set_image_path('./Assets/PlayerSprites/LJ.png')
+PlayerObject._set_image_path('./Assets/PlayerSprites/mario_32x32_idle_right.png')
 PlayerObject._set_image()
 PlayerObject._set_sprite_size(PlayerObject.image)
 PlayerObject._set_rect(PlayerObject.sprite_size)
@@ -112,6 +120,9 @@ while running:
 	EE.main_loop(GameObjects,PlE,GE)
 	#PlatformMechanics Engine
 	#PfE.main_loop()
+
+	#Animation System
+	AS.main_loop(GameObjects,input_dict)
 
 	#Graphics Engine
 	screen = GE.main_loop(GameObjects, levelObjects, LH)
