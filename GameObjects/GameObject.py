@@ -42,6 +42,8 @@ class _GameObject:
 		self.collisionLeft = False
 		self.collisionRight= False
 		self.collisionUp = False
+		self.onEnemy = False
+		self.isHit = False
 		#Audio Data
 		self.audioFootSteep = None
 		self.audioAttack = None
