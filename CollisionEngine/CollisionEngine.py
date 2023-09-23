@@ -78,6 +78,9 @@ class _CollisionEngine:
 
 					collisionBuffer[currentObject].collisionDown = True
 					collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+					if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
+						collisionBuffer[currentObject].onEnemy = True
+						objects.isHit = True
 					break
 
 			scan_point += scan_step
@@ -148,17 +151,7 @@ class _CollisionEngine:
 
 					collisionBuffer[currentObject].collisionUp = True
 					break
-			scan_point += scan_step		
-
-	def handle_up_collisions(self,collisionBuffer,objects,currentObject):
-		if 	(	objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0]+5,collisionBuffer[currentObject].rect.topleft[1] - 1) or 
-				objects.rect.collidepoint(collisionBuffer[currentObject].rect.midtop[0],collisionBuffer[currentObject].rect.midtop[1] - 1) or 
-				objects.rect.collidepoint(collisionBuffer[currentObject].rect.topright[0]-5,collisionBuffer[currentObject].rect.topright[1] - 1)
-
-			):
-			collisionBuffer[currentObject].collisionUp = True
-
-
+			scan_point += scan_step
 
 	def updateRectPosition(self,collisionObject):
 		collisionObject.rect.x = collisionObject.position[0]

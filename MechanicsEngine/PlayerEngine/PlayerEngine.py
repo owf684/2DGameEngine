@@ -23,9 +23,15 @@ class _PlayerEngine:
 
 		self.horizontal_movement(GameObjects,delta_t,input_dict,CollisionEngine)
 		self.jump(GameObjects,delta_t,input_dict)
-		
+		self.onEnemy(GameObjects)
 
 
+	def onEnemy(self,GameObjects):
+		for objects in GameObjects:
+			if objects.subClass =='player':
+				if objects.onEnemy:
+					objects.jump_velocity_1 = 250
+					objects.onEnemy = False
 	def jump(self,GameObjects,delta_t,input_dict):
 
 		for objects in GameObjects:

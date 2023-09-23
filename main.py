@@ -1,11 +1,6 @@
 import sys
-import os
 import pygame
-import time
-import math
-import cProfile
-import pickle
-import copy
+
 sys.path.append('./GraphicsEngine')
 sys.path.append('./InputsEngine')
 sys.path.append('./UIEngine')
@@ -114,7 +109,7 @@ while running:
 	PlE.main_loop(GameObjects, delta_t, input_dict, CE)
 
 	#Enemy Engine
-	EE.main_loop(GameObjects,PlE)
+	EE.main_loop(GameObjects,PlE,GE)
 	#PlatformMechanics Engine
 	#PfE.main_loop()
 
