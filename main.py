@@ -28,42 +28,42 @@ import LevelHandler
 import EnemyEngine
 import AnimationSystem
 
-#Initialize Inputs engine
+# Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
-#Initialize UI Engine
+# Initialize UI Engine
 UIE = UIEngine._UIEngine()
 
-#Initialize Physics Engine
+# Initialize Physics Engine
 PE = PhysicsEngine._PhysicsEngine()
 
-#Initialize Player Engine
-PlE  = PlayerEngine._PlayerEngine()
+# Initialize Player Engine
+PlE = PlayerEngine._PlayerEngine()
 
-#Initialize Enemy Engine
+# Initialize Enemy Engine
 EE = EnemyEngine._EnemyEngine()
 
-#Initialize Platforms Engine
-PfE  = PlatformsEngine._PlatformsEngine()
+# Initialize Platforms Engine
+PfE = PlatformsEngine._PlatformsEngine()
 
-#Initialize Graphics Engine
+# Initialize Graphics Engine
 GE = GraphicsEngine._GraphicsEngine()
 GE._setScreenSize(1280,720)
 
-#Initialize Collision Engine
+# Initialize Collision Engine
 CE = CollisionEngine._CollisionEngine()
 
-#Initialize Level Builder
+# Initialize Level Builder
 LB = LevelBuilder._LevelBuilder()
 
-#Intialize Level Handler
+# Initialize Level Handler
 LH = LevelHandler._LevelHandler()
 
-#Initialize Animation System
+# Initialize Animation System
 AS = AnimationSystem._AnimationSystem()
 
 
-#This will have to change
-#Initialize GameObjects
+# This will have to change
+# Initialize GameObjects
 GameObjects = list()
 PlayerObject = GameObject._GameObject()
 PlayerObject._set_sub_class('player')
@@ -81,16 +81,14 @@ collisionList = list()
 collisionList.extend(GameObjects)
 collisionList.extend(levelObjects)
 
-
-
 pygame_events = None
-#simulation runtime variables
+# simulation runtime variables
 delta_t = 0
 FPS = 60
 
 
 		
-#main loop
+# main loop
 running = True
 while running:
 
@@ -101,39 +99,37 @@ while running:
 
 	pygame_events = pygame.event.get()
 
-	#Inputs Engine
+	# Inputs Engine
 	input_dict = IE.main_loop(GameObjects,delta_t,pygame_events)
 
-	#UI Engine
-	#UIE.main_loop()
+	if not LB.edit:
+		# UI Engine
+		# UIE.main_loop()
 
-	#Physics Engine
-	PE.main_loop(GameObjects, delta_t)
+		# Physics Engine
+		PE.main_loop(GameObjects, delta_t)
 
-	#Collision Engine
-	CE.main_loop(collisionList, GE, input_dict)
+		# Collision Engine
+		CE.main_loop(collisionList, GE, input_dict)
 
-	#PlayerMechanics Engine
-	PlE.main_loop(GameObjects, delta_t, input_dict, CE)
+		# PlayerMechanics Engine
+		PlE.main_loop(GameObjects, delta_t, input_dict, CE)
 
-	#Enemy Engine
-	EE.main_loop(GameObjects,PlE,GE)
-	#PlatformMechanics Engine
-	#PfE.main_loop()
+		# Enemy Engine
+		EE.main_loop(GameObjects,PlE,GE)
+		# PlatformMechanics Engine
+		# PfE.main_loop()
 
-	#Animation System
-	AS.main_loop(GameObjects,input_dict)
+		# Animation System
+		AS.main_loop(GameObjects, input_dict)
 
-	#Graphics Engine
-	screen = GE.main_loop(GameObjects, levelObjects, LH)
+		LH.main_loop(levelObjects, PlE)
 
-	#Level Builer
+	# Graphics Engine
+	screen = GE.main_loop(GameObjects, levelObjects, LH,LB)
+	# Level Builder
 	LB.main_loop(input_dict, screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
 
-	LH.main_loop(levelObjects, PlE)
-
-
-	
 	clock.tick(FPS)
 
 	delta_t = clock.tick(FPS)/1000

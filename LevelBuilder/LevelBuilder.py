@@ -35,7 +35,8 @@ class _LevelBuilder:
 
 		self.patch_level_select = False
 
-
+		self.edit = False
+		self.edit_latch = True
 		self.category_selection_index = 0
 		self.category_select_key = False
 		'''
@@ -91,11 +92,18 @@ class _LevelBuilder:
 			self.enemy_sprites.append(new_enemy)
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
-		
-		self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects)
-		self.handle_user_input(input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler)
-		self.ui(input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine)
-				
+		if input_dict['edit'] == '1' and not self.edit_latch:
+			self.edit = not self.edit
+			self.edit_latch = True
+		if input_dict['edit'] == '0' and self.edit_latch:
+			self.edit_latch = False
+
+
+		if self.edit:
+			self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects)
+			self.handle_user_input(input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler)
+			self.ui(input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine)
+
 	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects):
 
 		#add block
