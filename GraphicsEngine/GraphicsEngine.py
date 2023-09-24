@@ -43,7 +43,7 @@ class _GraphicsEngine:
 
 	def main_loop(self,GameObjects,levelObjects,levelHandler, levelBuilder):
 		#clear the screen
-		self.screen.fill((0,0,0))
+		self.screen.fill((92,148,252))
 	
 		if levelBuilder.edit:
 

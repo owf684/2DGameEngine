@@ -74,7 +74,7 @@ class _LevelBuilder:
 	
 	def initialize_enemy_sprites(self):
 
-		enemy_list = glob.glob('./Assets/EnemySprites/*.png')
+		enemy_list = glob.glob('./Assets/EnemySprites/Goomba/*.png')
 		for enemy in enemy_list:
 			new_enemy = GameObject._GameObject()
 			new_enemy._set_sub_class('enemy')
