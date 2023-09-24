@@ -77,7 +77,7 @@ class _GraphicsEngine:
 		pygame.display.flip()
 		return self.screen
 
-	def load_render_buffer(self, levelObjects,GameObjects):
+	def load_render_buffer(self, levelObjects, GameObjects):
 
 		for objects in levelObjects:
 			if objects not in self.render_buffer:

@@ -12,16 +12,15 @@ class _EnemyEngine:
 		self.t2 = list()
 
 		self.thread_started = False
-	def main_loop(self,GameObjects,PlayerEngine,GraphicsEngine):
+	def main_loop(self, GameObjects, PlayerEngine, GraphicsEngine):
 
+		self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine)
 
-		self.move_enemy(GameObjects,PlayerEngine,GraphicsEngine)
-
-	def move_enemy(self,GameObjects,PlayerEngine,GraphicsEngine):
+	def move_enemy(self, GameObjects, PlayerEngine, GraphicsEngine):
 
 		for objects in GameObjects:
 
-			if objects._get_sub_class() == 'enemy':
+			if objects.subClass == 'enemy':
 
 				if objects.isRendered:
 					self.isHit(objects,GameObjects, GraphicsEngine)
