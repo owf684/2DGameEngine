@@ -23,10 +23,7 @@ class _GraphicsEngine:
 		self.levelObjectsIndex = 0
 		self.GameObjectsIndex = 0
 
-		pygame.display.set_caption("my PyGame Graphics")
-
-
-
+		pygame.display.set_caption("Fario Faker")
 
 
 	def _setScreenSize(self, screen_width, screen_height):
@@ -44,22 +41,20 @@ class _GraphicsEngine:
 		self.imageBuffer.append(pygame.image.load(image_path))
 
 
-	def main_loop(self,GameObjects,levelObjects,levelHandler):
+	def main_loop(self,GameObjects,levelObjects,levelHandler, levelBuilder):
 		#clear the screen
 		self.screen.fill((0,0,0))
 	
+		if levelBuilder.edit:
 
-		for x in range(0, self.screen_width+int(abs(levelHandler.scroll_offset)), self.grid_size):
+			for x in range(0, self.screen_width+int(abs(levelHandler.scroll_offset)), self.grid_size):
 
-			pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
-			
-			levelHandler.eox = x - abs(levelHandler.scroll_offset)
+				pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
+				levelHandler.eox = x - abs(levelHandler.scroll_offset)
+				levelHandler.scroll_delta = 1248 - levelHandler.eox
 
-			levelHandler.scroll_delta = 1248 - levelHandler.eox
-
-
-		for y in range(0, self.screen_height, self.grid_size):
-			pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
+			for y in range(0, self.screen_height, self.grid_size):
+				pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
 
 		if levelHandler.clear_render_buffer:
 			self.render_buffer.clear()
