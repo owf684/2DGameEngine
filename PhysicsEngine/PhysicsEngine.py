@@ -39,9 +39,6 @@ class _PhysicsEngine:
 			
 				objects.position[1] += objects.y_displacement
 
-				if objects.subClass == 'player':
-
-					print(objects.velocity_Y1)
 
 
 

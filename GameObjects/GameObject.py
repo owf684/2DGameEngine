@@ -19,6 +19,7 @@ class _GameObject:
 		self.initial_position = pygame.math.Vector2(0,0)
 		self.isRendered = False
 		self.scrollOffset = 0
+
 		#Physics Data
 		self.weight = 10
 		self.maxHorizontalVelocity = 10
@@ -39,6 +40,7 @@ class _GameObject:
 		self.x_direction = 1
 		self.x_speed = 1
 		self.y_displacement =0
+
 		#Collision Data
 		self.collisionDown = False
 		self.collisionLeft = False
@@ -53,6 +55,10 @@ class _GameObject:
 		self.isMaster = False
 		self.isSlave = False
 		self.troopCollision = list()
+		self.lastRect = None
+
+		#Mechanics Data
+		self.superMario = False
 		#Audio Data
 		self.audioFootSteep = None
 		self.audioAttack = None

@@ -13,6 +13,7 @@ sys.path.append('./CollisionEngine')
 sys.path.append('./LevelBuilder')
 sys.path.append('./LevelHandler')
 sys.path.append('./AnimationSystem')
+sys.path.append('./MechanicsEngine/BlockEngine')
 
 #Custom Libraries Kinda
 import GraphicsEngine
@@ -27,6 +28,7 @@ import LevelBuilder
 import LevelHandler
 import EnemyEngine
 import AnimationSystem
+import BlockEngine
 
 # Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -61,6 +63,8 @@ LH = LevelHandler._LevelHandler()
 # Initialize Animation System
 AS = AnimationSystem._AnimationSystem()
 
+#Initialize Block Engine
+BE = BlockEngine._BlockEngine()
 
 # This will have to change
 # Initialize GameObjects
@@ -122,6 +126,9 @@ while running:
 		# PlatformMechanics Engine
 		# PfE.main_loop()
 
+		#Block Engine
+		BE.main_loop(GameObjects,levelObjects,PlE)
+		
 		# Animation System
 		AS.main_loop(GameObjects, input_dict)
 		LH.main_loop(LH,GameObjects,levelObjects,collisionList, screen,PlE,LB)

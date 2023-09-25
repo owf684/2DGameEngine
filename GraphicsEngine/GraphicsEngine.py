@@ -61,12 +61,15 @@ class _GraphicsEngine:
 			levelHandler.clear_render_buffer = False
 
 		self.load_render_buffer(levelObjects,GameObjects)
-	
+	   		 	
+
+	   	#pygame.draw.rect(self.screen, (255, 0, 0), objects.rect)
+
 		
 		#Update Graphics Here
 		for objects in self.render_buffer:
-
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
+			pygame.draw.rect(self.screen,(255,0,0),objects.rect,2)	
 
 		#Update the display
 		pygame.display.flip()
