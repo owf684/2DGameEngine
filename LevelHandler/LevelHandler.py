@@ -15,7 +15,7 @@ class _LevelHandler:
 		self.currentLevel = 'level_1'
 	def main_loop(self,levelHandler,GameObjects,levelObjects,collisionList,screen, PlayerEngine,levelBuilder):
 
-		self.scroll_level(levelObjects,PlayerEngine)
+		self.scroll_level(levelObjects,PlayerEngine,GameObjects)
 
 		self.player_death(levelHandler,GameObjects,levelObjects,collisionList,self.currentLevel,screen,levelBuilder)
 
@@ -23,10 +23,14 @@ class _LevelHandler:
 		if levelHandler.load_level:
 			levelHandler.load_level = False
 			levelBuilder.load_level(GameObjects, levelObjects, collisionList, level, screen, levelHandler)
-	def scroll_level(self,levelObjects,PlayerEngine):
+	def scroll_level(self,levelObjects,PlayerEngine,GameObjects):
 
 		if (PlayerEngine.scroll_level):
 			self.scroll_offset += PlayerEngine.x_displacement
 
 			for objects in levelObjects:
 				objects.position[0] -= PlayerEngine.x_displacement
+				objects.rect.x -= PlayerEngine.x_displacement
+			for objects in GameObjects:
+				if objects.subClass != 'player':
+					objects.rect.x -= PlayerEngine.x_displacement

@@ -18,6 +18,7 @@ class _PlayerEngine:
 		self.reached_max_height = False
 		self.max_walk_velocity = 250
 		self.max_run_velocity = 500
+		self.superMario = False
 
 	def main_loop(self, GameObjects, delta_t, input_dict, CollisionEngine,levelHandler):
 		for objects in GameObjects:
@@ -36,6 +37,7 @@ class _PlayerEngine:
 			if objects.onEnemy:
 				objects.jump_velocity_1 = 250
 				objects.onEnemy = False
+
 	def jump(self,objects,delta_t,input_dict):
 
 			#Handle jump velocity
@@ -72,7 +74,7 @@ class _PlayerEngine:
 					self.y_displacement = 0
 
 				objects.position[1] -= self.y_displacement
-
+				objects.rect.y -= self.y_displacement
 				self.total_y_displacement += self.y_displacement
 
 			if self.total_y_displacement > 150:
@@ -101,7 +103,7 @@ class _PlayerEngine:
 
 		if not self.scroll_level:
 			objects.position[0] += self.x_displacement
-
+			objects.rect.x += self.x_displacement
 		try:
 
 			objects.velocity_X2 = math.sqrt( math.pow(objects.velocity_X1,2) + 2*abs(self.x_acceleration) + self.x_displacement)

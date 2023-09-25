@@ -22,6 +22,7 @@ class _CollisionEngine:
 			collisionBuffer = GraphicsEngine.render_buffer
 
 		numObjects = len(collisionBuffer)
+	
 		while currentObject < numObjects:
 
 			self.updateRectPosition(collisionBuffer[currentObject])
@@ -32,18 +33,19 @@ class _CollisionEngine:
 			collisionBuffer[currentObject].collisionRight = False
 			collisionBuffer[currentObject].collisionUp = False
 
+
 			for objects in collisionBuffer:
 
 				self.updateRectPosition(objects)
-
 				if collisionBuffer[currentObject] != objects:
 
 					if (collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy') and objects.subClass != 'environment':
 
 						self.detectCollisions(collisionBuffer, objects, currentObject)
-
+			
 			currentObject += 1
 
+	
 
 	def detectCollisions(self,collisionBuffer,objects,currentObject):
 
@@ -52,11 +54,11 @@ class _CollisionEngine:
 		self.ray_scan_up(collisionBuffer,objects,currentObject)
 		self.ray_scan_down(collisionBuffer,objects,currentObject)
 
-
 	def ray_scan_down(self,collisionBuffer,objects,currentObject):
+	
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
 
-		while scan_point+8 <= width-8:
+		while scan_point <= width:
 
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] + scan_point,collisionBuffer[currentObject].rect.bottom + scan_depth ):
 
@@ -72,20 +74,24 @@ class _CollisionEngine:
 
 			scan_point += scan_step
 
-	def configure_scan_variables_ud(self, collisionBuffer, currentObject):
-		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
-		if collisionBuffer[currentObject].subClass == 'enemy':
-			scan_resolution = 3
-		else:
-			scan_resolution = copy.deepcopy(width)
+	def ray_scan_up(self,collisionBuffer,objects,currentObject):
 
-		scan_step = width / scan_resolution
-		scan_point = 0
-		scan_depth = 3
+		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
 
-		return scan_depth, scan_point, scan_step, width
+		while scan_point<= width:
+
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
+
+				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
+					collisionBuffer[currentObject].collisionSubClass = objects.subClass
+					collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
+					collisionBuffer[currentObject].collisionObject = objects
+					collisionBuffer[currentObject].collisionUp = True
+					break
+			scan_point += scan_step			
 
 	def ray_scan_left(self,collisionBuffer,objects,currentObject):
+	
 		height, scan_depth, scan_offset, scan_point, scan_step = self.configure_scan_variables_lr(collisionBuffer, currentObject)
 
 		while scan_point <= height - scan_offset:
@@ -98,21 +104,6 @@ class _CollisionEngine:
 				break
 
 			scan_point += scan_step
-
-	def configure_scan_variables_lr(self, collisionBuffer, currentObject):
-		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
-		if collisionBuffer[currentObject].subClass == 'enemy':
-			scan_resolution = 3
-			scan_offset = 5
-		else:
-
-			scan_offset = 24
-			scan_resolution = copy.deepcopy(height) / 8
-
-		scan_depth = 5
-		scan_step = height / scan_resolution
-		scan_point = 0
-		return height, scan_depth, scan_offset, scan_point, scan_step
 
 	def ray_scan_right(self,collisionBuffer,objects,currentObject):
 
@@ -127,23 +118,38 @@ class _CollisionEngine:
 				break
 			scan_point += scan_step
 
-	def ray_scan_up(self,collisionBuffer,objects,currentObject):
 
-		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
+	def configure_scan_variables_lr(self, collisionBuffer, currentObject):
+	
+		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
+		if collisionBuffer[currentObject].subClass == 'enemy':
+			scan_resolution = 3
+			scan_offset = 5
+		else:
 
-		while scan_point+8 <= width-8:
+			scan_offset = 28
+			scan_resolution = copy.deepcopy(height) / 8
 
-			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
+		scan_depth = 5
+		scan_step = height / scan_resolution
+		scan_point = 0
+		return height, scan_depth, scan_offset, scan_point, scan_step
 
-				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-					collisionBuffer[currentObject].collisionSubClass = objects.subClass
-					collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
-					collisionBuffer[currentObject].collisionObject = objects
-					collisionBuffer[currentObject].collisionUp = True
-					break
-			scan_point += scan_step
+	def configure_scan_variables_ud(self, collisionBuffer, currentObject):
+	
+		width = copy.deepcopy(collisionBuffer[currentObject].rect.width)
+		if collisionBuffer[currentObject].subClass == 'enemy':
+			scan_resolution = 3
+		else:
+			scan_resolution = copy.deepcopy(width)
+
+		scan_step = width / scan_resolution
+		scan_point = 0
+		scan_depth = 3
+
+		return scan_depth, scan_point, scan_step, width
 
 	def updateRectPosition(self,collisionObject):
+	
 		collisionObject.rect.x = collisionObject.position[0]
-
 		collisionObject.rect.y = collisionObject.position[1]
