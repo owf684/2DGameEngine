@@ -48,11 +48,14 @@ class _PlayerEngine:
 
 				objects.jump_velocity_1 -= 15
 
-			if objects.collisionDown and input_dict['up'] == '0':
-				self.total_y_displacement = 0
-				objects.jumping = False
+			if objects.collisionDown:
 				objects.jump_velocity_1 = 0
-				self.reached_max_height = False
+
+				if input_dict['up'] == '0':
+					self.total_y_displacement = 0
+					objects.jumping = False
+					self.reached_max_height = False
+
 
 			if objects.collisionUp and not self.reached_max_height:
 				self.total_y_displacement = 0
@@ -76,7 +79,6 @@ class _PlayerEngine:
 				self.reached_max_height = True
 			if objects.jump_velocity_1 < 0:
 				objects.jump_velocity_1 = 0
-
 
 				
 	def horizontal_movement(self,objects,delta_t,input_dict,CollisionEngine):
