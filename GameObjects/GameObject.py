@@ -38,6 +38,7 @@ class _GameObject:
 		self.jumping = False
 		self.x_direction = 1
 		self.x_speed = 1
+		self.y_displacement =0
 		#Collision Data
 		self.collisionDown = False
 		self.collisionLeft = False
@@ -46,6 +47,12 @@ class _GameObject:
 		self.onEnemy = False
 		self.isHit = False
 		self.collisionSubClass = None
+		self.collisionObjDirection = 0
+		self.collisionObject = None
+		self.collisionMaster = None
+		self.isMaster = False
+		self.isSlave = False
+		self.troopCollision = list()
 		#Audio Data
 		self.audioFootSteep = None
 		self.audioAttack = None

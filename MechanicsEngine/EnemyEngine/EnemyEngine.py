@@ -8,9 +8,8 @@ class _EnemyEngine:
 
 	def __init__(self):
 		self.enemy_index = 0
-		self.t1 = list()
-		self.t2 = list()
-
+		self.goomba_troops = list()
+		self.change_dir = False
 		self.thread_started = False
 	def main_loop(self, GameObjects, PlayerEngine, GraphicsEngine):
 
@@ -47,3 +46,12 @@ class _EnemyEngine:
 			objects.x_direction = -1
 		if objects.collisionRight:
 			objects.x_direction = 1
+
+
+
+
+
+		#if objects.collisionRight:
+		#	objects.x_direction = 1
+
+
