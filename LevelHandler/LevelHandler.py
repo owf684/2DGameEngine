@@ -11,13 +11,18 @@ class _LevelHandler:
 		self.scroll_delta = 0
 		self.clear_render_buffer = False
 		self.eox = 0
-
-
-	def main_loop(self,levelObjects,PlayerEngine):
+		self.load_level = False
+		self.currentLevel = 'level_1'
+	def main_loop(self,levelHandler,GameObjects,levelObjects,collisionList,screen, PlayerEngine,levelBuilder):
 
 		self.scroll_level(levelObjects,PlayerEngine)
 
+		self.player_death(levelHandler,GameObjects,levelObjects,collisionList,self.currentLevel,screen,levelBuilder)
 
+	def player_death(self,levelHandler,GameObjects,levelObjects,collisionList,level,screen,levelBuilder):
+		if levelHandler.load_level:
+			levelHandler.load_level = False
+			levelBuilder.load_level(GameObjects, levelObjects, collisionList, level, screen, levelHandler)
 	def scroll_level(self,levelObjects,PlayerEngine):
 
 		if (PlayerEngine.scroll_level):

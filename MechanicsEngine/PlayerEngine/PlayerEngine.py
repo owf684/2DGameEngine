@@ -1,4 +1,4 @@
-
+import copy
 import math
 
 class _PlayerEngine:
@@ -19,13 +19,17 @@ class _PlayerEngine:
 		self.max_walk_velocity = 250
 		self.max_run_velocity = 500
 
-	def main_loop(self, GameObjects, delta_t, input_dict, CollisionEngine):
+	def main_loop(self, GameObjects, delta_t, input_dict, CollisionEngine,levelHandler):
 		for objects in GameObjects:
 			if objects.subClass == 'player':
 				self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine)
 				self.jump(objects,delta_t,input_dict)
 				self.onEnemy(objects)
+				self.handle_damage(objects,levelHandler)
 
+	def handle_damage(self, objects,levelHandler):
+		if (objects.collisionLeft or objects.collisionRight) and objects.collisionSubClass == 'enemy':
+			levelHandler.load_level = True
 
 	def onEnemy(self,objects):
 		if objects.subClass =='player':

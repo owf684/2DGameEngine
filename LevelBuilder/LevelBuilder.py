@@ -39,6 +39,8 @@ class _LevelBuilder:
 		self.edit_latch = True
 		self.category_selection_index = 0
 		self.category_select_key = False
+		self.spawn_point = (0,0)
+
 		'''
 		0 = Basic Platform Blocks
 		1 = Enemies
@@ -54,9 +56,15 @@ class _LevelBuilder:
 
 		self.initialize_enemy_sprites()
 
+
+		self.environment_sprites = list()
+		self.initialize_environment_sprites()
+
 		self.category_container = list()
 		self.category_container.append(self.building_blocks)
 		self.category_container.append(self.enemy_sprites)
+		self.category_container.append(self.environment_sprites)
+
 
 	def initialize_building_blocks(self):
 		block_list = glob.glob('./Assets/Platforms/*.png')
@@ -90,6 +98,18 @@ class _LevelBuilder:
 			new_enemy._set_rect(new_enemy.sprite_size)
 			print(new_enemy.position)
 			self.enemy_sprites.append(new_enemy)
+	def initialize_environment_sprites(self):
+		environment_list = glob.glob('./Assets/EnvironmentSprites/*.png')
+		for sprites in environment_list:
+			new_sprite = GameObject._GameObject()
+			new_sprite._set_sub_class('environment')
+			new_sprite._set_image_path(sprites)
+			new_sprite._set_image()
+			new_sprite.position = [self.screen_width/2,self.screen_height/20]
+			new_sprite._set_sprite_size(new_sprite.image)
+			new_sprite._set_rect(new_sprite.sprite_size)
+			self.environment_sprites.append(new_sprite)
+
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
 		if input_dict['edit'] == '1' and not self.edit_latch:
@@ -97,7 +117,6 @@ class _LevelBuilder:
 			self.edit_latch = True
 		if input_dict['edit'] == '0' and self.edit_latch:
 			self.edit_latch = False
-
 
 		if self.edit:
 			self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects)
@@ -121,14 +140,14 @@ class _LevelBuilder:
 			self.mouse_position = pygame.mouse.get_pos()
 			print(self.mouse_position)
 			for objects in GameObjects:
-				if objects.subClass == 'enemy':
+				if objects.subClass != 'player':
 					if objects.rect.collidepoint(self.mouse_position):
 
 						GameObjects.remove(objects)
 						levelHandler.clear_render_buffer = True
 						break
 			for objects in levelObjects:
-				if objects.subClass == 'platform':
+				if objects.subClass == 'platform' or objects.subClass == 'environment':
 					if objects.rect.collidepoint(self.mouse_position):
 						levelObjects.remove(objects)
 						levelHandler.clear_render_buffer = True
@@ -199,7 +218,17 @@ class _LevelBuilder:
 			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
 			collisionList.append(GameObjects[-1])	
 
-
+		if selected_block._get_sub_class() == 'environment':
+			#add first platform
+			levelObjects.append(GameObject._GameObject())
+			levelObjects[-1]._set_sub_class(selected_block._get_sub_class())
+			levelObjects[-1]._set_image_path(selected_block._get_image_path())
+			levelObjects[-1]._set_image()
+			levelObjects[-1].position = copy.deepcopy(self.snap_position)
+			levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
+			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
+			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
+			levelObjects[-1].scroll_offset = copy.deepcopy((levelHandler.scroll_offset))
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
 			
 
@@ -254,7 +283,7 @@ class _LevelBuilder:
 			self.patch_level_select = False
 		
 		#handle load data
-		if input_dict["load-level"] == "1" and not self.load_level_select:
+		if (input_dict["load-level"] == "1" and not self.load_level_select):
 			self.load_level_select = True
 			self.load_level(GameObjects,levelObjects,collisionList,"level_1",screen,levelHandler)
 		elif input_dict["load-level"] == "0":
@@ -389,8 +418,11 @@ class _LevelBuilder:
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
 			collisionList.append(levelObjects[-1])
-		
-
+			if levelObjects[-1].subClass == 'environment':
+				if 'spawn_point' in levelObjects[-1].imagePath:
+					self.spawn_point = copy.deepcopy(levelObjects[-1].initial_position)
+				else:
+					self.spawn_point = (0,0)
 	def load_game_objects(self,GameObjects,collisionList,level_string):
 		GameObjects.clear()
 
@@ -419,6 +451,8 @@ class _LevelBuilder:
 			GameObjects[-1].jump_decelleration = float(object_elem.find('jump_decelleration').text)
 			GameObjects[-1].accelerationX = float(object_elem.find("accelerationX").text)
 			GameObjects[-1].mass = float(object_elem.find("mass").text)
-
+			if GameObjects[-1].subClass == 'player':
+				GameObjects[-1].initial_position = copy.deepcopy(self.spawn_point)
+				GameObjects[-1].position = copy.deepcopy(self.spawn_point)
 			collisionList.append(GameObjects[-1])
 	

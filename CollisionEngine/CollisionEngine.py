@@ -38,7 +38,8 @@ class _CollisionEngine:
 
 				if collisionBuffer[currentObject] != objects:
 
-					if collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy':
+					if (collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy') and objects.subClass != 'environment':
+
 						self.detectCollisions(collisionBuffer, objects, currentObject)
 
 			currentObject += 1
@@ -62,6 +63,7 @@ class _CollisionEngine:
 				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
 
 					collisionBuffer[currentObject].collisionDown = True
+					collisionBuffer[currentObject].collisionSubClass = objects.subClass
 					collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
 					if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
 						collisionBuffer[currentObject].onEnemy = True
@@ -87,7 +89,7 @@ class _CollisionEngine:
 		while scan_point <= height - scan_offset:
 
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] - scan_depth,collisionBuffer[currentObject].rect.top + scan_point ):
-
+				collisionBuffer[currentObject].collisionSubClass = objects.subClass
 				collisionBuffer[currentObject].collisionLeft = True
 				break
 
@@ -113,7 +115,7 @@ class _CollisionEngine:
 		while scan_point <= height - scan_offset:
 
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomright[0] + scan_depth,  collisionBuffer[currentObject].rect.top + scan_point ):
-
+				collisionBuffer[currentObject].collisionSubClass = objects.subClass
 				collisionBuffer[currentObject].collisionRight = True
 				break
 			scan_point += scan_step
@@ -127,7 +129,7 @@ class _CollisionEngine:
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
 
 				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-
+					collisionBuffer[currentObject].collisionSubClass = objects.subClass
 					collisionBuffer[currentObject].collisionUp = True
 					break
 			scan_point += scan_step

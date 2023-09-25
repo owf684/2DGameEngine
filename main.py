@@ -102,6 +102,8 @@ while running:
 	# Inputs Engine
 	input_dict = IE.main_loop(GameObjects,delta_t,pygame_events)
 
+	# Graphics Engine
+	screen = GE.main_loop(GameObjects, levelObjects, LH,LB)
 	if not LB.edit:
 		# UI Engine
 		# UIE.main_loop()
@@ -113,7 +115,7 @@ while running:
 		CE.main_loop(collisionList, GE, input_dict)
 
 		# PlayerMechanics Engine
-		PlE.main_loop(GameObjects, delta_t, input_dict, CE)
+		PlE.main_loop(GameObjects, delta_t, input_dict, CE,LH)
 
 		# Enemy Engine
 		EE.main_loop(GameObjects,PlE,GE)
@@ -122,17 +124,15 @@ while running:
 
 		# Animation System
 		AS.main_loop(GameObjects, input_dict)
+		LH.main_loop(LH,GameObjects,levelObjects,collisionList, screen,PlE,LB)
 
-		LH.main_loop(levelObjects, PlE)
 
-	# Graphics Engine
-	screen = GE.main_loop(GameObjects, levelObjects, LH,LB)
 	# Level Builder
 	LB.main_loop(input_dict, screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
 
-	clock.tick(FPS)
-
 	delta_t = clock.tick(FPS)/1000
+
+	#delta_t = clock.tick(FPS)/1000
 
 
 pygame.quit()
