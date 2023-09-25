@@ -131,7 +131,7 @@ class _CollisionEngine:
 
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
 
-		while scan_point <= width:
+		while scan_point+8 <= width-8:
 
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
 
