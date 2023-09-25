@@ -32,13 +32,16 @@ class _PhysicsEngine:
 
 
 				if objects.collisionDown:
-					self.y_displacement = 0
+					objects.y_displacement = 0
 					objects.velocity_Y1 =0
 				else:
-					self.y_displacement = objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
+					objects.y_displacement = objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
 			
-				objects.position[1] += self.y_displacement
+				objects.position[1] += objects.y_displacement
 
+				if objects.subClass == 'player':
+
+					print(objects.velocity_Y1)
 
 
 
