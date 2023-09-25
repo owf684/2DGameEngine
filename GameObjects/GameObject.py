@@ -18,6 +18,7 @@ class _GameObject:
 		self.position = pygame.math.Vector2(0,0)
 		self.initial_position = pygame.math.Vector2(0,0)
 		self.isRendered = False
+		self.scrollOffset = 0
 		#Physics Data
 		self.weight = 10
 		self.maxHorizontalVelocity = 10
@@ -44,6 +45,7 @@ class _GameObject:
 		self.collisionUp = False
 		self.onEnemy = False
 		self.isHit = False
+		self.collisionSubClass = None
 		#Audio Data
 		self.audioFootSteep = None
 		self.audioAttack = None

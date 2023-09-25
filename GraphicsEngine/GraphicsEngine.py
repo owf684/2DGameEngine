@@ -78,7 +78,7 @@ class _GraphicsEngine:
 			if objects not in self.render_buffer:
 		
 				if not objects.position[0] < -objects.sprite_size[0] and not objects.position[0] > self.screen_width:
-					self.render_buffer.append(objects)
+					self.render_buffer.insert(0,objects) # using insert ensures player is always drawn last.
 
 			if objects in self.render_buffer:
 
