@@ -25,8 +25,7 @@ class _PhysicsEngine:
 		'''
 
 		for objects in GameObjects:
-
-			if objects.isRendered:
+			if objects.isRendered and not objects.pause_physics:
 
 				objects.velocity_Y1 += self.gravity * delta_t
 
