@@ -94,7 +94,7 @@ class _GraphicsEngine:
 					self.render_buffer.append(objects)
 					objects.isRendered = True
 
-			if objects.subClass == 'enemy':
+			if objects.subClass == 'enemy' or objects.subClass =='powerup':
 				
 				if objects not in self.render_buffer:
 

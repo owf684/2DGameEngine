@@ -40,7 +40,8 @@ class _GameObject:
 		self.x_direction = 1
 		self.x_speed = 1
 		self.y_displacement =0
-
+		self.pause_physics = False
+		
 		#Collision Data
 		self.collisionDown = False
 		self.collisionLeft = False
@@ -57,8 +58,10 @@ class _GameObject:
 		self.troopCollision = list()
 		self.lastRect = None
 		self.hit = False
-		#Mechanics Data
-		self.superMario = False
+		# [0 = up , 1 = down, 2 = left, 3 = right]
+		self.pixelCollisionMap = (list(),list(),list(),list())
+		self.item = None
+
 		#Audio Data
 		self.audioFootSteep = None
 		self.audioAttack = None
@@ -109,6 +112,21 @@ class _GameObject:
 	def _set_init_yPos(self,y_position):
 		self.initial_position[1] = y_position	
 
+	def _set_pixel_collision_map(self):
+
+		#up pixels
+		for x in range (self.rect.height):
+			pixel_color = self.image.get_at((x,0))
+			if pixel_color[3] > 0:
+				self.pixelCollisionMap[0].append((x,0))
+
+		#down pixels
+
+		#left pixels
+
+		#ight pixels
+
+
 	'''GETTERS'''
 	def _get_weight(self):
 		return self.get_weight
@@ -138,3 +156,5 @@ class _GameObject:
 
 	def _get_accelerationX(self):
 		return self.accelerationX
+
+

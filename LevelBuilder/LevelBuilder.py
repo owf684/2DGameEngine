@@ -60,11 +60,14 @@ class _LevelBuilder:
 		self.environment_sprites = list()
 		self.initialize_environment_sprites()
 
+		self.power_up_sprites = list()
+		self.initialize_power_up_sprites()
+
 		self.category_container = list()
 		self.category_container.append(self.building_blocks)
 		self.category_container.append(self.enemy_sprites)
 		self.category_container.append(self.environment_sprites)
-
+		self.category_container.append(self.power_up_sprites)
 
 	def initialize_building_blocks(self):
 		block_list = glob.glob('./Assets/Platforms/*.png')
@@ -109,7 +112,17 @@ class _LevelBuilder:
 			new_sprite._set_sprite_size(new_sprite.image)
 			new_sprite._set_rect(new_sprite.sprite_size)
 			self.environment_sprites.append(new_sprite)
-
+	def initialize_power_up_sprites(self):
+		power_up_list = glob.glob('./Assets/PowerUps/*.png')
+		for sprites in power_up_list:
+			new_sprite = GameObject._GameObject()
+			new_sprite._set_sub_class('powerup')
+			new_sprite._set_image_path(sprites)
+			new_sprite._set_image()
+			new_sprite.position = [self.screen_width/2,self.screen_height/20]
+			new_sprite._set_sprite_size(new_sprite.image)
+			new_sprite._set_rect(new_sprite.sprite_size)
+			self.power_up_sprites.append(new_sprite)			
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
 		if input_dict['edit'] == '1' and not self.edit_latch:
@@ -175,9 +188,9 @@ class _LevelBuilder:
 			if objects.rect.collidepoint(self.snap_position):
 				self.can_place_block = False
 		for objects in levelObjects:
-			if objects.rect.collidepoint(self.snap_position):
+			if objects.rect.collidepoint(self.snap_position) and self.category_selection_index != 3:
 				self.can_place_block = False
-
+				print(self.category_selection_index)
 
 		pygame.draw.rect(screen, self.block_color, square_rect)
 		#update the screen
@@ -212,9 +225,6 @@ class _LevelBuilder:
 			GameObjects[-1].position = copy.deepcopy(self.snap_position)
 			GameObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
 			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
-
-			if GameObjects[-1].sprite_size[0] == 16 and GameObjects[-1].sprite_size[1] == 16:
-				GameObjects[-1].image = pygame.transform.scale(GameObjects[-1].image, (GameObjects[-1].sprite_size[0]*2,GameObjects[-1].sprite_size[1]*2))
 			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
 			collisionList.append(GameObjects[-1])	
 
@@ -229,6 +239,33 @@ class _LevelBuilder:
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
 			levelObjects[-1].scroll_offset = copy.deepcopy((levelHandler.scroll_offset))
+
+		if selected_block._get_sub_class() == 'powerup':
+
+
+			#add GameObjects
+			new_object = GameObject._GameObject()
+			new_object._set_sub_class(copy.deepcopy(selected_block._get_sub_class()))
+			new_object._set_image_path(copy.deepcopy(selected_block._get_image_path()))
+			new_object._set_image()
+			new_object.position = copy.deepcopy(self.snap_position)
+			new_object.initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
+			new_object._set_sprite_size(GameObjects[-1].image)
+			new_object._set_rect(GameObjects[-1].sprite_size)
+
+			add = True
+			for objects in levelObjects:
+				print(self.snap_position)
+				if objects.rect.collidepoint(self.snap_position):
+					print("adding item to block")
+					objects.item = new_object 
+					add = False
+
+			if add:
+				print("adding item to the world")
+				GameObjects.append(new_object)	
+				collisionList.append(GameObjects[-1])
+
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
 			
 

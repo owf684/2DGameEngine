@@ -40,8 +40,9 @@ class _CollisionEngine:
 				self.updateRectPosition(objects)
 				if collisionBuffer[currentObject] != objects:
 
-					if (collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy') and objects.subClass != 'environment':
-
+					if (collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy' or collisionBuffer[currentObject].subClass == 'powerup') and objects.subClass != 'environment':
+						collisionBuffer[currentObject].pixelCollisionMap[0].clear()
+						collisionBuffer[currentObject]._set_pixel_collision_map()
 						self.detectCollisions(collisionBuffer, objects, currentObject)
 			
 			currentObject += 1
@@ -79,18 +80,33 @@ class _CollisionEngine:
 
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
 
-		while scan_point <= width:
+		if collisionBuffer[currentObject].subClass == 'player2':
+			for pixel_points in collisionBuffer[currentObject].pixelCollisionMap[0]:
 
-			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
-			#if objects.rect.collidepoint(collisionBuffer[currentObject].rect.midtop[0], collisionBuffer[currentObject].rect.top - scan_depth ):
+				translated_point = (pixel_points[0] + collisionBuffer[currentObject].rect.x , pixel_points[1] + collisionBuffer[currentObject].rect.y )
+				if objects.rect.collidepoint(translated_point[0],translated_point[1]):
+					collisionBuffer[currentObject].collisionSubClass = objects.subClass
+					collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
+					collisionBuffer[currentObject].collisionObject = objects
+					collisionBuffer[currentObject].collisionUp = True
+					break	
+				translated_point = None				
+		else:
 
-				#if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-				collisionBuffer[currentObject].collisionSubClass = objects.subClass
-				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
-				collisionBuffer[currentObject].collisionObject = objects
-				collisionBuffer[currentObject].collisionUp = True
-				break
-			scan_point += scan_step			
+
+			while scan_point <= width:
+
+				if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
+
+					collisionBuffer[currentObject].collisionSubClass = objects.subClass
+					collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
+					collisionBuffer[currentObject].collisionObject = objects
+					collisionBuffer[currentObject].collisionUp = True
+					break
+
+				scan_point += scan_step
+
+
 
 	def ray_scan_left(self,collisionBuffer,objects,currentObject):
 	

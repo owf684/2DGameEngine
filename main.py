@@ -14,6 +14,7 @@ sys.path.append('./LevelBuilder')
 sys.path.append('./LevelHandler')
 sys.path.append('./AnimationSystem')
 sys.path.append('./MechanicsEngine/BlockEngine')
+sys.path.append('./MechanicsEngine/PowerUpEngine')
 
 #Custom Libraries Kinda
 import GraphicsEngine
@@ -29,6 +30,7 @@ import LevelHandler
 import EnemyEngine
 import AnimationSystem
 import BlockEngine
+import PowerUpEngine
 
 # Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -66,6 +68,9 @@ AS = AnimationSystem._AnimationSystem()
 #Initialize Block Engine
 BE = BlockEngine._BlockEngine()
 
+#Initialize PowerUpEngine
+PUP = PowerUpEngine._PowerUpEngine()
+
 # This will have to change
 # Initialize GameObjects
 GameObjects = list()
@@ -75,6 +80,8 @@ PlayerObject._set_image_path('./Assets/PlayerSprites/mario_32x32_idle_right.png'
 PlayerObject._set_image()
 PlayerObject._set_sprite_size(PlayerObject.image)
 PlayerObject._set_rect(PlayerObject.sprite_size)
+PlayerObject._set_pixel_collision_map()
+print(len(PlayerObject.pixelCollisionMap[0]))
 GameObjects.append(PlayerObject)
 
 levelObjects = list()
@@ -133,6 +140,8 @@ while running:
 		AS.main_loop(GameObjects, input_dict,LH)
 		LH.main_loop(LH,GameObjects,levelObjects,collisionList, screen,PlE,LB)
 
+		#PowerUp Engine
+		PUP.main_loop(GameObjects, LH, PlE)
 
 	# Level Builder
 	LB.main_loop(input_dict, screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
