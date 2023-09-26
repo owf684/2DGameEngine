@@ -56,7 +56,7 @@ class _GameObject:
 		self.isSlave = False
 		self.troopCollision = list()
 		self.lastRect = None
-
+		self.hit = False
 		#Mechanics Data
 		self.superMario = False
 		#Audio Data

@@ -11,9 +11,10 @@ class _CollisionEngine:
 		self.collisionRight = False
 		self.collisionDown = False
 		self.threadStarted = False
+		self.screen = None
 		self.collisionThread = list()
-	def main_loop(self,collisionBuffer,GraphicsEngine,input_dict):
-
+	def main_loop(self,collisionBuffer,GraphicsEngine,input_dict,screen):
+		self.screen = screen
 		i = 0
 		currentObject = 0
 
@@ -78,16 +79,17 @@ class _CollisionEngine:
 
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
 
-		while scan_point<= width:
+		while scan_point <= width:
 
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.topleft[0] + scan_point,collisionBuffer[currentObject].rect.top - scan_depth ):
+			#if objects.rect.collidepoint(collisionBuffer[currentObject].rect.midtop[0], collisionBuffer[currentObject].rect.top - scan_depth ):
 
-				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-					collisionBuffer[currentObject].collisionSubClass = objects.subClass
-					collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
-					collisionBuffer[currentObject].collisionObject = objects
-					collisionBuffer[currentObject].collisionUp = True
-					break
+				#if collisionBuffer[currentObject].rect.colliderect(objects.rect):
+				collisionBuffer[currentObject].collisionSubClass = objects.subClass
+				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
+				collisionBuffer[currentObject].collisionObject = objects
+				collisionBuffer[currentObject].collisionUp = True
+				break
 			scan_point += scan_step			
 
 	def ray_scan_left(self,collisionBuffer,objects,currentObject):
@@ -145,7 +147,7 @@ class _CollisionEngine:
 
 		scan_step = width / scan_resolution
 		scan_point = 0
-		scan_depth = 3
+		scan_depth = 5
 
 		return scan_depth, scan_point, scan_step, width
 

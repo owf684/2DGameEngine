@@ -1,4 +1,5 @@
 import pygame
+import question_block_anim
 import sys
 
 
@@ -35,8 +36,10 @@ class _AnimationSystem:
         self.goomba_walk = self.extract_frames("./Assets/EnemySprites/Goomba/sprite_sheet/goomba_32x32_walk.png",2,32,32)
         self.goomba_frame_index = 0
         self.goomba_frame_duration = 200
-    def main_loop(self, GameObjects, input_dict):
 
+        self.qb = question_block_anim._question_block()
+    def main_loop(self, GameObjects, input_dict,levelHandler):
+        self.qb.main_loop(levelHandler)
         self.determine_frame_count()
 
         for objects in GameObjects:

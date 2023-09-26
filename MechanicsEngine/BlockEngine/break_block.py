@@ -11,7 +11,6 @@ class _break_block:
 		self.step = .1
 		self.push_block_object = None
 
-	
 	def main_loop(self,GameObjects,levelObjects,PlayerEngine):
 		
 		self.handle_break_blocks(GameObjects,levelObjects,PlayerEngine)
@@ -34,7 +33,7 @@ class _break_block:
 
 	def push_block_animation(self,objects):
 
-		objects.position[1] += math.cos(self.theta*math.pi)
+		objects.position[1] += 2*math.cos(self.theta*math.pi)
 		self.theta -= self.step 
 
 		if self.theta <= 0:
