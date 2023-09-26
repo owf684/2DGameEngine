@@ -391,12 +391,14 @@ class _LevelBuilder:
 		screen.fill((0,0,0))
 	
 
-		self.load_level_objects(levelObjects,collisionList,level_string)
+		self.load_level_objects(levelObjects,collisionList,level_string,levelHandler)
 		self.load_game_objects(GameObjects,collisionList,level_string)
 
-	def load_level_objects(self,levelObjects,collisionList,level_string):
+	def load_level_objects(self,levelObjects,collisionList,level_string,levelHandler):
 		levelObjects.clear()
 		collisionList.clear()
+		levelHandler.question_blocks.clear()
+
 		print("loading level objects...")
 
 		#clear levelObjects list
@@ -423,6 +425,10 @@ class _LevelBuilder:
 					self.spawn_point = copy.deepcopy(levelObjects[-1].initial_position)
 				else:
 					self.spawn_point = (0,0)
+
+			if 'Question' in levelObjects[-1].imagePath:
+				levelHandler.question_blocks.append(levelObjects[-1])
+
 	def load_game_objects(self,GameObjects,collisionList,level_string):
 		GameObjects.clear()
 

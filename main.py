@@ -116,7 +116,7 @@ while running:
 		PE.main_loop(GameObjects, delta_t)
 
 		# Collision Engine
-		CE.main_loop(collisionList, GE, input_dict)
+		CE.main_loop(collisionList, GE, input_dict,screen)
 
 		# PlayerMechanics Engine
 		PlE.main_loop(GameObjects, delta_t, input_dict, CE,LH)
@@ -130,7 +130,7 @@ while running:
 		BE.main_loop(GameObjects,levelObjects,PlE)
 		
 		# Animation System
-		AS.main_loop(GameObjects, input_dict)
+		AS.main_loop(GameObjects, input_dict,LH)
 		LH.main_loop(LH,GameObjects,levelObjects,collisionList, screen,PlE,LB)
 
 

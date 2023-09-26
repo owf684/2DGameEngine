@@ -13,6 +13,10 @@ class _LevelHandler:
 		self.eox = 0
 		self.load_level = False
 		self.currentLevel = 'level_1'
+
+		# Question Block List
+		self.question_blocks = list()
+
 	def main_loop(self,levelHandler,GameObjects,levelObjects,collisionList,screen, PlayerEngine,levelBuilder):
 
 		self.scroll_level(levelObjects,PlayerEngine,GameObjects)

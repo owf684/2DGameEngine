@@ -8,7 +8,7 @@ class _PlayerEngine:
 		self.y_displacement = 0
 		self.x_displacement = 0
 		self.x_direction = 0
-		self.x_decelleration = 0.01
+		self.x_decelleration = 0.1
 		self.screen_width = 1280
 		self.scroll_level = False
 		self.x_acceleration = 0
@@ -16,8 +16,8 @@ class _PlayerEngine:
 		self.start_jump = False
 		self.total_y_displacement = 0
 		self.reached_max_height = False
-		self.max_walk_velocity = 250
-		self.max_run_velocity = 500
+		self.max_walk_velocity = 150
+		self.max_run_velocity = 300
 		self.superMario = False
 
 	def main_loop(self, GameObjects, delta_t, input_dict, CollisionEngine,levelHandler):
