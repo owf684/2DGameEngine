@@ -115,13 +115,16 @@ class _GameObject:
 	def _set_pixel_collision_map(self):
 
 		#up pixels
-		for x in range (self.rect.height):
+		for x in range (self.rect.width):
 			pixel_color = self.image.get_at((x,0))
 			if pixel_color[3] > 0:
 				self.pixelCollisionMap[0].append((x,0))
 
 		#down pixels
-
+		for x in range (self.rect.width):
+			pixel_color = self.image.get_at((x,self.rect.height-1))
+			if pixel_color[3] > 0:
+				self.pixelCollisionMap[1].append((x,self.rect.height-1))
 		#left pixels
 
 		#ight pixels

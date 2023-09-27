@@ -42,6 +42,7 @@ class _CollisionEngine:
 
 					if (collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy' or collisionBuffer[currentObject].subClass == 'powerup') and objects.subClass != 'environment':
 						collisionBuffer[currentObject].pixelCollisionMap[0].clear()
+						collisionBuffer[currentObject].pixelCollisionMap[1].clear()
 						collisionBuffer[currentObject]._set_pixel_collision_map()
 						self.detectCollisions(collisionBuffer, objects, currentObject)
 			
@@ -59,22 +60,35 @@ class _CollisionEngine:
 	def ray_scan_down(self,collisionBuffer,objects,currentObject):
 	
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
+		if collisionBuffer[currentObject].subClass == 'player':
+			for pixel_points in collisionBuffer[currentObject].pixelCollisionMap[1]:
 
-		while scan_point <= width:
-
-			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] + scan_point,collisionBuffer[currentObject].rect.bottom + scan_depth ):
-
-				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-
+				translated_point = (pixel_points[0] + collisionBuffer[currentObject].rect.x, pixel_points[1] + collisionBuffer[currentObject].rect.y)
+				if objects.rect.collidepoint(translated_point[0], translated_point[1]):
 					collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
 					collisionBuffer[currentObject].collisionDown = True
 					if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
-
 						collisionBuffer[currentObject].onEnemy = True
 						objects.isHit = True
 					break
 
-			scan_point += scan_step
+		else:
+
+			while scan_point <= width:
+
+				if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] + scan_point,collisionBuffer[currentObject].rect.bottom + scan_depth ):
+
+					if collisionBuffer[currentObject].rect.colliderect(objects.rect):
+
+						collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+						collisionBuffer[currentObject].collisionDown = True
+						if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
+
+							collisionBuffer[currentObject].onEnemy = True
+							objects.isHit = True
+						break
+
+				scan_point += scan_step
 
 	def ray_scan_up(self,collisionBuffer,objects,currentObject):
 
@@ -84,12 +98,14 @@ class _CollisionEngine:
 			for pixel_points in collisionBuffer[currentObject].pixelCollisionMap[0]:
 
 				translated_point = (pixel_points[0] + collisionBuffer[currentObject].rect.x , pixel_points[1] + collisionBuffer[currentObject].rect.y )
-				if objects.rect.collidepoint(translated_point[0],translated_point[1]):
-					collisionBuffer[currentObject].collisionSubClass = objects.subClass
-					collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
-					collisionBuffer[currentObject].collisionObject = objects
-					collisionBuffer[currentObject].collisionUp = True
-					break	
+				if objects.rect.colliderect(collisionBuffer[currentObject].rect):
+
+					if objects.rect.collidepoint(translated_point[0],translated_point[1]):
+						collisionBuffer[currentObject].collisionSubClass = objects.subClass
+						collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
+						collisionBuffer[currentObject].collisionObject = objects
+						collisionBuffer[currentObject].collisionUp = True
+					break
 				translated_point = None				
 		else:
 
