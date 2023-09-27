@@ -40,6 +40,7 @@ class _EnemyEngine:
 	def track_scroll(self,objects,PlayerEngine):
 		if PlayerEngine.scroll_level:
 			objects.position[0] -= PlayerEngine.x_displacement
+
 	def change_direction(self,objects):
 
 		if objects.collisionLeft:

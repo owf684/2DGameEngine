@@ -172,11 +172,10 @@ class _LevelBuilder:
 			self.scroll_offset_magnitude = levelHandler.scroll_offset/levelHandler.scroll_offset
 		else:
 			self.scroll_offset_magnitude = 1
-			self.scroll_offset_fudge = 0
 
 
-		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size-(levelHandler.scroll_delta*self.scroll_offset_magnitude) 
-		#print(self.snap_position[0])
+		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size - int(levelHandler.scroll_delta*self.scroll_offset_magnitude)
+		print(self.snap_position[0])
 		#get y snap value
 		self.snap_position[1] = int(self.mouse_position[1]/self.grid_size)*self.grid_size
 
@@ -257,8 +256,7 @@ class _LevelBuilder:
 			for objects in levelObjects:
 				print(self.snap_position)
 				if objects.rect.collidepoint(self.snap_position):
-					print("adding item to block")
-					objects.item = new_object 
+					objects.item = new_object
 					add = False
 
 			if add:
