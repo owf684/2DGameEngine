@@ -51,7 +51,8 @@ class _GraphicsEngine:
 				pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
 				levelHandler.eox = x - abs(levelHandler.scroll_offset)
 				levelHandler.scroll_delta = 1248 - levelHandler.eox
-			#print(levelHandler.scroll_delta)
+				levelHandler.screen_width = self.screen_width + int(abs(levelHandler.scroll_offset))
+
 			for y in range(0, self.screen_height, self.grid_size):
 				pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
 
