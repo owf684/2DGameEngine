@@ -23,7 +23,7 @@ class _PlayerEngine:
 	def main_loop(self, GameObjects, delta_t, input_dict, CollisionEngine,levelHandler):
 		for objects in GameObjects:
 			if objects.subClass == 'player':
-				self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine)
+				self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine,levelHandler)
 				self.jump(objects,delta_t,input_dict)
 				self.onEnemy(objects)
 				self.handle_damage(objects,levelHandler)
@@ -83,7 +83,7 @@ class _PlayerEngine:
 				objects.jump_velocity_1 = 0
 
 				
-	def horizontal_movement(self,objects,delta_t,input_dict,CollisionEngine):
+	def horizontal_movement(self,objects,delta_t,input_dict,CollisionEngine,levelHandler):
 
 		'''KINEMATIC EQUATIONS
 		delta_x = v_initial * delta_t + 0.5 * a * delta_t^2
@@ -94,7 +94,7 @@ class _PlayerEngine:
 
 		self.set_x_acceleration(objects,input_dict,CollisionEngine)
 
-		self.set_scroll_state(objects,input_dict)
+		self.set_scroll_state(objects,input_dict,levelHandler)
 
 		#C.Corona try integer movements to fix scrolling weirdness
 		self.x_displacement = int((objects.velocity_X1 * delta_t) + (0.5 * self.x_acceleration * math.pow(delta_t,2)))
@@ -145,14 +145,14 @@ class _PlayerEngine:
 				self.x_direction += self.x_decelleration
 
 
-	def set_scroll_state(self,objects,input_dict):
+	def set_scroll_state(self,objects,input_dict,levelHandler):
 
 		#handle level scrolling left
 		if objects.position[0] >= self.screen_width/2 and self.x_direction > 0 and input_dict['right'] == '1':
 			self.scroll_level = True
 
 		#handle level scrolling right
-		elif objects.position[0] < self.screen_width/2 and self.x_direction < 0 and input_dict['left'] == '-1':
+		elif objects.position[0] < self.screen_width/2 and self.x_direction < 0 and input_dict['left'] == '-1' and levelHandler.scroll_offset > 0:
 			self.scroll_level = True
 		else:
 			self.scroll_level = False

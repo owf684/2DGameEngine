@@ -13,12 +13,11 @@ class _LevelHandler:
 		self.eox = 0
 		self.load_level = False
 		self.currentLevel = 'level_1'
-
+		self.screen_width = 0
 		# Question Block List
 		self.question_blocks = list()
 
 	def main_loop(self,levelHandler,GameObjects,levelObjects,collisionList,screen, PlayerEngine,levelBuilder):
-
 		self.scroll_level(levelObjects,PlayerEngine,GameObjects)
 
 		self.player_death(levelHandler,GameObjects,levelObjects,collisionList,self.currentLevel,screen,levelBuilder)
@@ -34,6 +33,14 @@ class _LevelHandler:
 			for objects in levelObjects:
 				objects.position[0] -= PlayerEngine.x_displacement
 				objects.rect.x -= PlayerEngine.x_displacement
+
+				if objects.item is not None:
+					objects.item.position[0] -= PlayerEngine.x_displacement
+					objects.item.rect.x -= PlayerEngine.x_displacement
+
 			for objects in GameObjects:
 				if objects.subClass != 'player':
 					objects.rect.x -= PlayerEngine.x_displacement
+				if objects.item is not None:
+					objects.item.position[0] -= PlayerEngine.x_displacement
+					objects.item.rect.x -= PlayerEngine.x_displacement
