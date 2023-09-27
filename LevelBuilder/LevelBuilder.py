@@ -471,8 +471,7 @@ class _LevelBuilder:
 
 			if object_elem.find('itemImagePath').text != 'None':
 				levelObjects[-1].item = self.generate_item(object_elem)
-			else:
-				print("no item found")
+
 			collisionList.append(levelObjects[-1])
 			if levelObjects[-1].subClass == 'environment':
 				if 'spawn_point' in levelObjects[-1].imagePath:
