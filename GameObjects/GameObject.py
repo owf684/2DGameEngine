@@ -113,26 +113,32 @@ class _GameObject:
 		self.initial_position[1] = y_position	
 
 	def _set_pixel_collision_map(self):
-
+		i = 0
 		#up pixels
-		for x in range (self.rect.width):
-			pixel_color = self.image.get_at((x,0))
-			if pixel_color[3] > 0:
-				self.pixelCollisionMap[0].append((x,0))
+		while i < 4:
+
+			for x in range (self.rect.width):
+				pixel_color = self.image.get_at((x,i))
+				if pixel_color[3] > 0:
+					self.pixelCollisionMap[0].append((x,i))
+			i+=1
 
 		#down pixels
-		for x in range (self.rect.width):
-			pixel_color = self.image.get_at((x,self.rect.height-1))
-			if pixel_color[3] > 0:
-				self.pixelCollisionMap[1].append((x,self.rect.height-1))
-		#left pixels
+		i = 1
+		while i < 2:
 
+			for x in range (self.rect.width):
+				pixel_color = self.image.get_at((x,self.rect.height-i))
+				if pixel_color[3] > 0:
+					self.pixelCollisionMap[1].append((x,self.rect.height-i))
+			i+= 1
+		#left pixels
 		#ight pixels
 
 
 	'''GETTERS'''
 	def _get_weight(self):
-		return self.get_weight
+		return self.weight
 
 	def _get_max_horizontal_velocity(self):
 		return self.maxHorizontalVelocity
@@ -160,4 +166,5 @@ class _GameObject:
 	def _get_accelerationX(self):
 		return self.accelerationX
 
-
+	def _get_pixel_collision_map(self):
+		return self.pixelCollisionMap

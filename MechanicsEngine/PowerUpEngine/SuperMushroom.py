@@ -26,7 +26,6 @@ class _SuperMushroom:
 			objects.position[0] -= PlayerEngine.x_displacement
 
 	def move_mushroom(self,objects):
-		print(objects.subClass)
 		position = copy.deepcopy(objects.position)
 		position[0] -= self.velocity_x*objects.x_direction
 		objects.position = position

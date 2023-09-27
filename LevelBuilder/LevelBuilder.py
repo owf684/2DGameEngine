@@ -468,6 +468,7 @@ class _LevelBuilder:
 			levelObjects[-1]._set_image()		
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
+			levelObjects[-1]._set_pixel_collision_map()
 
 			if object_elem.find('itemImagePath').text != 'None':
 				levelObjects[-1].item = self.generate_item(object_elem)
@@ -505,6 +506,7 @@ class _LevelBuilder:
 			GameObjects[-1]._set_image()		
 			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
 			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
+			GameObjects[-1]._set_pixel_collision_map()
 
 			GameObjects[-1].jump_velocity = float(object_elem.find("jump_velocity").text)
 			GameObjects[-1].jump_decelleration = float(object_elem.find('jump_decelleration').text)

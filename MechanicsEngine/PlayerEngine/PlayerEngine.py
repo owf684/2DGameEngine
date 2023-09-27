@@ -12,13 +12,12 @@ class _PlayerEngine:
 		self.screen_width = 1280
 		self.scroll_level = False
 		self.x_acceleration = 0
-		self.stop_jump = False
-		self.start_jump = False
 		self.total_y_displacement = 0
 		self.reached_max_height = False
 		self.max_walk_velocity = 150
 		self.max_run_velocity = 300
 		self.superMario = False
+		self.jump_latch = False
 
 	def main_loop(self, GameObjects, delta_t, input_dict, CollisionEngine,levelHandler):
 		for objects in GameObjects:
@@ -39,18 +38,16 @@ class _PlayerEngine:
 				objects.onEnemy = False
 
 	def jump(self,objects,delta_t,input_dict):
-
 			#Handle jump velocity
 			if input_dict['up'] == '1' and not objects.collisionUp and not self.reached_max_height:
-
 				objects.jumping = True
 				objects.jump_velocity_1 = 450
 
-			elif input_dict['up'] == '0' or self.reached_max_height and not objects.collisionDown:
-
+			elif input_dict['up'] == '0' or self.reached_max_height:
 				objects.jump_velocity_1 -= 15
 
 			if objects.collisionDown:
+
 				objects.jump_velocity_1 = 0
 
 				if input_dict['up'] == '0':
@@ -58,31 +55,28 @@ class _PlayerEngine:
 					objects.jumping = False
 					self.reached_max_height = False
 
+			if self.total_y_displacement > 100:
+				self.reached_max_height = True
 
 			if objects.collisionUp and not self.reached_max_height:
 				self.total_y_displacement = 0
 				objects.jumping = False
 				objects.jump_velocity_1 = 0
 				self.reached_max_height = True
-
+			print(self.total_y_displacement)
+			if objects.jump_velocity_1 < 0:
+				objects.jump_velocity_1 = 0
 			#handle position calculations
 			if delta_t != 0:
-
 				self.y_displacement	= objects.jump_velocity_1*delta_t + (0.5 * (objects.jump_velocity_1/delta_t) * math.pow(delta_t,2) )
-				
 				if self.y_displacement < 0:
 					self.y_displacement = 0
-
 				objects.position[1] -= self.y_displacement
 				objects.rect.y -= self.y_displacement
 				self.total_y_displacement += self.y_displacement
 
-			if self.total_y_displacement > 150:
-				self.reached_max_height = True
-			if objects.jump_velocity_1 < 0:
-				objects.jump_velocity_1 = 0
 
-				
+
 	def horizontal_movement(self,objects,delta_t,input_dict,CollisionEngine,levelHandler):
 
 		'''KINEMATIC EQUATIONS
