@@ -96,7 +96,8 @@ class _PlayerEngine:
 
 		self.set_scroll_state(objects,input_dict)
 
-		self.x_displacement = (objects.velocity_X1 * delta_t) + (0.5 * self.x_acceleration * math.pow(delta_t,2))
+		#C.Corona try integer movements to fix scrolling weirdness
+		self.x_displacement = int((objects.velocity_X1 * delta_t) + (0.5 * self.x_acceleration * math.pow(delta_t,2)))
 
 		if objects.collisionLeft and input_dict['right'] != '1' or objects.collisionRight and input_dict['left'] != '-1':
 			self.x_displacement= 0
@@ -126,7 +127,7 @@ class _PlayerEngine:
 		if (input_dict['right'] == '1') and not CollisionEngine.collisionRight:
 			self.x_acceleration = objects.accelerationX
 		elif input_dict['left'] == '-1' and not CollisionEngine.collisionLeft:
-			self.x_acceleration  = objects.accelerationX*int( input_dict['left'] )
+			self.x_acceleration = objects.accelerationX*int(input_dict['left'])
 		else:
 			self.x_acceleration = 0 
 

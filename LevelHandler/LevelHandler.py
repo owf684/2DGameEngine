@@ -31,7 +31,6 @@ class _LevelHandler:
 
 		if (PlayerEngine.scroll_level):
 			self.scroll_offset += PlayerEngine.x_displacement
-
 			for objects in levelObjects:
 				objects.position[0] -= PlayerEngine.x_displacement
 				objects.rect.x -= PlayerEngine.x_displacement

@@ -93,13 +93,7 @@ class _LevelBuilder:
 			new_enemy._set_image()
 			new_enemy.position = [self.screen_width/2,self.screen_height/20]
 			new_enemy._set_sprite_size(new_enemy.image)
-			print("scaling")
-			if new_enemy.sprite_size[0] == 16 and new_enemy.sprite_size[1] == 16:
-
-				new_enemy.image = pygame.transform.scale(new_enemy.image,(new_enemy.sprite_size[0]*2,new_enemy.sprite_size[1]*2))
-			
 			new_enemy._set_rect(new_enemy.sprite_size)
-			print(new_enemy.position)
 			self.enemy_sprites.append(new_enemy)
 	def initialize_environment_sprites(self):
 		environment_list = glob.glob('./Assets/EnvironmentSprites/*.png')
@@ -151,7 +145,6 @@ class _LevelBuilder:
 		#remove block
 		if input_dict['right-click'] == '1':
 			self.mouse_position = pygame.mouse.get_pos()
-			print(self.mouse_position)
 			for objects in GameObjects:
 				if objects.subClass != 'player':
 					if objects.rect.collidepoint(self.mouse_position):
@@ -172,13 +165,12 @@ class _LevelBuilder:
 			self.scroll_offset_magnitude = levelHandler.scroll_offset/levelHandler.scroll_offset
 		else:
 			self.scroll_offset_magnitude = 1
-
-
-		self.snap_position[0] = int((self.mouse_position[0]) /self.grid_size)*self.grid_size - int(levelHandler.scroll_delta*self.scroll_offset_magnitude)
-		print(self.snap_position[0])
+		print("mouse_position: " + str(self.mouse_position))
+		print("scroll_delta: " + str(levelHandler.scroll_delta))
+		self.snap_position[0] = int((self.mouse_position[0] - abs(levelHandler.scroll_delta))/self.grid_size)*self.grid_size + abs(levelHandler.scroll_delta)
 		#get y snap value
 		self.snap_position[1] = int(self.mouse_position[1]/self.grid_size)*self.grid_size
-
+		print("snap_position: " + str(self.snap_position))
 		#draw the placement sqaure
 		square_rect = pygame.Rect(self.snap_position[0], self.snap_position[1], self.scan_block_size, self.scan_block_size)
 		
@@ -189,7 +181,6 @@ class _LevelBuilder:
 		for objects in levelObjects:
 			if objects.rect.collidepoint(self.snap_position) and self.category_selection_index != 3:
 				self.can_place_block = False
-				print(self.category_selection_index)
 
 		pygame.draw.rect(screen, self.block_color, square_rect)
 		#update the screen
@@ -254,14 +245,12 @@ class _LevelBuilder:
 
 			add = True
 			for objects in levelObjects:
-				print(self.snap_position)
 				if objects.rect.collidepoint(self.snap_position):
 					objects.item = new_object
 					add = False
 
 			if add:
-				print("adding item to the world")
-				GameObjects.append(new_object)	
+				GameObjects.append(new_object)
 				collisionList.append(GameObjects[-1])
 
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
@@ -341,10 +330,6 @@ class _LevelBuilder:
 
 		elif self.selected_block_index >= len(self.category_container[self.category_selection_index]):
 			self.selected_block_index = len(self.category_container[self.category_selection_index])-1	
-
-
-
-		#print(self.selected_block_index)
 
 	def patch_level(self,levelObjects,GameObjects):
 		selected_level = 1
