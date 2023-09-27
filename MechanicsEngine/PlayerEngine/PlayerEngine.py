@@ -4,7 +4,7 @@ import math
 class _PlayerEngine:
 
 	def __init__(self):
-		self.gravity = 9.8*150
+		self.gravity = 9.8*100
 		self.y_displacement = 0
 		self.x_displacement = 0
 		self.x_direction = 0

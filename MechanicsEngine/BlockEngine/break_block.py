@@ -49,5 +49,6 @@ class _break_block:
 			item.position[1] -= push_block_object.rect.height/2
 			item.rect.y = item.position[1]
 			item.pause_physics = False
+			push_block_object.item = None
 			self.release_item_trigger = False
 			GameObjects.append(item)
