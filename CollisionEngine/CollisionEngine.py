@@ -80,7 +80,7 @@ class _CollisionEngine:
 
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
 
-		if collisionBuffer[currentObject].subClass == 'player2':
+		if collisionBuffer[currentObject].subClass == 'player':
 			for pixel_points in collisionBuffer[currentObject].pixelCollisionMap[0]:
 
 				translated_point = (pixel_points[0] + collisionBuffer[currentObject].rect.x , pixel_points[1] + collisionBuffer[currentObject].rect.y )

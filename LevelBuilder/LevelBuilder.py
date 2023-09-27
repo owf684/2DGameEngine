@@ -366,12 +366,41 @@ class _LevelBuilder:
 			position_y = ET.SubElement(obj[-1],"position_y")
 			position_y.text = str(objects.initial_position[1])
 
+			item_image_path = ET.SubElement(obj[-1],"itemImagePath")
+			item_sub_class = ET.SubElement(obj[-1],"itemSubClass")
+			item_position_x = ET.SubElement(obj[-1],"item_position_x")
+			item_position_y = ET.SubElement(obj[-1],"item_position_y")
+
+			if objects.item is not None:
+				item_image_path.text = objects.item.imagePath
+				item_sub_class.text = objects.item.subClass
+				item_position_x.text = str(objects.item.initial_position[0])
+				item_position_y.text = str(objects.item.initial_position[1])
+			else:
+				item_image_path.text = 'None'
+				item_sub_class.text = 'None'
+				item_position_x.text = 'None'
+				item_position_y.text = 'None'
 
 		tree = ET.ElementTree(root)
 		
 		tree.write("./WorldData/"+level_string+"/levelObjects.xml" )
+	def generate_item(self,object_elem):
+		item = GameObject._GameObject()
+		item.subClass = object_elem.find("itemSubClass").text
+		item.imagePath = object_elem.find("itemImagePath").text
+		x_position = float(object_elem.find("item_position_x").text)
+		y_position = float(object_elem.find("item_position_y").text)
+		item.position[0] = x_position
+		item.position[1] = y_position
+		item.initial_position = copy.deepcopy(item.position)
+		item._set_image_path(item._get_image_path())
+		item._set_image()
+		item._set_sprite_size(item.image)
+		item._set_rect(item.sprite_size)
+		return item
 
-	def save_game_objects(slef,GameObjects,level_string):
+	def save_game_objects(self,GameObjects,level_string):
 
 		root = ET.Element("objects")
 		obj = list()
@@ -439,6 +468,11 @@ class _LevelBuilder:
 			levelObjects[-1]._set_image()		
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
+
+			if object_elem.find('itemImagePath').text != 'None':
+				levelObjects[-1].item = self.generate_item(object_elem)
+			else:
+				print("no item found")
 			collisionList.append(levelObjects[-1])
 			if levelObjects[-1].subClass == 'environment':
 				if 'spawn_point' in levelObjects[-1].imagePath:
