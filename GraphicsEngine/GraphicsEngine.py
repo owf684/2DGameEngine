@@ -48,30 +48,25 @@ class _GraphicsEngine:
 		if levelBuilder.edit:
 
 			for x in range(0, self.screen_width+int(abs(levelHandler.scroll_offset)), self.grid_size):
-
 				pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
 				levelHandler.eox = x - abs(levelHandler.scroll_offset)
 				levelHandler.scroll_delta = 1248 - levelHandler.eox
-
+			#print(levelHandler.scroll_delta)
 			for y in range(0, self.screen_height, self.grid_size):
 				pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
+
 
 		if levelHandler.clear_render_buffer:
 			self.render_buffer.clear()
 			levelHandler.clear_render_buffer = False
 
 		self.load_render_buffer(levelObjects,GameObjects)
-	   		 	
-
-	   	#pygame.draw.rect(self.screen, (255, 0, 0), objects.rect)
-
-		
-		#Update Graphics Here
+		# Update Graphics Here
 		for objects in self.render_buffer:
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
 			pygame.draw.rect(self.screen,(255,0,0),objects.rect,2)
 
-		#Update the display
+		# Update the display
 		pygame.display.flip()
 		return self.screen
 
@@ -85,8 +80,8 @@ class _GraphicsEngine:
 
 			if objects in self.render_buffer:
 
-					if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
-						self.render_buffer.remove(objects)
+				if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
+					self.render_buffer.remove(objects)
 
 		for objects in GameObjects:
 			if objects.subClass == "player":
