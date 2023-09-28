@@ -41,6 +41,13 @@ class _GameObject:
 		self.x_speed = 1
 		self.y_displacement =0
 		self.pause_physics = False
+		self.scrolling = False
+
+		#Momentum 
+		self.final_v = 0
+		self.initial_v = 0
+		self.delta_p = 0
+		self.detla_v  = 0
 		
 		#Collision Data
 		self.collisionDown = False
@@ -52,12 +59,8 @@ class _GameObject:
 		self.collisionSubClass = None
 		self.collisionObjDirection = 0
 		self.collisionObject = None
-		self.collisionMaster = None
-		self.isMaster = False
-		self.isSlave = False
-		self.troopCollision = list()
-		self.lastRect = None
 		self.hit = False
+
 		# [0 = up , 1 = down, 2 = left, 3 = right]
 		self.pixelCollisionMap = (list(),list(),list(),list())
 		self.item = None

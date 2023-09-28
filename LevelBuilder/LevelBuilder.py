@@ -469,6 +469,8 @@ class _LevelBuilder:
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
 			levelObjects[-1]._set_pixel_collision_map()
+			if levelObjects[-1].subClass == 'platform':
+				levelObjects[-1].mass = 100000
 
 			if object_elem.find('itemImagePath').text != 'None':
 				levelObjects[-1].item = self.generate_item(object_elem)
