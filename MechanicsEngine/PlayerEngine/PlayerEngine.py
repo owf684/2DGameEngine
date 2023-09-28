@@ -48,8 +48,6 @@ class _PlayerEngine:
 
 			if objects.collisionDown:
 
-				objects.jump_velocity_1 = 0
-
 				if input_dict['up'] == '0':
 					self.total_y_displacement = 0
 					objects.jumping = False

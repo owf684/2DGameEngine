@@ -27,7 +27,7 @@ class _PhysicsEngine:
 		for objects in GameObjects:
 			if objects.isRendered and not objects.pause_physics:
 
-				objects.velocity_Y1 += self.gravity * delta_t
+				objects.velocity_Y1 -= self.gravity * delta_t
 
 
 				if objects.collisionDown:
@@ -36,7 +36,7 @@ class _PhysicsEngine:
 				else:
 					objects.y_displacement = objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
 			
-				objects.position[1] += objects.y_displacement
+				objects.position[1] -= objects.y_displacement
 
 
 
