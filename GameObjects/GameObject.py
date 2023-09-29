@@ -19,7 +19,7 @@ class _GameObject:
 		self.initial_position = pygame.math.Vector2(0,0)
 		self.isRendered = False
 		self.scrollOffset = 0
-
+		self.image_mask = None
 		#Physics Data
 		self.weight = 10
 		self.maxHorizontalVelocity = 10
@@ -43,11 +43,6 @@ class _GameObject:
 		self.pause_physics = False
 		self.scrolling = False
 
-		#Momentum 
-		self.final_v = 0
-		self.initial_v = 0
-		self.delta_p = 0
-		self.detla_v  = 0
 		
 		#Collision Data
 		self.collisionDown = False
@@ -77,7 +72,7 @@ class _GameObject:
 		self.imagePath = imagePath
 
 	def _set_image(self):
-		self.image = pygame.image.load(self.imagePath)
+		self.image = pygame.image.load(self.imagePath).convert_alpha()
 
 	def _set_weight(self,weight):
 		self.weight = weight
@@ -114,6 +109,9 @@ class _GameObject:
 
 	def _set_init_yPos(self,y_position):
 		self.initial_position[1] = y_position	
+
+	def _set_mask(self):
+		self.image_mask = pygame.mask.from_surface(self.image)
 
 	def _set_pixel_collision_map(self):
 		i = 0

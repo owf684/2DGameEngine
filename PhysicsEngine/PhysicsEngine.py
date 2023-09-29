@@ -14,7 +14,7 @@ class _PhysicsEngine:
 
 		for objects in GameObjects:
 
-			self.collision_physics(objects,delta_t)
+			#self.collision_physics(objects,delta_t)
 			self.simulate_gravity(objects,delta_t)
 			self.x_position(objects,delta_t)
 
@@ -55,41 +55,19 @@ class _PhysicsEngine:
 			else:
 				objects.x_acceleration = 0
 
-			objects.x_displacement = objects.velocity_X1*delta_t + (0.5*objects.x_acceleration*math.pow(delta_t,2))
-
+			if (not objects.collisionLeft and objects.x_direction == -1) or (not objects.collisionRight and objects.x_direction == 1 ):
+				objects.x_displacement = objects.velocity_X1*delta_t + (0.5*objects.x_acceleration*math.pow(delta_t,2))
+				if objects.subClass =='player':
+					print(objects.collisionLeft)
+					print(objects.collisionRight)
+					print(objects.x_direction)
+			else:
+				objects.x_displacement = 0
 			if not objects.scrolling:
 
 				objects.position[0] += objects.x_displacement
 
 
-	#change in momentum due to collision with another object
-	def calculate_momentum(self,objects,delta_t):
-
-		'''
-		delta_p = change in momentum
-		delta_p = m*delta_v
-		'''
-		objects.delta_p = objects.mass*objects.delta_v
-
-	#change of velocity due to collision with another object
-	def calculate_delta_v(self,objects,delta_t): 
-
-		objects.final_v =(objects.mass*objects.initial_v + objects.collisionObject.mass*objects.collisionObject.initial_v)
-		objects.final_v = objects.final_v/(objects.mass + objects.collisionObject.mass)
-		objects.delta_v = objects.final_v - objects.initial_v 
-
-
-	def collision_physics(self,objects,delta_t):
-		if objects.velocity_X1 is not None:
-
-			if objects.collisionLeft or objects.collisionRight:
-				objects.initial_v = objects.velocity_X1
-				objects.collisionObject.initial_v = objects.collisionObject.velocity_X1
-				self.calculate_delta_v(objects,delta_t)
-				self.calculate_momentum(objects,delta_t)
-				objects.velocity_X1 = objects.delta_v
-				print("objects.delta_p: " + str(objects.delta_p))
-				print("objects.delta_v: "  + str(objects.delta_v))
-
+	
 
 
