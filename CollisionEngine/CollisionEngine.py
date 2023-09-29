@@ -53,7 +53,16 @@ class _CollisionEngine:
 		self.ray_scan_right(collisionBuffer,objects,currentObject)
 		self.ray_scan_up(collisionBuffer,objects,currentObject)
 		self.ray_scan_down(collisionBuffer,objects,currentObject)
+		#self.mask_left(collisionBuffer,objects,currentObject)
 
+	def mask_left(self,collisionBuffer,objects,currentObject):
+		if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask,(objects.position[0]-collisionBuffer[currentObject].position[0],objects.position[1]-collisionBuffer[currentObject].position[1])):
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.midleft[0],collisionBuffer[currentObject].rect.midleft[1] + 5):
+				collisionBuffer[currentObject].collisionSubClass = objects.subClass
+				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
+				collisionBuffer[currentObject].collisionObjects = objects
+				collisionBuffer[currentObject].collisionLeft = True			
+	
 	def ray_scan_down(self,collisionBuffer,objects,currentObject):
 	
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
@@ -84,9 +93,7 @@ class _CollisionEngine:
 				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
 				collisionBuffer[currentObject].collisionObject = objects
 				collisionBuffer[currentObject].collisionUp = True
-				#break
-
-
+				break
 
 	def ray_scan_left(self,collisionBuffer,objects,currentObject):
 	
@@ -99,7 +106,6 @@ class _CollisionEngine:
 				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
 				collisionBuffer[currentObject].collisionObjects = objects
 				collisionBuffer[currentObject].collisionLeft = True
-				break
 
 			scan_point += scan_step
 
