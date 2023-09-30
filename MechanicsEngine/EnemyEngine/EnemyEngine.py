@@ -32,10 +32,8 @@ class _EnemyEngine:
 			GameObjects.remove(objects)
 			GraphicsEngine.render_buffer.remove(objects)
 	def change_position(self,objects,PlayerEngine):
-		#position = copy.deepcopy(objects.position)
-		#position[0] -= objects.x_speed*objects.x_direction
-		#objects.position = position
-		objects.velocityX = 10
+
+		objects.velocityX = 20
 
 
 	def track_scroll(self,objects,PlayerEngine):

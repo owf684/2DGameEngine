@@ -512,4 +512,5 @@ class _LevelBuilder:
 				GameObjects[-1].initial_position = copy.deepcopy(self.spawn_point)
 				GameObjects[-1].position = copy.deepcopy(self.spawn_point)
 			collisionList.append(GameObjects[-1])
-	
+			if GameObjects[-1].subClass == 'enemy':
+				GameObjects[-1].x_direction = -1
