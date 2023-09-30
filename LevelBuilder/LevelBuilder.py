@@ -422,17 +422,6 @@ class _LevelBuilder:
 			position_y = ET.SubElement(obj[-1],"position_y")
 			position_y.text = str(objects.initial_position[1])
 
-			accelerationX = ET.SubElement(obj[-1],"accelerationX")
-			accelerationX.text = str(objects.accelerationX)
-
-			jump_velocity = ET.SubElement(obj[-1],"jump_velocity")
-			jump_velocity.text = str(objects.jump_velocity)
-
-			jump_decelleration = ET.SubElement(obj[-1],"jump_decelleration")
-			jump_decelleration.text = str(objects.jump_decelleration)
-
-			mass = ET.SubElement(obj[-1],"mass")
-			mass.text = str(objects.mass)
 
 
 		tree = ET.ElementTree(root)
@@ -454,8 +443,6 @@ class _LevelBuilder:
 
 		print("loading level objects...")
 
-		#clear levelObjects list
-		#levelObjects = list()
 		tree = ET.parse("./WorldData/" + level_string +"/levelObjects.xml")
 		root = tree.getroot()
 
@@ -472,7 +459,6 @@ class _LevelBuilder:
 			levelObjects[-1]._set_image()		
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
-			levelObjects[-1]._set_pixel_collision_map()
 			levelObjects[-1]._set_mask()
 
 			if object_elem.find('itemImagePath').text != 'None':
@@ -511,13 +497,8 @@ class _LevelBuilder:
 			GameObjects[-1]._set_image()		
 			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
 			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
-			GameObjects[-1]._set_pixel_collision_map()
 			GameObjects[-1]._set_mask()
-			
-			GameObjects[-1].jump_velocity = float(object_elem.find("jump_velocity").text)
-			GameObjects[-1].jump_decelleration = float(object_elem.find('jump_decelleration').text)
-			GameObjects[-1].accelerationX = float(object_elem.find("accelerationX").text)
-			GameObjects[-1].mass = float(object_elem.find("mass").text)
+
 			if GameObjects[-1].subClass == 'player':
 				GameObjects[-1].initial_position = copy.deepcopy(self.spawn_point)
 				GameObjects[-1].position = copy.deepcopy(self.spawn_point)

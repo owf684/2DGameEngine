@@ -7,16 +7,12 @@ class _break_block:
 
     def __init__(self):
 
-        self.push_block_trigger = False
-        self.theta = 1
-        self.step = .1
-        self.push_block_object = None
-        self.release_item_trigger = False
+        self.step = 0.1
 
     def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t):
         for objects in levelObjects:
 
-            self.handle_break_blocks(objects,PlayerEngine)
+            self.handle_break_blocks(objects, PlayerEngine)
 
             if objects.push_block_trigger:
                 self.push_block_animation(objects)
