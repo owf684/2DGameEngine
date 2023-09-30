@@ -96,7 +96,7 @@ collisionList.extend(levelObjects)
 pygame_events = None
 # simulation runtime variables
 delta_t = 0
-FPS = 60
+FPS = 120
 
 
 		
@@ -126,6 +126,9 @@ while running:
 		# Collision Engine
 		CE.main_loop(collisionList, GE, input_dict,screen)
 
+		#Block Engine
+		BE.main_loop(GameObjects,levelObjects,PlE)
+
 		# PlayerMechanics Engine
 		PlE.main_loop(GameObjects, delta_t, input_dict, CE,LH)
 
@@ -134,8 +137,7 @@ while running:
 		# PlatformMechanics Engine
 		# PfE.main_loop()
 
-		#Block Engine
-		BE.main_loop(GameObjects,levelObjects,PlE)
+
 		
 		# Animation System
 		AS.main_loop(GameObjects, input_dict,LH)

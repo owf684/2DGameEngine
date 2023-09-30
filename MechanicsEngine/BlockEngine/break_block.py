@@ -28,11 +28,14 @@ class _break_block:
 
 		for objects in GameObjects:
 			if objects.subClass == 'player':
-				if objects.collisionUp and objects.collisionSubClass == 'platform':
-					if "break" in objects.collisionObject.imagePath and not PlayerEngine.superMario:
-						self.push_block_object = objects.collisionObject
-						self.push_block_trigger = True
-						self.release_item_trigger = True
+				if objects.collisionObject is not None:
+
+					if objects.collisionObject.isHit and objects.collisionSubClass == 'platform':
+						if "break" in objects.collisionObject.imagePath and not PlayerEngine.superMario:
+							objects.collisionObject.isHit = False
+							self.push_block_object = objects.collisionObject
+							self.push_block_trigger = True
+							self.release_item_trigger = True
 
 	def push_block_animation(self,objects):
 
