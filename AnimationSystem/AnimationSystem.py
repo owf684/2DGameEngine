@@ -20,10 +20,10 @@ class _AnimationSystem:
         self.frame_index = 0
 
         self.jumping = False
-        self.idle_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_idle_right.png")
-        self.idle_left = pygame.image.load('./Assets/PlayerSprites/mario_32x32_idle_left.png')
-        self.jump_left = pygame.image.load("./Assets/PlayerSprites/mario_32x32_jump_left.png")
-        self.jump_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_jump_right.png")
+        self.idle_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_idle_right.png").convert_alpha()
+        self.idle_left = pygame.image.load('./Assets/PlayerSprites/mario_32x32_idle_left.png').convert_alpha()
+        self.jump_left = pygame.image.load("./Assets/PlayerSprites/mario_32x32_jump_left.png").convert_alpha()
+        self.jump_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_jump_right.png").convert_alpha()
         self.run_right = self.extract_frames("./Assets/PlayerSprites/mario_32x32_run_right.png",3,32,32)
         self.run_left = self.extract_frames("./Assets/PlayerSprites/mario_32x32_run_left.png",3,32,32)
         self.jump_lock = False
@@ -32,7 +32,7 @@ class _AnimationSystem:
         self.playerObjectStored = False
         self.playerObject = None
 
-        self.goomba_idle = pygame.image.load("./Assets/EnemySprites/Goomba/goomba_32x32_idle.png")
+        self.goomba_idle = pygame.image.load("./Assets/EnemySprites/Goomba/goomba_32x32_idle.png").convert_alpha()
         self.goomba_walk = self.extract_frames("./Assets/EnemySprites/Goomba/sprite_sheet/goomba_32x32_walk.png",2,32,32)
         self.goomba_frame_index = 0
         self.goomba_frame_duration = 200
@@ -112,7 +112,7 @@ class _AnimationSystem:
             self.goomba_last_frame_time = self.goomba_current_time
     def extract_frames(self, path, num_frames, frame_width, frame_height):
         frames = list()
-        sprite_sheet = pygame.image.load(path)
+        sprite_sheet = pygame.image.load(path).convert_alpha()
         for i in range(num_frames):
             frame = sprite_sheet.subsurface((0, i*frame_width, frame_width,frame_height))
             frames.append(frame)

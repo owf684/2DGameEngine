@@ -35,6 +35,8 @@ class _CollisionEngine:
 			collisionBuffer[currentObject].collisionUp = False
 
 
+
+
 			for objects in collisionBuffer:
 
 				self.updateRectPosition(objects)
@@ -54,12 +56,27 @@ class _CollisionEngine:
 		self.mask_scan_up(collisionBuffer,objects,currentObject)
 		self.mask_scan_down(collisionBuffer,objects,currentObject)
 
+		if collisionBuffer[currentObject].subClass == 'player':
 
+			if collisionBuffer[currentObject].collisionLeft:
+
+				print("collisionLeft: " + str(collisionBuffer[currentObject].collisionLeft))
+			if collisionBuffer[currentObject].collisionRight:
+
+				print("collisionRight: " + str(collisionBuffer[currentObject].collisionRight))
+			if collisionBuffer[currentObject].collisionUp:
+
+				print("collisionUp: " + str(collisionBuffer[currentObject].collisionUp))
+			if collisionBuffer[currentObject].collisionDown:
+
+				print("collisionDown: " + str(collisionBuffer[currentObject].collisionDown))
 	def mask_scan_up(self,collisionBuffer,objects,currentObject):
 		if collisionBuffer[currentObject].rect.colliderect(objects.rect):
 			if collisionBuffer[currentObject].rect.top < objects.rect.bottom:
 				if collisionBuffer[currentObject].rect.bottom > objects.rect.bottom:
 					if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
+						collisionBuffer[currentObject]._set_mask()
+						objects._set_mask()
 						if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (
 						collisionBuffer[currentObject].position[0] - objects.position[0],
 						collisionBuffer[currentObject].position[1] - objects.position[1])):
@@ -75,12 +92,15 @@ class _CollisionEngine:
 			if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
 				if collisionBuffer[currentObject].rect.top < objects.rect.bottom:
 					if collisionBuffer[currentObject].rect.top < objects.rect.top:
-						if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (objects.position[0] - collisionBuffer[currentObject].position[0],objects.position[1] - collisionBuffer[currentObject].position[1])):
-							collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
-							collisionBuffer[currentObject].collisionDown = True
-							if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
-								collisionBuffer[currentObject].onEnemy = True
-								objects.isHit = True
+						if collisionBuffer[currentObject].rect.centery+5 < objects.rect.centery:
+							collisionBuffer[currentObject]._set_mask()
+							objects._set_mask()
+							if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (objects.position[0] - collisionBuffer[currentObject].position[0],objects.position[1] - collisionBuffer[currentObject].position[1] )):
+								collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+								collisionBuffer[currentObject].collisionDown = True
+								if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
+									collisionBuffer[currentObject].onEnemy = True
+									objects.isHit = True
 
 	def ray_scan_left(self,collisionBuffer,objects,currentObject):
 	
@@ -116,17 +136,17 @@ class _CollisionEngine:
 	def configure_scan_variables_lr(self, collisionBuffer, currentObject):
 	
 		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
-		if collisionBuffer[currentObject].subClass == 'enemy':
+		if collisionBuffer[currentObject].subClass != 'player':
 			scan_resolution = 3
 			scan_offset = 5
 		else:
 
-			scan_offset = 0
-			scan_resolution = copy.deepcopy(height)/2
+			scan_offset = 10
+			scan_resolution = copy.deepcopy(height)
 
 		scan_depth = 10
 		scan_step = height / scan_resolution
-		scan_point = 5
+		scan_point = 0
 		return height, scan_depth, scan_offset, scan_point, scan_step
 
 
