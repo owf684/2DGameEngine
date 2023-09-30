@@ -1,7 +1,7 @@
-import pygame
-import copy
 import math
-
+import sys
+sys.path.append('./GameObjects')
+import BlockObject
 
 class _question_block:
 
@@ -17,13 +17,15 @@ class _question_block:
     def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t):
 
         for objects in levelObjects:
-            self.handle_question_blocks(objects, PlayerEngine)
+            if isinstance(objects, BlockObject._BlockObject):
 
-            if objects.question_block_trigger:
-                self.question_block_animation(objects)
-                self.question_block_hit(objects)
-            if objects.release_item_trigger:
-                self.release_item(objects, GameObjects)
+                self.handle_question_blocks(objects, PlayerEngine)
+
+                if objects.question_block_trigger:
+                    self.question_block_animation(objects)
+                    self.question_block_hit(objects)
+                if objects.release_item_trigger:
+                    self.release_item(objects, GameObjects)
 
     def handle_question_blocks(self, objects, PlayerEngine):
 

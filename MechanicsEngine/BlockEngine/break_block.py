@@ -1,5 +1,6 @@
-import pygame
-import copy
+import sys
+sys.path.append('./GameObjects')
+import BlockObject
 import math
 
 
@@ -11,17 +12,16 @@ class _break_block:
 
     def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t):
         for objects in levelObjects:
+            if isinstance(objects, BlockObject._BlockObject):
+                self.handle_break_blocks(objects, PlayerEngine)
 
-            self.handle_break_blocks(objects, PlayerEngine)
+                if objects.push_block_trigger:
+                    self.push_block_animation(objects)
 
-            if objects.push_block_trigger:
-                self.push_block_animation(objects)
-
-            if objects.release_item_trigger:
-                self.release_item(objects, GameObjects)
+                if objects.release_item_trigger:
+                    self.release_item(objects, GameObjects)
 
     def handle_break_blocks(self, objects, PlayerEngine):
-
         if objects.hit:
             if "break" in objects.imagePath and not PlayerEngine.superMario:
                 objects.hit = False

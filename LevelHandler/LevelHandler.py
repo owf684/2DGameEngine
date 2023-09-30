@@ -1,7 +1,6 @@
-import pygame
-
-
-
+import sys
+sys.path.append("./GameObject")
+import BlockObject
 
 class _LevelHandler:
 
@@ -42,6 +41,7 @@ class _LevelHandler:
 			for objects in GameObjects:
 				if objects.subClass != 'player':
 					objects.rect.x -= PlayerEngine.x_displacement
-				if objects.item is not None:
-					objects.item.position[0] -= PlayerEngine.x_displacement
-					objects.item.rect.x -= PlayerEngine.x_displacement
+				if isinstance(objects,BlockObject._BlockObject):
+					if objects.item is not None:
+						objects.item.position[0] -= PlayerEngine.x_displacement
+						objects.item.rect.x -= PlayerEngine.x_displacement
