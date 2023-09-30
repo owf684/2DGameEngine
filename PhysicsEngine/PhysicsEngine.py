@@ -29,16 +29,19 @@ class _PhysicsEngine:
 
 		if objects.isRendered and not objects.pause_physics:
 
-			objects.velocity_Y1 -= self.gravity * delta_t
+			objects.velocityY -= self.gravity * delta_t
 
 
-			if objects.collisionDown:
+			if  not objects.collisionDown or objects.jumping:
+
+				objects.y_displacement = objects.velocityY*delta_t + (self.gravity * math.pow(delta_t,2) )
+				objects.position[1] -= objects.y_displacement
+
+			elif objects.collisionDown:
 				objects.y_displacement = 0
-				objects.velocity_Y1 =0
-			else:
-				objects.y_displacement = objects.velocity_Y1*delta_t + ( 0.5 * self.gravity * math.pow(delta_t,2) )
-			
-			objects.position[1] -= objects.y_displacement
+				objects.velocityY =0
+				#if objects.collisionObject is not None:
+				#	objects.position[1] = objects.collisionObject.rect.top - objects.rect.height
 
 
 	def x_position(self,objects,delta_t):
@@ -57,10 +60,6 @@ class _PhysicsEngine:
 
 			if (not objects.collisionLeft and objects.x_direction == -1) or (not objects.collisionRight and objects.x_direction == 1 ):
 				objects.x_displacement = objects.velocity_X1*delta_t + (0.5*objects.x_acceleration*math.pow(delta_t,2))
-				if objects.subClass =='player':
-					print(objects.collisionLeft)
-					print(objects.collisionRight)
-					print(objects.x_direction)
 			else:
 				objects.x_displacement = 0
 			if not objects.scrolling:

@@ -53,7 +53,7 @@ class _AnimationSystem:
                 self.goomba_walk_animation(objects)
     def handle_jump_animations(self, objects, input_dict):
 
-        if objects.jump_velocity_1 > 0:
+        if objects.velocityY > 0:
             if self.x_direction == 1:
                 objects.image = self.jump_right
                 self.jumping = True

@@ -30,6 +30,7 @@ class _GameObject:
 		self.jump_velocity = 400
 		self.jump_decelleration = 20
 		self.velocityX = 0
+		self.velocityY = 0
 		self.velocity_X2 = 0
 		self.velocity_X1 = 0
 		self.accelerationX = 1500

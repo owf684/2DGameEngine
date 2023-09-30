@@ -55,6 +55,7 @@ class _question_block:
 			item.position[1] -= question_block_object.rect.height/2
 			item.rect.y = item.position[1]
 			item.pause_physics = False
+			item._set_mask()
 			question_block_object.item = None
 			self.release_item_trigger = False
 			GameObjects.append(item)

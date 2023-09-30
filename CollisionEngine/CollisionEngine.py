@@ -51,18 +51,41 @@ class _CollisionEngine:
 
 		self.ray_scan_left(collisionBuffer,objects,currentObject)
 		self.ray_scan_right(collisionBuffer,objects,currentObject)
-		self.ray_scan_up(collisionBuffer,objects,currentObject)
-		self.ray_scan_down(collisionBuffer,objects,currentObject)
+		self.mask_scan_up(collisionBuffer,objects,currentObject)
+		self.mask_scan_down(collisionBuffer,objects,currentObject)
+		#self.ray_scan_up(collisionBuffer,objects,currentObject)
+		#self.ray_scan_down(collisionBuffer,objects,currentObject)
 		#self.mask_left(collisionBuffer,objects,currentObject)
 
 	def mask_left(self,collisionBuffer,objects,currentObject):
 		if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask,(objects.position[0]-collisionBuffer[currentObject].position[0],objects.position[1]-collisionBuffer[currentObject].position[1])):
-			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.midleft[0],collisionBuffer[currentObject].rect.midleft[1] + 5):
+			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.midleft[0],collisionBuffer[currentObject].rect.midleft[1]):
 				collisionBuffer[currentObject].collisionSubClass = objects.subClass
 				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
 				collisionBuffer[currentObject].collisionObjects = objects
-				collisionBuffer[currentObject].collisionLeft = True			
-	
+				collisionBuffer[currentObject].collisionLeft = True
+
+	def mask_scan_up(self,collisionBuffer,objects,currentObject):
+		if collisionBuffer[currentObject].rect.colliderect(objects.rect):
+			if collisionBuffer[currentObject].rect.top < objects.rect.bottom:
+				if collisionBuffer[currentObject].rect.bottom > objects.rect.bottom:
+					if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (objects.position[0] - collisionBuffer[currentObject].position[0],objects.position[1] - collisionBuffer[currentObject].position[1])):
+						collisionBuffer[currentObject].collisionSubClass = objects.subClass
+						collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
+						collisionBuffer[currentObject].collisionObject = objects
+						collisionBuffer[currentObject].collisionUp = True
+
+	def mask_scan_down(self,collisionBuffer,objects,currentObject):
+		if collisionBuffer[currentObject].rect.colliderect(objects.rect):
+			if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
+				if collisionBuffer[currentObject].rect.top < objects.rect.bottom+5:
+					if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (objects.position[0] - collisionBuffer[currentObject].position[0],objects.position[1] - collisionBuffer[currentObject].position[1])):
+						collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+						collisionBuffer[currentObject].collisionDown = True
+						if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
+							collisionBuffer[currentObject].onEnemy = True
+							objects.isHit = True
+
 	def ray_scan_down(self,collisionBuffer,objects,currentObject):
 	
 		scan_depth, scan_point, scan_step, width = self.configure_scan_variables_ud(collisionBuffer, currentObject)
@@ -72,11 +95,10 @@ class _CollisionEngine:
 			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] + scan_point,collisionBuffer[currentObject].rect.bottom + scan_depth ):
 
 				if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-
 					collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
+
 					collisionBuffer[currentObject].collisionDown = True
 					if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
-
 						collisionBuffer[currentObject].onEnemy = True
 						objects.isHit = True
 
@@ -131,10 +153,10 @@ class _CollisionEngine:
 			scan_offset = 5
 		else:
 
-			scan_offset = 28
+			scan_offset = 5
 			scan_resolution = copy.deepcopy(height) / 8
 
-		scan_depth = 5
+		scan_depth = 10
 		scan_step = height / scan_resolution
 		scan_point = 0
 		return height, scan_depth, scan_offset, scan_point, scan_step
@@ -149,7 +171,7 @@ class _CollisionEngine:
 
 		scan_step = width / scan_resolution
 		scan_point = 0
-		scan_depth = 5
+		scan_depth = 10
 
 		return scan_depth, scan_point, scan_step, width
 
