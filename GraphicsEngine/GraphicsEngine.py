@@ -65,7 +65,7 @@ class _GraphicsEngine:
 		# Update Graphics Here
 		for objects in self.render_buffer:
 			self.screen.blit(objects.image,(objects.position[0],objects.position[1]))
-			#pygame.draw.rect(self.screen,(255,0,0),objects.rect,2)
+			pygame.draw.rect(self.screen,(255,0,0),objects.rect,2)
 
 		# Update the display
 		pygame.display.flip()
