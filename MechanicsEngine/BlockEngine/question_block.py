@@ -56,7 +56,7 @@ class _question_block:
 
         if objects.item is not None:
             item = objects.item
-            item.position[1] -= objects.rect.height / 2
+            item.position[1] -= objects.rect.height
             item.rect.y = item.position[1]
             item.pause_physics = False
             item._set_mask()

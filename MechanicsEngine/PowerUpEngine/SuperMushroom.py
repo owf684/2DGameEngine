@@ -2,12 +2,11 @@ import pygame
 import copy
 
 
-
-
 class _SuperMushroom:
 
 	def __init__(self):
 		self.velocity_x = 1
+		self.init_direction = 1
 
 	def main_loop(self,GameObjects,levelHandler,PlayerEngine):
 		for objects in GameObjects:
@@ -26,9 +25,9 @@ class _SuperMushroom:
 			objects.position[0] -= PlayerEngine.x_displacement
 
 	def move_mushroom(self,objects):
-		objects.velocityX = 10
+		objects.velocityX = 20
 	
-	def detectCollisions(self,objects):
+	def detectCollisions(self, objects):
 
 		if objects.collisionLeft:
 			objects.x_direction = 1
