@@ -28,11 +28,14 @@ class _question_block:
 
 		for objects in GameObjects:
 			if objects.subClass == 'player':
-				if objects.collisionUp and objects.collisionSubClass == 'platform':
-					if "Question" in objects.collisionObject.imagePath:
-						self.question_block_object = objects.collisionObject
-						self.question_block_trigger = True
-						self.release_item_trigger = True
+				if objects.collisionObject is not None:
+
+					if objects.collisionObject.isHit and objects.collisionSubClass == 'platform':
+						if "Question" in objects.collisionObject.imagePath:
+							objects.collisionObject.isHit = False
+							self.question_block_object = objects.collisionObject
+							self.question_block_trigger = True
+							self.release_item_trigger = True
 
 	def question_block_hit(self,questionBlock):
 		questionBlock.imagePath = self.hit_state_path

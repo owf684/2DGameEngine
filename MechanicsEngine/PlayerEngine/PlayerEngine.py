@@ -30,7 +30,8 @@ class _PlayerEngine:
 
 	def handle_damage(self, objects,levelHandler):
 		if (objects.collisionLeft or objects.collisionRight) and objects.collisionSubClass == 'enemy':
-			levelHandler.load_level = True
+			if objects.image_mask.overlap(objects.collisionObject.image_mask,(objects.position[0]-objects.collisionObject.position[0],objects.position[1]-objects.collisionObject.position[1])):
+				levelHandler.load_level = True
 
 	def onEnemy(self,objects):
 		if objects.subClass =='player':
