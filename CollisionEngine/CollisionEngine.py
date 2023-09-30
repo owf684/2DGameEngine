@@ -56,7 +56,7 @@ class _CollisionEngine:
 		self.mask_scan_up(collisionBuffer,objects,currentObject)
 		self.mask_scan_down(collisionBuffer,objects,currentObject)
 
-		if collisionBuffer[currentObject].subClass == 'player':
+		'''if collisionBuffer[currentObject].subClass == 'player':
 
 			if collisionBuffer[currentObject].collisionLeft:
 
@@ -69,7 +69,7 @@ class _CollisionEngine:
 				print("collisionUp: " + str(collisionBuffer[currentObject].collisionUp))
 			if collisionBuffer[currentObject].collisionDown:
 
-				print("collisionDown: " + str(collisionBuffer[currentObject].collisionDown))
+				print("collisionDown: " + str(collisionBuffer[currentObject].collisionDown))'''
 	def mask_scan_up(self,collisionBuffer,objects,currentObject):
 		if collisionBuffer[currentObject].rect.colliderect(objects.rect):
 			if collisionBuffer[currentObject].rect.top < objects.rect.bottom:
@@ -84,7 +84,7 @@ class _CollisionEngine:
 							collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
 							collisionBuffer[currentObject].collisionObject = objects
 							collisionBuffer[currentObject].collisionUp = True
-							objects.isHit = True
+							objects.hit = True
 
 
 	def mask_scan_down(self,collisionBuffer,objects,currentObject):
@@ -98,6 +98,7 @@ class _CollisionEngine:
 							if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (objects.position[0] - collisionBuffer[currentObject].position[0],objects.position[1] - collisionBuffer[currentObject].position[1] )):
 								collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
 								collisionBuffer[currentObject].collisionDown = True
+								collisionBuffer[currentObject].collisionObject = objects
 								if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
 									collisionBuffer[currentObject].onEnemy = True
 									objects.isHit = True
@@ -142,7 +143,7 @@ class _CollisionEngine:
 		else:
 
 			scan_offset = 10
-			scan_resolution = copy.deepcopy(height)
+			scan_resolution = copy.deepcopy(height)/8
 
 		scan_depth = 10
 		scan_step = height / scan_resolution

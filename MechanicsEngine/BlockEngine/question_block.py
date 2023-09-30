@@ -2,63 +2,62 @@ import pygame
 import copy
 import math
 
+
 class _question_block:
 
-	def __init__(self):
+    def __init__(self):
 
-		self.question_block_trigger = False
-		self.theta = 1
-		self.step = .1
-		self.question_block_object = None
-		self.hit_state_path = './Assets/Platforms/question_block_states/question_block_hit_32x32.png'
-		self.release_item_trigger = False
+        self.question_block_trigger = False
+        self.theta = 1
+        self.step = .1
+        self.question_block_object = None
+        self.hit_state_path = './Assets/Platforms/question_block_states/question_block_hit_32x32.png'
+        self.release_item_trigger = False
 
-	def main_loop(self,GameObjects,levelObjects,PlayerEngine):
-		
-		self.handle_question_blocks(GameObjects,levelObjects,PlayerEngine)
-		
-		if self.question_block_trigger:
+    def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t):
 
-			self.question_block_animation(self.question_block_object)
-			self.question_block_hit(self.question_block_object)
-		if self.release_item_trigger:
-			self.release_item(self.question_block_object,GameObjects)
+        for objects in levelObjects:
+            self.handle_question_blocks(objects, PlayerEngine)
 
-	def handle_question_blocks(self,GameObjects,levelObjects,PlayerEngine):
+            if objects.question_block_trigger:
+                self.question_block_animation(objects)
+                self.question_block_hit(objects)
+            if objects.release_item_trigger:
+                self.release_item(objects, GameObjects)
 
-		for objects in GameObjects:
-			if objects.subClass == 'player':
-				if objects.collisionObject is not None:
+    def handle_question_blocks(self, objects, PlayerEngine):
 
-					if objects.collisionObject.isHit and objects.collisionSubClass == 'platform':
-						if "Question" in objects.collisionObject.imagePath:
-							objects.collisionObject.isHit = False
-							self.question_block_object = objects.collisionObject
-							self.question_block_trigger = True
-							self.release_item_trigger = True
+        # if objects.collisionObject is not None and objects.collisionObject.collisionSubClass == 'player':
+        # print("hello!")
+        if objects.hit:
+            if "Question" in objects.imagePath:
+                objects.hit = False
+                objects.question_block_trigger = True
+                objects.release_item_trigger = True
 
-	def question_block_hit(self,questionBlock):
-		questionBlock.imagePath = self.hit_state_path
-		questionBlock._set_image()
-		questionBlock.hit = True
-	def question_block_animation(self,objects):
+    def question_block_hit(self, questionBlock):
+        questionBlock.imagePath = self.hit_state_path
+        questionBlock._set_image()
+        questionBlock.image.convert_alpha()
+        questionBlock.hit = True
 
-		objects.position[1] += 2*math.cos(self.theta*math.pi)
-		self.theta -= self.step
+    def question_block_animation(self, objects):
 
-		if self.theta <= 0:
-			self.question_block_trigger = False
-			self.theta = 1
+        objects.position[1] += 2 * math.cos(objects.theta * math.pi)
+        objects.theta -= self.step
 
+        if objects.theta <= 0:
+            objects.question_block_trigger = False
+            objects.theta = 1
 
-	def release_item(self,question_block_object,GameObjects):
+    def release_item(self, objects, GameObjects):
 
-		if question_block_object.item is not None:
-			item = question_block_object.item
-			item.position[1] -= question_block_object.rect.height/2
-			item.rect.y = item.position[1]
-			item.pause_physics = False
-			item._set_mask()
-			question_block_object.item = None
-			self.release_item_trigger = False
-			GameObjects.append(item)
+        if objects.item is not None:
+            item = objects.item
+            item.position[1] -= objects.rect.height / 2
+            item.rect.y = item.position[1]
+            item.pause_physics = False
+            item._set_mask()
+            objects.item = None
+            objects.release_item_trigger = False
+            GameObjects.append(item)

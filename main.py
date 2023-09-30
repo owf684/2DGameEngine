@@ -127,7 +127,7 @@ while running:
 		CE.main_loop(collisionList, GE, input_dict,screen)
 
 		#Block Engine
-		BE.main_loop(GameObjects,levelObjects,PlE)
+		BE.main_loop(GameObjects,levelObjects,PlE,delta_t)
 
 		# PlayerMechanics Engine
 		PlE.main_loop(GameObjects, delta_t, input_dict, CE,LH)

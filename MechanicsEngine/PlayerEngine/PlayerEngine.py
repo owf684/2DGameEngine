@@ -50,7 +50,10 @@ class _PlayerEngine:
 
 		if objects.collisionUp:
 			self.reached_max_height = True
-			objects.velocityY *= -1
+			if objects.velocityY > 0:
+				objects.velocityY *= -0.5
+			self.total_y_displacement = 0
+			objects.jumping = False
 
 		if objects.collisionDown:
 			self.total_y_displacement = 0

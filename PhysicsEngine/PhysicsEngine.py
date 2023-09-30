@@ -40,8 +40,6 @@ class _PhysicsEngine:
 			elif objects.collisionDown:
 				objects.y_displacement = 0
 				objects.velocityY =0
-				#if objects.collisionObject is not None:
-				#	objects.position[1] = objects.collisionObject.rect.top - objects.rect.height
 
 
 	def x_position(self,objects,delta_t):
