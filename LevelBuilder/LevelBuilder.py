@@ -2,6 +2,7 @@ import pygame
 import sys
 sys.path.append('./GameObjects')
 import GameObject
+import BlockObject
 import copy
 import glob
 import os
@@ -122,6 +123,7 @@ class _LevelBuilder:
 		if input_dict['edit'] == '1' and not self.edit_latch:
 			self.edit = not self.edit
 			self.edit_latch = True
+			levelHandler.clear_render_buffer = True
 		if input_dict['edit'] == '0' and self.edit_latch:
 			self.edit_latch = False
 
@@ -237,7 +239,7 @@ class _LevelBuilder:
 
 
 			#add GameObjects
-			new_object = GameObject._GameObject()
+			new_object = BlockObject._BlockObject()
 			new_object._set_sub_class(copy.deepcopy(selected_block._get_sub_class()))
 			new_object._set_image_path(copy.deepcopy(selected_block._get_image_path()))
 			new_object._set_image()
@@ -249,9 +251,10 @@ class _LevelBuilder:
 
 			add = True
 			for objects in levelObjects:
-				if objects.rect.collidepoint(self.snap_position):
-					objects.item = new_object
-					add = False
+				if isinstance(objects,BlockObject._BlockObject):
+					if objects.rect.collidepoint(self.snap_position):
+						objects.item = new_object
+						add = False
 
 			if add:
 				GameObjects.append(new_object)
@@ -278,7 +281,8 @@ class _LevelBuilder:
 			self.block_select_key = True
 			self.selected_block_index -= 1
 		elif input_dict["arrow_vert"] == "0":
-			self.block_select_key = False	
+			self.block_select_key = False
+
 		#write category selection here
 		if input_dict['arrow_hori'] == '1' and not self.category_select_key:
 			self.category_select_key = True
@@ -286,7 +290,7 @@ class _LevelBuilder:
 		elif input_dict['arrow_hori'] == '-1' and not self.category_select_key:
 			self.category_select_key = True
 			self.category_selection_index -= 1
-		elif input_dict['arrow_vert'] == '0':
+		elif input_dict['arrow_hori'] == '0':
 			self.category_select_key = False
 
 
@@ -447,7 +451,12 @@ class _LevelBuilder:
 		root = tree.getroot()
 
 		for object_elem in root.findall("object"):
-			levelObjects.append(GameObject._GameObject())
+			tmp_img_path = object_elem.find("imagePath")
+			if  "Question" or "break" in tmp_img_path:
+				levelObjects.append(BlockObject._BlockObject())
+			else:
+				levelObjects.append(GameObject._GameObject())
+
 			levelObjects[-1].subClass = object_elem.find("subClass").text
 			levelObjects[-1].imagePath = object_elem.find("imagePath").text
 			x_position = float(object_elem.find("position_x").text)

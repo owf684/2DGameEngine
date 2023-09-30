@@ -50,12 +50,7 @@ class _GameObject:
 		self.collisionObjDirection = 0
 		self.collisionObject = None
 		self.hit = False
-		self.question_block_object = None
-		self.question_block_trigger = False
-		self.push_block_trigger = False
-		self.release_item_trigger = False
-		self.theta = 1
-		self.item = None
+
 
 		#Audio Data
 		self.audioFootSteep = None

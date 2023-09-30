@@ -1,7 +1,8 @@
 import copy
-import pygame
-import threading
-from multiprocessing import Process
+import sys
+sys.path.append("./GameObjects")
+import BlockObject
+
 class _CollisionEngine:
 
 	def __init__(self):
@@ -84,7 +85,8 @@ class _CollisionEngine:
 							collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
 							collisionBuffer[currentObject].collisionObject = objects
 							collisionBuffer[currentObject].collisionUp = True
-							objects.hit = True
+							if isinstance(objects,BlockObject._BlockObject):
+								objects.hit = True
 
 
 	def mask_scan_down(self,collisionBuffer,objects,currentObject):
