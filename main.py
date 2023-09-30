@@ -80,9 +80,7 @@ PlayerObject._set_image_path('./Assets/PlayerSprites/mario_32x32_idle_right.png'
 PlayerObject._set_image()
 PlayerObject._set_sprite_size(PlayerObject.image)
 PlayerObject._set_rect(PlayerObject.sprite_size)
-PlayerObject._set_pixel_collision_map()
 PlayerObject._set_mask()
-print(len(PlayerObject.pixelCollisionMap[0]))
 GameObjects.append(PlayerObject)
 
 levelObjects = list()
