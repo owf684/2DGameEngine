@@ -22,7 +22,8 @@ class _GraphicsEngine:
 		self.render_buffer = list()
 		self.levelObjectsIndex = 0
 		self.GameObjectsIndex = 0
-
+		self.environment_sprites = list()
+		self.level_sprites = list()
 		pygame.display.set_caption("Fario Faker")
 
 
@@ -77,12 +78,17 @@ class _GraphicsEngine:
 			if objects not in self.render_buffer:
 		
 				if not objects.position[0] < -objects.sprite_size[0] and not objects.position[0] > self.screen_width:
-					self.render_buffer.insert(0,objects) # using insert ensures player is always drawn last.
+					if objects.subClass == 'environment':
+						self.render_buffer.insert(0,objects) # using insert ensures player is always drawn last.
+					else:
+						self.render_buffer.append(objects)
 
 			if objects in self.render_buffer:
 
 				if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
 					self.render_buffer.remove(objects)
+
+
 
 		for objects in GameObjects:
 			if objects.subClass == "player":

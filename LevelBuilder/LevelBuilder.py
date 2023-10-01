@@ -41,6 +41,7 @@ class _LevelBuilder:
 		self.category_selection_index = 0
 		self.category_select_key = False
 		self.spawn_point = (0,0)
+		self.spawn_point_loaded = False
 
 		'''
 		0 = Basic Platform Blocks
@@ -386,6 +387,11 @@ class _LevelBuilder:
 					item_sub_class.text = objects.item.subClass
 					item_position_x.text = str(objects.item.initial_position[0])
 					item_position_y.text = str(objects.item.initial_position[1])
+				else:
+					item_image_path.text = 'None'
+					item_sub_class.text  = 'None'
+					item_position_x.text = 'None'
+					item_position_y.text = 'None'
 			else:
 				item_image_path.text = 'None'
 				item_sub_class.text = 'None'
@@ -439,6 +445,7 @@ class _LevelBuilder:
 		tree.write("./WorldData/"+level_string+"/GameObjects.xml")
 
 	def load_level(self,GameObjects,levelObjects,collisionList,level_string,screen,levelHandler):
+		self.spawn_point_loaded = False
 		levelHandler.scroll_offset = 0
 		levelHandler.clear_render_buffer =True
 		screen.fill((0,0,0))
@@ -484,7 +491,8 @@ class _LevelBuilder:
 			if levelObjects[-1].subClass == 'environment':
 				if 'spawn_point' in levelObjects[-1].imagePath:
 					self.spawn_point = copy.deepcopy(levelObjects[-1].initial_position)
-				else:
+					self.spawn_point_loaded = True
+				elif not self.spawn_point_loaded:
 					self.spawn_point = (0,0)
 
 			if 'Question' in levelObjects[-1].imagePath:

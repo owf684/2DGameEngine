@@ -39,7 +39,7 @@ class _PhysicsEngine:
 
 			elif objects.collisionDown:
 				objects.y_displacement = 0
-				objects.velocityY =0
+				objects.velocityY = 0
 
 
 	def x_position(self,objects,delta_t):
