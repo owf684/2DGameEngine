@@ -19,6 +19,7 @@ class _GameObject:
 		self.initial_position = pygame.math.Vector2(0,0)
 		self.isRendered = False
 		self.image_mask = None
+		self.power_up = 0
 
 		#scrolling data
 		self.scrollOffset = 0
