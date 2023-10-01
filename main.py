@@ -135,14 +135,12 @@ while running:
 		# PlatformMechanics Engine
 		# PfE.main_loop()
 
-
-		
 		# Animation System
 		AS.main_loop(GameObjects, input_dict,LH)
 		LH.main_loop(LH,GameObjects,levelObjects,collisionList, screen,PlE,LB)
 
 		#PowerUp Engine
-		PUP.main_loop(GameObjects, LH, PlE)
+		PUP.main_loop(GameObjects, LH, PlE,GE)
 
 	# Level Builder
 	LB.main_loop(input_dict, screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)

@@ -108,7 +108,7 @@ class _CollisionEngine:
 	def ray_scan_left(self,collisionBuffer,objects,currentObject):
 	
 		height, scan_depth, scan_offset, scan_point, scan_step = self.configure_scan_variables_lr(collisionBuffer, currentObject)
-		if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass != 'enemy':
+		if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass != 'enemy' or objects.subClass == 'powerup':
 			scan_depth = 0
 		while scan_point <= height - scan_offset:
 
@@ -123,7 +123,7 @@ class _CollisionEngine:
 	def ray_scan_right(self,collisionBuffer,objects,currentObject):
 
 		height, scan_depth, scan_offset, scan_point, scan_step = self.configure_scan_variables_lr(collisionBuffer, currentObject)
-		if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass != 'enemy':
+		if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass != 'enemy' or objects.subClass == 'powerup':
 			scan_depth = 0
 		while scan_point <= height - scan_offset:
 
@@ -132,7 +132,7 @@ class _CollisionEngine:
 				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
 				collisionBuffer[currentObject].collisionObject = objects
 				collisionBuffer[currentObject].collisionRight = True
-				break
+
 			scan_point += scan_step
 
 
@@ -143,7 +143,6 @@ class _CollisionEngine:
 			scan_resolution = 3
 			scan_offset = 5
 		else:
-
 			scan_offset = 10
 			scan_resolution = copy.deepcopy(height)/8
 

@@ -8,6 +8,6 @@ class _PowerUpEngine:
 		self.SM = SuperMushroom._SuperMushroom()
 
 
-	def main_loop(self,GameObjects,levelHandler,PlayerEngine):
+	def main_loop(self,GameObjects,levelHandler,PlayerEngine,GraphicsEngine):
 
-		self.SM.main_loop(GameObjects,levelHandler,PlayerEngine)
+		self.SM.main_loop(GameObjects,levelHandler,PlayerEngine,GraphicsEngine)

@@ -22,6 +22,6 @@ class _anim_util:
             frames = list()
             sprite_sheet = pygame.image.load(path).convert_alpha()
             for i in range(num_frames):
-                frame = sprite_sheet.subsurface((0, i*frame_width, frame_width,frame_height))
+                frame = sprite_sheet.subsurface((0, i*frame_height, frame_width,frame_height))
                 frames.append(frame)
             return frames

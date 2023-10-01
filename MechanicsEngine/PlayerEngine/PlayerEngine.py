@@ -1,5 +1,8 @@
 import copy
 import math
+import sys
+sys.path.append('./GameObjects')
+import BlockObject
 
 class _PlayerEngine:
 
@@ -27,10 +30,21 @@ class _PlayerEngine:
 				self.jump(objects,delta_t,input_dict)
 				self.onEnemy(objects)
 				self.handle_damage(objects,levelHandler)
+				self.handle_power_ups(objects)
+
+	def handle_power_ups(self,objects):
+		if objects.collisionObject is not None:
+			if objects.collisionObject.subClass == 'powerup':
+				if "super_mushroom" in objects.collisionObject.imagePath:
+					print("self.power_up: " + str(objects.power_up))
+					objects.power_up = 1
 
 	def handle_damage(self, objects,levelHandler):
 		if (objects.collisionLeft or objects.collisionRight) and objects.collisionSubClass == 'enemy':
-			if objects.image_mask.overlap(objects.collisionObject.image_mask,(objects.position[0]-objects.collisionObject.position[0],objects.position[1]-objects.collisionObject.position[1])):
+			#if objects.image_mask.overlap(objects.collisionObject.image_mask,(objects.position[0]-objects.collisionObject.position[0],objects.position[1]-objects.collisionObject.position[1])):
+			if objects.power_up > 0:
+				objects.power_up = 0
+			elif objects.power_up == 0:
 				levelHandler.load_level = True
 
 	def onEnemy(self,objects):
@@ -41,7 +55,7 @@ class _PlayerEngine:
 				objects.onEnemy = False
 	def jump(self,objects,delta_t,input_dict):
 		if input_dict['up'] == '1' and not self.reached_max_height:
-			objects.velocityY = 350
+			objects.velocityY = 300
 			objects.jumping = True
 
 		self.total_y_displacement += objects.y_displacement
