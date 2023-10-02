@@ -13,7 +13,7 @@ class _EnemyEngine:
 		self.thread_started = False
 	def main_loop(self, GameObjects, PlayerEngine, GraphicsEngine):
 
-		self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine)
+			self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine)
 
 	def move_enemy(self, GameObjects, PlayerEngine, GraphicsEngine):
 
@@ -24,16 +24,15 @@ class _EnemyEngine:
 				if objects.isRendered:
 					self.isHit(objects,GameObjects, GraphicsEngine)
 					self.change_direction(objects)
-					self.change_position(objects,PlayerEngine)
+					self.change_position(objects)
 				self.track_scroll(objects,PlayerEngine)
 
 	def isHit(self,objects,GameObjects,GraphicsEngine):
 		if objects.isHit:
 			GameObjects.remove(objects)
 			GraphicsEngine.render_buffer.remove(objects)
-	def change_position(self,objects,PlayerEngine):
-
-		objects.velocityX = 20
+	def change_position(self,objects):
+			objects.velocityX = 35
 
 
 	def track_scroll(self,objects,PlayerEngine):

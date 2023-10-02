@@ -13,21 +13,23 @@ class _LevelHandler:
 		self.load_level = False
 		self.currentLevel = 'level_1'
 		self.screen_width = 0
+		self.pause_for_damage = False
+		self.decrease_power = False
 		# Question Block List
 		self.question_blocks = list()
 
 	def main_loop(self,levelHandler,GameObjects,levelObjects,collisionList,screen, PlayerEngine,levelBuilder):
-		self.scroll_level(levelObjects,PlayerEngine,GameObjects)
+		self.scroll_level(levelObjects,PlayerEngine,GameObjects, levelHandler)
 
-		self.player_death(levelHandler,GameObjects,levelObjects,collisionList,self.currentLevel,screen,levelBuilder)
+		self.player_death(GameObjects,levelObjects,collisionList,self.currentLevel, screen,levelBuilder)
 
-	def player_death(self,levelHandler,GameObjects,levelObjects,collisionList,level,screen,levelBuilder):
-		if levelHandler.load_level:
-			levelHandler.load_level = False
-			levelBuilder.load_level(GameObjects, levelObjects, collisionList, level, screen, levelHandler)
-	def scroll_level(self,levelObjects,PlayerEngine,GameObjects):
-
+	def player_death(self,GameObjects,levelObjects,collisionList,level,screen,levelBuilder):
+		if self.load_level:
+			self.load_level = False
+			levelBuilder.load_level(GameObjects, levelObjects, collisionList, level, screen, self)
+	def scroll_level(self,levelObjects,PlayerEngine,GameObjects, levelHandler):
 		if (PlayerEngine.scroll_level):
+
 			self.scroll_offset += PlayerEngine.x_displacement
 
 			for objects in levelObjects:
