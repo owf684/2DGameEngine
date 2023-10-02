@@ -9,6 +9,8 @@ class _anim_util:
         self.frame_duration = 0
         self.frame_count = 0
 
+        self.damage_frame_index = 0
+        self.damage_frame_index_captured = False
     def determine_frame_count(self):
         self.current_time = pygame.time.get_ticks()
         self.elapsed_time = self.current_time - self.last_frame_time
@@ -25,3 +27,13 @@ class _anim_util:
                 frame = sprite_sheet.subsurface((0, i*frame_height, frame_width,frame_height))
                 frames.append(frame)
             return frames
+
+    def determine_time_elapsed(self):
+        self.current_time = pygame.time.get_ticks()
+        self.elapsed_time = self.current_time - self.last_frame_time
+        return self.elapsed_time
+    def reset_time_variables(self):
+        self.elapsed_time = 0
+        self.current_time = 0
+        self.last_frame_time = 0
+        self.frame_index = 0

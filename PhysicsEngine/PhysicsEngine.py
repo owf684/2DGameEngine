@@ -10,13 +10,16 @@ class _PhysicsEngine:
 		self.x_direction = 0
 		self.x_decelleration = 0.01
 		self.y_displacement = 0
-	def main_loop(self,GameObjects, delta_t):
+	def main_loop(self,GameObjects, delta_t, levelHandler):
+			if levelHandler.pause_for_damage:
+				pass
+			for objects in GameObjects:
+				if not levelHandler.pause_for_damage:
 
-		for objects in GameObjects:
+					#self.collision_physics(objects,delta_t)
+					self.simulate_gravity(objects,delta_t)
+					self.x_position(objects,delta_t)
 
-			#self.collision_physics(objects,delta_t)
-			self.simulate_gravity(objects,delta_t)
-			self.x_position(objects,delta_t)
 
 	def simulate_gravity(self,objects, delta_t):
 

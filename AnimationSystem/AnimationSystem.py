@@ -11,9 +11,11 @@ class _AnimationSystem:
         self.goomba_anim = goomba_anim._goomba_anim()
 
     def main_loop(self, GameObjects, input_dict,levelHandler):
+
         self.question_block.main_loop(levelHandler)
+
         for objects in GameObjects:
 
-            self.mario_anim.main_loop(objects,input_dict)
+            self.mario_anim.main_loop(objects,input_dict, levelHandler)
             self.goomba_anim.main_loop(objects)
 

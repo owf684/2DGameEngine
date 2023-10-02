@@ -2,11 +2,14 @@ import copy
 import math
 import sys
 sys.path.append('./GameObjects')
+sys.path.append('./AnimationSystem')
+import anim_util
 import BlockObject
 
-class _PlayerEngine:
+class _PlayerEngine(anim_util._anim_util):
 
 	def __init__(self):
+		super().__init__()
 		self.gravity = 9.8*100
 		self.y_displacement = 0
 		self.x_displacement = 0
@@ -22,30 +25,40 @@ class _PlayerEngine:
 		self.superMario = False
 		self.jump_latch = False
 		self.runningFactor = 1
+		self.supressDamage = False
 
 	def main_loop(self, GameObjects, delta_t, input_dict, CollisionEngine,levelHandler):
 		for objects in GameObjects:
 			if objects.subClass == 'player':
-				self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine,levelHandler)
-				self.jump(objects,delta_t,input_dict)
-				self.onEnemy(objects)
-				self.handle_damage(objects,levelHandler)
-				self.handle_power_ups(objects)
+				if not levelHandler.pause_for_damage:
 
+					self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine,levelHandler)
+					self.jump(objects,delta_t,input_dict)
+					self.onEnemy(objects)
+
+				self.handle_power_ups(objects)
+				self.handle_damage(objects, levelHandler)
+			elif levelHandler.pause_for_damage:
+				self.scroll_level = False
 	def handle_power_ups(self,objects):
 		if objects.collisionObject is not None:
 			if objects.collisionObject.subClass == 'powerup':
 				if "super_mushroom" in objects.collisionObject.imagePath:
-					print("self.power_up: " + str(objects.power_up))
 					objects.power_up = 1
 
 	def handle_damage(self, objects,levelHandler):
 		if (objects.collisionLeft or objects.collisionRight) and objects.collisionSubClass == 'enemy':
 			#if objects.image_mask.overlap(objects.collisionObject.image_mask,(objects.position[0]-objects.collisionObject.position[0],objects.position[1]-objects.collisionObject.position[1])):
 			if objects.power_up > 0:
-				objects.power_up = 0
-			elif objects.power_up == 0:
+				levelHandler.pause_for_damage = True
+				#objects.power_up = 0
+			elif objects.power_up == 0 and False:
 				levelHandler.load_level = True
+
+			if levelHandler.decrease_power and objects.power_up > 0:
+				objects.power_up = 0
+				levelHandler.decrease_power = False
+
 
 	def onEnemy(self,objects):
 		if objects.subClass =='player':
@@ -88,7 +101,7 @@ class _PlayerEngine:
 			objects.x_direction = -1
 		else:
 			objects.velocityX = 0
-		
+
 		if input_dict['l-shift'] == '1':
 			self.runningFactor = 1.5
 		else:
