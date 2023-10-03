@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('./GameObjects')
 import BlockObject
 import math
@@ -10,16 +11,15 @@ class _break_block:
 
         self.step = 0.1
 
-    def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t):
-        for objects in levelObjects:
-            if isinstance(objects, BlockObject._BlockObject):
-                self.handle_break_blocks(objects, PlayerEngine)
+    def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t, objects):
+        if isinstance(objects, BlockObject._BlockObject):
+            self.handle_break_blocks(objects, PlayerEngine)
 
-                if objects.push_block_trigger:
-                    self.push_block_animation(objects)
+            if objects.push_block_trigger:
+                self.push_block_animation(objects)
 
-                if objects.release_item_trigger:
-                    self.release_item(objects, GameObjects)
+            if objects.release_item_trigger:
+                self.release_item(objects, GameObjects)
 
     def handle_break_blocks(self, objects, PlayerEngine):
         if objects.hit:

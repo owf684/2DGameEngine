@@ -14,132 +14,103 @@ class _CollisionEngine:
 		self.threadStarted = False
 		self.screen = None
 		self.collisionThread = list()
-	def main_loop(self,collisionBuffer,GraphicsEngine,input_dict,screen):
+	def main_loop(self,objects ,GraphicsEngine,input_dict,screen):
 		self.screen = screen
 		i = 0
 		currentObject = 0
+		# Reset collisions here please!
+		objects.collisionDown = False
+		objects.collisionLeft = False
+		objects.collisionRight = False
+		objects.collisionUp = False
 
-		# only process collisions with objects that are rendered
-		if len(GraphicsEngine.render_buffer) > 0:
-			collisionBuffer = GraphicsEngine.render_buffer
+		for objs in GraphicsEngine.render_buffer:
 
-		numObjects = len(collisionBuffer)
-	
-		while currentObject < numObjects:
-
-			#self.updateRectPosition(collisionBuffer[currentObject])
-
-			# Reset collisions here please!
-			collisionBuffer[currentObject].collisionDown = False
-			collisionBuffer[currentObject].collisionLeft = False
-			collisionBuffer[currentObject].collisionRight = False
-			collisionBuffer[currentObject].collisionUp = False
-
-
-
-
-			for objects in collisionBuffer:
+			try:
 
 				self.updateRectPosition(objects)
-				if collisionBuffer[currentObject] != objects:
+				if objects != objs:
+					if (objects.subClass == 'player' or objects.subClass == 'enemy' or objects.subClass == 'powerup') and objs.subClass != 'environment':
+						self.detectCollisions(objects, objs)
+			except:
+				pass
 
-					if (collisionBuffer[currentObject].subClass == 'player' or collisionBuffer[currentObject].subClass == 'enemy' or collisionBuffer[currentObject].subClass == 'powerup') and objects.subClass != 'environment':
-						self.detectCollisions(collisionBuffer, objects, currentObject)
-			
-			currentObject += 1
 
-	
+	def detectCollisions(self, objects, objs ):
 
-	def detectCollisions(self,collisionBuffer,objects,currentObject):
+		self.ray_scan_left(objects, objs)
+		self.ray_scan_right(objects, objs)
+		self.mask_scan_up(objects, objs)
+		self.mask_scan_down(objects, objs)
 
-		self.ray_scan_left(collisionBuffer,objects,currentObject)
-		self.ray_scan_right(collisionBuffer,objects,currentObject)
-		self.mask_scan_up(collisionBuffer,objects,currentObject)
-		self.mask_scan_down(collisionBuffer,objects,currentObject)
-
-		'''if collisionBuffer[currentObject].subClass == 'player':
-
-			if collisionBuffer[currentObject].collisionLeft:
-
-				print("collisionLeft: " + str(collisionBuffer[currentObject].collisionLeft))
-			if collisionBuffer[currentObject].collisionRight:
-
-				print("collisionRight: " + str(collisionBuffer[currentObject].collisionRight))
-			if collisionBuffer[currentObject].collisionUp:
-
-				print("collisionUp: " + str(collisionBuffer[currentObject].collisionUp))
-			if collisionBuffer[currentObject].collisionDown:
-
-				print("collisionDown: " + str(collisionBuffer[currentObject].collisionDown))'''
-	def mask_scan_up(self,collisionBuffer,objects,currentObject):
-		if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-			if collisionBuffer[currentObject].rect.top < objects.rect.bottom:
-				if collisionBuffer[currentObject].rect.bottom > objects.rect.bottom:
-					if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
-						collisionBuffer[currentObject]._set_mask()
+	def mask_scan_up(self, objects, objs):
+		if objects.rect.colliderect(objs.rect):
+			if objects.rect.top < objs.rect.bottom:
+				if objects.rect.bottom > objs.rect.bottom:
+					if objects.rect.bottom > objs.rect.top:
 						objects._set_mask()
-						if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (
-						collisionBuffer[currentObject].position[0] - objects.position[0],
-						collisionBuffer[currentObject].position[1] - objects.position[1])):
-							collisionBuffer[currentObject].collisionSubClass = objects.subClass
-							collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
-							collisionBuffer[currentObject].collisionObject = objects
-							collisionBuffer[currentObject].collisionUp = True
-							if isinstance(objects,BlockObject._BlockObject):
-								objects.hit = True
+						objs._set_mask()
+						if objects.image_mask.overlap(objs.image_mask, (
+						objects.position[0] - objs.position[0],
+						objects.position[1] - objs.position[1])):
+							objects.collisionSubClass = objs.subClass
+							objects.collisionObjDirection = objs.x_direction
+							objects.collisionObject = objs
+							objects.collisionUp = True
+							if isinstance(objs,BlockObject._BlockObject):
+								objs.hit = True
 
 
-	def mask_scan_down(self,collisionBuffer,objects,currentObject):
-		if collisionBuffer[currentObject].rect.colliderect(objects.rect):
-			if collisionBuffer[currentObject].rect.bottom > objects.rect.top:
-				if collisionBuffer[currentObject].rect.top < objects.rect.bottom:
-					if collisionBuffer[currentObject].rect.top < objects.rect.top:
-						if collisionBuffer[currentObject].rect.centery+5 < objects.rect.centery:
-							collisionBuffer[currentObject]._set_mask()
+	def mask_scan_down(self, objects ,objs):
+		if objects.rect.colliderect(objs.rect):
+			if objects.rect.bottom > objs.rect.top:
+				if objects.rect.top < objs.rect.bottom:
+					if objects.rect.top < objs.rect.top:
+						if objects.rect.centery+5 < objs.rect.centery:
 							objects._set_mask()
-							if collisionBuffer[currentObject].image_mask.overlap(objects.image_mask, (objects.position[0] - collisionBuffer[currentObject].position[0],objects.position[1] - collisionBuffer[currentObject].position[1] )):
-								collisionBuffer[currentObject].position[1] = objects.rect.top - collisionBuffer[currentObject].rect.height
-								collisionBuffer[currentObject].collisionDown = True
-								collisionBuffer[currentObject].collisionObject = objects
-								if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass == "player":
-									collisionBuffer[currentObject].onEnemy = True
-									objects.isHit = True
+							objs._set_mask()
+							if objects.image_mask.overlap(objs.image_mask, (objs.position[0] - objects.position[0],objs.position[1] - objects.position[1] )):
+								objects.position[1] = objs.rect.top - objects.rect.height
+								objects.collisionDown = True
+								objects.collisionObject = objs
+								if objs.subClass == 'enemy' and objects.subClass == "player":
+									objects.onEnemy = True
+									objs.isHit = True
 
-	def ray_scan_left(self,collisionBuffer,objects,currentObject):
+	def ray_scan_left(self, objects, objs):
 	
-		height, scan_depth, scan_offset, scan_point, scan_step = self.configure_scan_variables_lr(collisionBuffer, currentObject)
-		if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass != 'enemy' or objects.subClass == 'powerup':
+		height, scan_depth, scan_offset, scan_point, scan_step = self.configure_scan_variables_lr(objects)
+		if objs.subClass == 'enemy' and objects.subClass != 'enemy' or objs.subClass == 'powerup':
 			scan_depth = 0
 		while scan_point <= height - scan_offset:
-
-			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomleft[0] - scan_depth,collisionBuffer[currentObject].rect.top + scan_point ):
-				collisionBuffer[currentObject].collisionSubClass = objects.subClass
-				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
-				collisionBuffer[currentObject].collisionObjects = objects
-				collisionBuffer[currentObject].collisionLeft = True
+			if objects.rect.collidepoint(objects.rect.bottomleft[0] - scan_depth,objects.rect.top + scan_point ):
+				objects.collisionSubClass = objs.subClass
+				objects.collisionObjDirection = objs.x_direction
+				objects.collisionObjects = objs
+				objects.collisionLeft = True
 
 			scan_point += scan_step
 
-	def ray_scan_right(self,collisionBuffer,objects,currentObject):
+	def ray_scan_right(self, objects, objs):
 
-		height, scan_depth, scan_offset, scan_point, scan_step = self.configure_scan_variables_lr(collisionBuffer, currentObject)
-		if objects.subClass == 'enemy' and collisionBuffer[currentObject].subClass != 'enemy' or objects.subClass == 'powerup':
+		height, scan_depth, scan_offset, scan_point, scan_step = self.configure_scan_variables_lr(objects)
+		if objs.subClass == 'enemy' and objects.subClass != 'enemy' or objs.subClass == 'powerup':
 			scan_depth = 0
 		while scan_point <= height - scan_offset:
 
-			if objects.rect.collidepoint(collisionBuffer[currentObject].rect.bottomright[0] + scan_depth,  collisionBuffer[currentObject].rect.top + scan_point ):
-				collisionBuffer[currentObject].collisionSubClass = objects.subClass
-				collisionBuffer[currentObject].collisionObjDirection = objects.x_direction
-				collisionBuffer[currentObject].collisionObject = objects
-				collisionBuffer[currentObject].collisionRight = True
+			if objects.rect.collidepoint(objects.rect.bottomright[0] + scan_depth,  objects.rect.top + scan_point ):
+				objects.collisionSubClass = objs.subClass
+				objects.collisionObjDirection = objs.x_direction
+				objects.collisionObject = objs
+				objects.collisionRight = True
 
 			scan_point += scan_step
 
 
-	def configure_scan_variables_lr(self, collisionBuffer, currentObject):
+	def configure_scan_variables_lr(self, objects):
 	
-		height = copy.deepcopy(collisionBuffer[currentObject].rect.height)
-		if collisionBuffer[currentObject].subClass != 'player':
+		height = copy.deepcopy(objects.rect.height)
+		if objects.subClass != 'player':
 			scan_resolution = 3
 			scan_offset = 5
 		else:

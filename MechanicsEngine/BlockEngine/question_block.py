@@ -1,7 +1,9 @@
 import math
 import sys
+
 sys.path.append('./GameObjects')
 import BlockObject
+
 
 class _question_block:
 
@@ -14,18 +16,17 @@ class _question_block:
         self.hit_state_path = './Assets/Platforms/question_block_states/question_block_hit_32x32.png'
         self.release_item_trigger = False
 
-    def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t):
+    def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t, objects):
 
-        for objects in levelObjects:
-            if isinstance(objects, BlockObject._BlockObject):
+        if isinstance(objects, BlockObject._BlockObject):
 
-                self.handle_question_blocks(objects, PlayerEngine)
+            self.handle_question_blocks(objects, PlayerEngine)
 
-                if objects.question_block_trigger:
-                    self.question_block_animation(objects)
-                    self.question_block_hit(objects)
-                if objects.release_item_trigger:
-                    self.release_item(objects, GameObjects)
+            if objects.question_block_trigger:
+                self.question_block_animation(objects)
+                self.question_block_hit(objects)
+            if objects.release_item_trigger:
+                self.release_item(objects, GameObjects)
 
     def handle_question_blocks(self, objects, PlayerEngine):
 

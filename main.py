@@ -111,38 +111,41 @@ while running:
 
 	# Inputs Engine
 	input_dict = IE.main_loop(GameObjects,delta_t,pygame_events)
+	# Graphics Engine
+	GE.main_loop(GameObjects, levelObjects, LH,LB)
 
 	if not LB.edit:
 		# UI Engine
 		# UIE.main_loop()
 
-		# PlayerMechanics Engine
-		PlE.main_loop(GameObjects, delta_t, input_dict, CE, LH)
+		for objects in GE.render_buffer:
+			# PlayerMechanics Engine
+			PlE.main_loop(objects, delta_t, input_dict, CE, LH)
 
-		# Enemy Engine
-		EE.main_loop(GameObjects, PlE, GE)
+			# Enemy Engine
+			EE.main_loop(GameObjects, PlE, GE,objects)
 
-		# Animation System
-		AS.main_loop(GameObjects, input_dict, LH)
+			# Physics Engine
+			PE.main_loop(objects, delta_t, LH)
 
-		# Block Engine
-		BE.main_loop(GameObjects, levelObjects, PlE, delta_t)
+			# Collision Engine
+			CE.main_loop(objects, GE, input_dict, GE.screen)
 
-		# PowerUp Engine
-		PUP.main_loop(GameObjects, LH, PlE,GE)
+			# Animation System
+			AS.main_loop(objects, input_dict, LH)
 
-		# Physics Engine
-		PE.main_loop(GameObjects, delta_t, LH)
+			# Block Engine
+			BE.main_loop(GameObjects, levelObjects, PlE, delta_t,objects)
 
-		# Collision Engine
-		CE.main_loop(collisionList, GE, input_dict, GE.screen)
+			# PowerUp Engine
+			PUP.main_loop(GameObjects, LH, PlE,GE, objects)
+
 
 		# Level Handler
 		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB)
 
 
-	# Graphics Engine
-	GE.main_loop(GameObjects, levelObjects, LH,LB)
+
 
 	# Level Builder
 	LB.main_loop(input_dict, GE.screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
