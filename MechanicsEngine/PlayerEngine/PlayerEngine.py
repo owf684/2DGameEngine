@@ -83,7 +83,7 @@ class _PlayerEngine(anim_util._anim_util):
             self.total_y_displacement = 0
             objects.jumping = False
 
-        if objects.collisionDown:
+        if objects.collisionDown and objects.velocityY < 0:
             self.total_y_displacement = 0
             objects.jumping = False
             if self.reached_max_height:

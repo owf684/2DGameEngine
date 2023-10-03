@@ -70,7 +70,8 @@ class _CollisionEngine:
 							objects._set_mask()
 							objs._set_mask()
 							if objects.image_mask.overlap(objs.image_mask, (objs.position[0] - objects.position[0],objs.position[1] - objects.position[1] )):
-								objects.position[1] = objs.rect.top - objects.rect.height
+								if not objects.jumping:
+									objects.position[1] = objs.rect.top - objects.rect.height				
 								objects.collisionDown = True
 								objects.collisionObject = objs
 								if objs.subClass == 'enemy' and objects.subClass == "player":
@@ -83,7 +84,7 @@ class _CollisionEngine:
 		if objs.subClass == 'enemy' and objects.subClass != 'enemy' or objs.subClass == 'powerup':
 			scan_depth = 0
 		while scan_point <= height - scan_offset:
-			if objects.rect.collidepoint(objects.rect.bottomleft[0] - scan_depth,objects.rect.top + scan_point ):
+			if objs.rect.collidepoint(objects.rect.bottomleft[0] - scan_depth,objects.rect.top + scan_point ):
 				objects.collisionSubClass = objs.subClass
 				objects.collisionObjDirection = objs.x_direction
 				objects.collisionObjects = objs
@@ -98,7 +99,7 @@ class _CollisionEngine:
 			scan_depth = 0
 		while scan_point <= height - scan_offset:
 
-			if objects.rect.collidepoint(objects.rect.bottomright[0] + scan_depth,  objects.rect.top + scan_point ):
+			if objs.rect.collidepoint(objects.rect.bottomright[0] + scan_depth,  objects.rect.top + scan_point ):
 				objects.collisionSubClass = objs.subClass
 				objects.collisionObjDirection = objs.x_direction
 				objects.collisionObject = objs
@@ -115,9 +116,9 @@ class _CollisionEngine:
 			scan_offset = 5
 		else:
 			scan_offset = 10
-			scan_resolution = copy.deepcopy(height)/8
+			scan_resolution = 3
 
-		scan_depth = 10
+		scan_depth = 20
 		scan_step = height / scan_resolution
 		scan_point = 0
 		return height, scan_depth, scan_offset, scan_point, scan_step

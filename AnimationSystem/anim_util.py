@@ -2,6 +2,8 @@ import pygame
 class _anim_util:
 
     def __init__(self):
+
+        # variables used in main animation 
         self.elapsed_time = 0
         self.current_time = 0
         self.last_frame_time = 0
@@ -11,6 +13,11 @@ class _anim_util:
 
         self.damage_frame_index = 0
         self.damage_frame_index_captured = False
+
+        # variables used in damage handling
+        self.current_time_2 = 0
+        self.elapsed_time_2 = 0
+        self.last_frame_time_2 = 0
     def determine_frame_count(self):
         self.current_time = pygame.time.get_ticks()
         self.elapsed_time = self.current_time - self.last_frame_time
@@ -29,11 +36,12 @@ class _anim_util:
             return frames
 
     def determine_time_elapsed(self):
-        self.current_time = pygame.time.get_ticks()
-        self.elapsed_time = self.current_time - self.last_frame_time
-        return self.elapsed_time
+        self.current_time_2 = pygame.time.get_ticks()
+        self.elapsed_time_2 = self.current_time_2 - self.last_frame_time_2
+        return self.elapsed_time_2
+   
     def reset_time_variables(self):
-        self.elapsed_time = 0
-        self.current_time = 0
-        self.last_frame_time = 0
+        self.elapsed_time_2 = 0
+        self.current_time_2 = 0
+        self.last_frame_time_2 = 0
         self.frame_index = 0

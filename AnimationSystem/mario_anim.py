@@ -1,6 +1,6 @@
 import anim_util
 import pygame
-
+import copy
 
 class _mario_anim(anim_util._anim_util):
 
@@ -51,8 +51,12 @@ class _mario_anim(anim_util._anim_util):
         self.damage_count = 0
         self.current_power = 0
         self.current_sprite = 0
+        self.alpha = 255
+        self.damage_frame = self.idle_right
+        self.transform_frame = self.idle_right
+        self.damage_frame_captured = False
 
-    def main_loop(self, objects, input_dict, levelHandler):
+    def main_loop(self, objects, input_dict, levelHandler,delta_t):
 
         if objects.subClass == 'player':
             if not levelHandler.pause_for_damage:
@@ -67,55 +71,83 @@ class _mario_anim(anim_util._anim_util):
 
                 self.handle_power_ups(objects)
 
+                objects.image.set_alpha(self.alpha)
+
             elif levelHandler.pause_for_damage:
 
-                self.damage_animation(objects, levelHandler)
+                self.damage_animation(objects, levelHandler,delta_t)
 
-    def damage_animation(self, objects, levelHandler):
-        if not self.damage_frame_index_captured:
-            self.damage_frame_index = self.frame_index
-            self.damage_frame_index_captured = True
+            if levelHandler.freeze_damage:
+                self.alpha = 128
+                if self.determine_time_elapsed() >1500:
+
+                    levelHandler.freeze_damage = False
+
+            else:
+                self.alpha = 255
+
+    def damage_animation(self, objects, levelHandler, delta_t):
+
+        # resets time variables and capture relevant sprites/frame when damaged
+        if objects.image is None:
+            pass
+        if not self.damage_frame_captured:
+
+            self.damage_frame = objects.image
+
+            if self.current_sprite == 4 or self.current_sprite == 5:
+                self.transform_frame = self.mario_sprites[self.current_sprite][self.frame_index]
+            else:
+                self.transform_frame = self.mario_sprites[self.current_sprite]
+
+            self.damage_frame_captured = True
             self.reset_time_variables()
-            self.last_frame_time = self.determine_time_elapsed()
+            self.last_frame_time_2 = self.determine_time_elapsed()
 
-        # Do animation here
+        # go little
         if self.damage_count == 0:
-            if self.current_sprite == 4 or self.current_sprite == 5:
-                objects.image = self.mario_sprites[self.current_sprite][self.damage_frame_index]
-            else:
-                objects.image = self.mario_sprites[self.current_sprite]
-            objects.image.set_alpha(128)
-            self.set_object(objects)
-        if self.damage_count == 25:
-            if self.current_sprite == 4 or self.current_sprite ==5:
-                objects.image = self.current_mario_sprites[self.current_sprite][self.damage_frame_index]
-            else:
-                objects.image = self.current_mario_sprites[self.current_sprite]
+            
+            objects.image = self.transform_frame
             objects.image.set_alpha(128)
             self.set_object(objects)
 
-        self.damage_count += 1
-        if self.damage_count > 50:
+        # go big
+        if self.damage_count > 0.4:
+            objects.image = self.damage_frame
+            objects.image.set_alpha(128)
+            self.set_object(objects)
+
+        # increment damage count by delta_t. ensures consistent damage animation
+        self.damage_count += delta_t
+
+        # reset damage count
+        if self.damage_count > 0.8:
             self.damage_count = 0
-        if self.determine_time_elapsed() > 1500:
-            objects.image.set_alpha(255)
-            if self.current_sprite == 4 or self.current_sprite == 5:
-                self.mario_sprites[self.current_sprite][self.damage_frame_index].set_alpha(255)
-                self.current_mario_sprites[self.current_sprite][self.damage_frame_index].set_alpha(255)
-            else:
-                self.mario_sprites[self.current_sprite].set_alpha(255)
-                self.current_mario_sprites[self.current_sprite].set_alpha(255)
 
+        # check elapsed time
+        if self.determine_time_elapsed() > 1200:
+
+            # reset flags
             levelHandler.pause_for_damage = False
+            self.damage_frame_captured = False
+
+            # set flags
             levelHandler.decrease_power = True
-            self.damage_frame_index_captured = False
+            levelHandler.freeze_damage = True
+
+            # restart timer for freeze damage
+            self.reset_time_variables()
+            self.last_frame_time_2 = self.determine_time_elapsed()
+
+            # setup player object image
+            objects.image = self.transform_frame
             self.current_mario_sprites = self.mario_sprites
+            self.set_object(objects)
 
     def handle_power_ups(self,objects):
         if objects.power_up == 0 and self.current_power != objects.power_up:
             self.current_mario_sprites = self.mario_sprites
             objects.image = self.current_mario_sprites[0]
-
             self.set_object(objects)
             self.current_power = objects.power_up
 

@@ -23,7 +23,6 @@ class _EnemyEngine:
                 self.isHit(objects, GameObjects, GraphicsEngine)
                 self.change_direction(objects)
                 self.change_position(objects)
-            self.track_scroll(objects, PlayerEngine)
 
     def isHit(self, objects, GameObjects, GraphicsEngine):
         if objects.isHit:
@@ -33,9 +32,12 @@ class _EnemyEngine:
     def change_position(self, objects):
         objects.velocityX = 35
 
-    def track_scroll(self, objects, PlayerEngine):
-        if PlayerEngine.scroll_level:
-            objects.position[0] -= PlayerEngine.x_displacement
+    def track_scroll(self, GameObjects, PlayerEngine):
+        for objects in GameObjects:
+
+            if PlayerEngine.scroll_level and objects.subClass == 'enemy':
+
+                objects.position[0] -= PlayerEngine.x_displacement
 
     def change_direction(self, objects):
 
