@@ -73,13 +73,14 @@ class _CollisionEngine:
                         if (objs.rect.left < objects.rect.centerx < objs.rect.right or
                             objs.rect.left < objects.rect.right < objs.rect.right or
                                 objs.rect.left < objects.rect.left < objects.rect.right):
+                                    objects.collisionDown = True
+
                                     objects._set_mask()
                                     objs._set_mask()
                                     if objects.image_mask.overlap(objs.image_mask, (
                                         objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
                                         #if objs.collidepoint(objects.rect.centerx,objects.rect.bottom+5):#not objects.jumping:
                                         objects.position[1] = objs.rect.top - objects.rect.height
-                                        objects.collisionDown = True
                                         objects.collisionObject = objs
                                         if objs.subClass == 'enemy' and objects.subClass == "player":
                                             objects.onEnemy = True
