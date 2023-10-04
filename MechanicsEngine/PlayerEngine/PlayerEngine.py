@@ -38,8 +38,9 @@ class _PlayerEngine(anim_util._anim_util):
 
             self.handle_power_ups(objects)
             self.handle_damage(objects, levelHandler)
-        elif levelHandler.pause_for_damage:
-            self.scroll_level = False
+
+            if levelHandler.pause_for_damage:
+                self.scroll_level = False
 
     def handle_power_ups(self, objects):
         if objects.collisionObject is not None:
@@ -49,16 +50,16 @@ class _PlayerEngine(anim_util._anim_util):
 
     def handle_damage(self, objects, levelHandler):
         if (objects.collisionLeft or objects.collisionRight) and objects.collisionSubClass == 'enemy':
-            # if objects.image_mask.overlap(objects.collisionObject.image_mask,(objects.position[0]-objects.collisionObject.position[0],objects.position[1]-objects.collisionObject.position[1])):
             if objects.power_up > 0:
                 levelHandler.pause_for_damage = True
-            # objects.power_up = 0
-            elif objects.power_up == 0 and False:
+
+            elif objects.power_up == 0 and not levelHandler.freeze_damage:
                 levelHandler.load_level = True
 
-            if levelHandler.decrease_power and objects.power_up > 0:
-                objects.power_up = 0
-                levelHandler.decrease_power = False
+        if levelHandler.decrease_power:
+            objects.power_up = 0
+            levelHandler.decrease_power = False
+        print(objects.power_up)
 
     def onEnemy(self, objects):
         if objects.subClass == 'player':
