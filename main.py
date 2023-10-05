@@ -119,11 +119,7 @@ while running:
 		# UIE.main_loop()
 
 		for objects in GE.render_buffer:
-			# PlayerMechanics Engine
-			PlE.main_loop(objects, delta_t, input_dict, CE, LH)
 
-			# Enemy Engine
-			EE.main_loop(GameObjects, PlE, GE,objects)
 
 			# Physics Engine
 			PE.main_loop(objects, delta_t, LH)
@@ -131,6 +127,12 @@ while running:
 			# Collision Engine
 			CE.main_loop(objects, GE, input_dict, GE.screen)
 
+			# PlayerMechanics Engine
+			PlE.main_loop(objects, delta_t, input_dict, CE, LH)
+
+			# Enemy Engine
+			EE.main_loop(GameObjects, PlE, GE,objects)
+			
 			# Animation System
 			AS.main_loop(objects, input_dict, LH, delta_t)
 
