@@ -1,6 +1,7 @@
 import sys
 import pygame
 
+#Library Paths
 sys.path.append('./GraphicsEngine')
 sys.path.append('./InputsEngine')
 sys.path.append('./UIEngine')
@@ -16,7 +17,7 @@ sys.path.append('./AnimationSystem')
 sys.path.append('./MechanicsEngine/BlockEngine')
 sys.path.append('./MechanicsEngine/PowerUpEngine')
 
-#Custom Libraries Kinda
+#Game Libraries
 import GraphicsEngine
 import InputsEngine
 import UIEngine
@@ -34,6 +35,7 @@ import PowerUpEngine
 
 # Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
+
 # Initialize UI Engine
 UIE = UIEngine._UIEngine()
 
@@ -65,13 +67,12 @@ LH = LevelHandler._LevelHandler()
 # Initialize Animation System
 AS = AnimationSystem._AnimationSystem()
 
-#Initialize Block Engine
+# Initialize Block Engine
 BE = BlockEngine._BlockEngine()
 
-#Initialize PowerUpEngine
+# Initialize PowerUpEngine
 PUP = PowerUpEngine._PowerUpEngine()
 
-# This will have to change
 # Initialize GameObjects
 GameObjects = list()
 PlayerObject = GameObject._GameObject()
@@ -83,49 +84,49 @@ PlayerObject._set_rect(PlayerObject.sprite_size)
 PlayerObject._set_mask()
 GameObjects.append(PlayerObject)
 
+# Initialize Level Objects
 levelObjects = list()
 
-clock = pygame.time.Clock()
-
+# Initialize Collision List
 collisionList = list()
 collisionList.extend(GameObjects)
 collisionList.extend(levelObjects)
 
-pygame_events = None
+# Start clock
+clock = pygame.time.Clock()
+
 # simulation runtime variables
+pygame_events = None
 delta_t = 0
 FPS = 30
-
-
 		
-# main loop
+# main game loop
 running = True
 while running:
 
 	for event in pygame.event.get():
-
 		if event.type == pygame.QUIT:
 			running = False
 
 	pygame_events = pygame.event.get()
 
-	# Inputs Engine
+	# Inputs Engine | Update our inputs once a frame
 	input_dict = IE.main_loop(GameObjects,delta_t,pygame_events)
-	# Graphics Engine
+
+	# Graphics Engine | Update our graphics once a frame
 	GE.main_loop(GameObjects, levelObjects, LH,LB)
 
+	# game and level objects are only updated in play mode
 	if not LB.edit:
-		# UI Engine
-		# UIE.main_loop()
 
+		# update all game and level objects once a frame
 		for objects in GE.render_buffer:
 
-
-			# Physics Engine
+			# Physics Engine | Maintain this order. Physics is always first. Collisions is always second.
 			PE.main_loop(objects, delta_t, LH)
 
 			# Collision Engine
-			CE.main_loop(objects, GE, input_dict, GE.screen)
+			CE.main_loop(objects, GE, input_dict)
 
 			# PlayerMechanics Engine
 			PlE.main_loop(objects, delta_t, input_dict, CE, LH)
@@ -142,12 +143,8 @@ while running:
 			# PowerUp Engine
 			PUP.main_loop(GameObjects, LH, PlE,GE, objects)
 
-
 		# Level Handler
 		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB, EE)
-
-
-
 
 	# Level Builder
 	LB.main_loop(input_dict, GE.screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
