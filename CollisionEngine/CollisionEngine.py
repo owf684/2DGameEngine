@@ -16,6 +16,7 @@ class _CollisionEngine:
         self.threadStarted = False
         self.screen = None
         self.collisionThread = list()
+        self.collision_tolerance = 10
 
     def main_loop(self, objects, GraphicsEngine, input_dict, screen):
         self.screen = screen
@@ -40,53 +41,39 @@ class _CollisionEngine:
                 pass
 
     def detectCollisions(self, objects, objs):
-
         self.left_collision(objects,objs)
         self.right_collision(objects,objs)
         self.up_collision(objects, objs)
         self.down_collision(objects, objs)
 
+        
     def up_collision(self, objects, objs):
         if objects.rect.colliderect(objs.rect):
-            if objects.rect.top < objs.rect.bottom:
-                if objects.rect.bottom > objs.rect.bottom and objects.rect.centery > objs.rect.bottom:
-                    if objs.rect.left - objects.rect.width/2 < objects.rect.centerx < objs.rect.right + objects.rect.width/2:
-                        objects._set_mask()
-                        objs._set_mask()
-                        if objects.image_mask.overlap(objs.image_mask, (
-                                objects.position[0] - objs.position[0],
-                                objects.position[1] - objs.position[1])):
-                            objects.collisionSubClass = objs.subClass
-                            objects.collisionObjDirection = objs.x_direction
-                            objects.collisionObject = objs
-                            objects.collisionUp = True
-                            if isinstance(objs, BlockObject._BlockObject):
-                                objs.hit = True
+            if abs(objs.rect.bottom - objects.rect.top) < self.collision_tolerance:
+                objects.collisionSubClass = objs.subClass
+                objects.collisionObjDirection = objs.x_direction
+                objects.collisionObject = objs
+                objects.collisionUp = True
+                if isinstance(objs, BlockObject._BlockObject):
+                    if (objs.rect.left < objects.rect.centerx < objs.rect.right):
+                        objs.hit = True               
 
     def down_collision(self, objects, objs):
         if objects.rect.colliderect(objs.rect):
-            if (objects.rect.bottom > objs.rect.top and objects.rect.top < objs.rect.top and 
-                objects.rect.centery < objs.rect.top):
+            if abs(objs.rect.top - objects.rect.bottom) < self.collision_tolerance*2.25:
+                objects.collisionDown = True
+                objects.collisionObject = objs
+                objects.collisionSubClass = objs.subClass
+                objects.collisionObjDirection = objs.x_direction
+                objects.position[1] = objs.rect.top - objects.rect.height              
+                if objs.subClass =='enemy' and objects.subClass == 'player':    
+                    if objs.rect.right +5 < objects.rect.centerx < objs.rect.left -5 :
 
-                if (objs.rect.left - objects.rect.width/2 < objects.rect.centerx < objs.rect.right + objects.rect.width/2):
-                    objects._set_mask()
-                    objs._set_mask()
-                    if objects.image_mask.overlap(objs.image_mask, (
-                        objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):    
-                        objects.collisionDown = True
-                        objects.collisionObject = objs
-                        objects.collisionSubClass = objs.subClass
-                        objects.collisionObjDirection = objs.x_direction
+                        objects.onEnemy = True
+                        objs.isHit = True
+                                
+    def left_collision(self,objects,objs):
 
-                        if objs.subClass =='enemy' and objects.subClass == 'player':    
-                            objects.onEnemy = True
-                            objs.isHit = True
-                        else:
-                            if not objects.jumping:
-                                objects.position[1] = objs.rect.top - objects.rect.height
-                                                                              
-                            
-    def left_collision(self,objects,objs):   
         offset =5
         if objects.rect.left - offset< objs.rect.right:
             if objects.rect.right > objs.rect.left and objects.rect.right > objs.rect.right:
@@ -105,6 +92,9 @@ class _CollisionEngine:
                             if not objects.image_mask.overlap(objs.image_mask, (
                             objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
                                 objects.collisionLeft = False
+                            else:
+                                if objects.rect.top < objs.rect.centery < objects.rect.bottom:
+                                    objects.isHit = True
   
     def right_collision(self,objects,objs):
 
@@ -126,7 +116,9 @@ class _CollisionEngine:
                             if not objects.image_mask.overlap(objs.image_mask, (
                             objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
                                 objects.collisionRight = False 
-          
+                            else:
+                                if objects.rect.top < objs.rect.centery < objects.rect.bottom:
+                                    objects.isHit = True
 
     def updateRectPosition(self, collisionObject):
 

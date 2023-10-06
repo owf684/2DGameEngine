@@ -49,8 +49,9 @@ class _PlayerEngine(anim_util._anim_util):
                     objects.power_up = 1
 
     def handle_damage(self, objects, levelHandler):
-        if (objects.collisionLeft or objects.collisionRight) and objects.collisionSubClass == 'enemy':
+        if objects.isHit:
             if objects.power_up > 0:
+                objects.isHit = False
                 levelHandler.pause_for_damage = True
 
             elif objects.power_up == 0 and not levelHandler.freeze_damage:
