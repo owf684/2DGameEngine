@@ -40,11 +40,12 @@ class _EnemyEngine:
                 objects.position[0] -= PlayerEngine.x_displacement
 
     def change_direction(self, objects):
+        if objects.collisionObject.subClass != "player":
 
-        if objects.collisionLeft:
-            objects.x_direction = 1
-        if objects.collisionRight:
-            objects.x_direction = -1
+            if objects.collisionLeft:
+                objects.x_direction = 1
+            if objects.collisionRight:
+                objects.x_direction = -1
 
     # if objects.collisionRight:
     #	objects.x_direction = 1

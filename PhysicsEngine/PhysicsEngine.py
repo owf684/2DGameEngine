@@ -53,8 +53,10 @@ class _PhysicsEngine:
                 objects.x_acceleration = 0
 
             if (not objects.collisionLeft and objects.x_direction == -1) or (
-                    not objects.collisionRight and objects.x_direction == 1) or (
-                    objects.subClass == 'powerup' and objects.collisionSubClass == 'player'):
+                not objects.collisionRight and objects.x_direction == 1) or (
+                    objects.subClass == 'powerup' and objects.collisionSubClass == 'player') or (
+                    objects.subClass == 'enemy'   and objects.collisionSubClass == 'player'):
+                
                 objects.x_displacement = objects.velocity_X1 * delta_t + (
                         0.5 * objects.x_acceleration * math.pow(delta_t, 2))
             else:
