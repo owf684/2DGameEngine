@@ -43,9 +43,7 @@ class _PlayerEngine(anim_util._anim_util):
                 self.scroll_level = False
 
     def handle_power_ups(self, objects):
-        print(objects.powerUp)
         if objects.powerUp:
-            print("powerup detected")
             if objects.collisionObject.subClass == 'powerup':
                 if "super_mushroom" in objects.collisionObject.imagePath:
                     objects.power_up = 1
