@@ -1,5 +1,9 @@
+import sys
 import pygame
 import copy
+sys.path.append('./GameObjects')
+sys.path.append("./AnimationSystem")
+import BlockObject
 
 
 class _SuperMushroom:
@@ -41,6 +45,11 @@ class _SuperMushroom:
 
                 if objects.collisionRight:
                     objects.x_direction = -1
+
+                if isinstance(objects.collisionObject, BlockObject._BlockObject):
+                    if objects.collisionObject.changeHit:
+                        objects.x_direction *= -1
+                        objects.collisionObject.changeHit = False
 
         if objects.isHit:
             self.destroy = True

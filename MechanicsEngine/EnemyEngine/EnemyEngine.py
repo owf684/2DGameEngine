@@ -1,9 +1,11 @@
 import pygame
 import copy
 import threading
+import sys
+sys.path.append("./GameObjects")
+import BlockObject
 
-
-class _EnemyEngine:
+class _EnemyEngine():
 
     def __init__(self):
         self.enemy_index = 0
@@ -54,6 +56,11 @@ class _EnemyEngine:
                     objects.x_direction = 1
                 if objects.collisionRight:
                     objects.x_direction = -1
+            if isinstance(objects.collisionObject,BlockObject._BlockObject):
+                if objects.collisionObject.changeHit:
+                    objects.isHit = True
+                    objects.collisionObject.changeHit = False
+            
 
     def enemy_ai(self, GameObjects, PlayerEngine, GraphicsEngine, objects):
         inRangeX = 128
@@ -67,5 +74,3 @@ class _EnemyEngine:
                 if x_distance > 0:
                     objects.x_direction = -1
 
-    # if objects.collisionRight:
-    #	objects.x_direction = 1

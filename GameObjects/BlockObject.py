@@ -1,7 +1,10 @@
 import GameObject
+import sys
+import pygame
+sys.path.append("./AnimationSystem")
+import anim_util
 
-
-class _BlockObject(GameObject._GameObject):
+class _BlockObject(GameObject._GameObject, anim_util._anim_util):
     def __init__(self):
         super().__init__()
 
@@ -11,3 +14,6 @@ class _BlockObject(GameObject._GameObject):
         self.release_item_trigger = False
         self.theta = 1
         self.item = None
+        self.changeHit = False
+        self.pauseHit = False
+        self.last_frame_time_2 = 0

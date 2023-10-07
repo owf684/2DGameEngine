@@ -169,8 +169,10 @@ class _CollisionEngine:
 
     def level_object_hit_box(self,objects,objs):
         try:
-            if isinstance(objs, BlockObject._BlockObject):
+            if isinstance(objs, BlockObject._BlockObject) and not objs.pauseHit:
                 if (objs.rect.left < objects.rect.centerx < objs.rect.right):
                     objs.hit = True  
+                    objs.changeHit = True
+                    objs.pauseHit = True          
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function level_object_hit_box: ", Error)

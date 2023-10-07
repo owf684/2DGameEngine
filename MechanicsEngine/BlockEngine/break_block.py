@@ -1,14 +1,13 @@
 import sys
-
+sys.path.append("./AnimationSystem")
 sys.path.append('./GameObjects')
 import BlockObject
 import math
 
 
-class _break_block:
+class _break_block():
 
     def __init__(self):
-
         self.step = 0.1
 
     def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t, objects):
@@ -21,12 +20,18 @@ class _break_block:
             if objects.release_item_trigger:
                 self.release_item(objects, GameObjects)
 
+            if objects.pauseHit:
+                if objects.determine_time_elapsed() > 300:
+                    objects.pauseHit = False
+
     def handle_break_blocks(self, objects, PlayerEngine):
         if objects.hit:
             if "break" in objects.imagePath and not PlayerEngine.superMario:
                 objects.hit = False
                 objects.push_block_trigger = True
                 objects.release_item_trigger = True
+                objects.reset_time_variables()
+                objects.last_frame_time_2 = objects.determine_time_elapsed()
 
     def push_block_animation(self, objects):
 
@@ -35,6 +40,7 @@ class _break_block:
 
         if objects.theta <= 0:
             objects.push_block_trigger = False
+            objects.changeHit = False
             objects.theta = 1
 
     def release_item(self, push_block_object, GameObjects):
@@ -45,5 +51,5 @@ class _break_block:
             item.pause_physics = False
             push_block_object.item = None
             item._set_mask()
-            self.release_item_trigger = False
+            self.release_item_trigger = False     
             GameObjects.append(item)
