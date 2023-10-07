@@ -64,7 +64,7 @@ class _CollisionEngine:
                                 
     def left_collision(self,objects,objs):
         try:
-            offset = objects.rect.width/3
+            offset = objects.rect.width/2
             if objects.rect.left - offset< objs.rect.right:
                 if objects.rect.right > objs.rect.left and objects.rect.right > objs.rect.right:
                     if (objs.rect.topright[1] < objects.rect.top < objs.rect.bottomright[1] or 
@@ -72,8 +72,7 @@ class _CollisionEngine:
                         objs.rect.topright[1] < objects.rect.bottom - offset< objs.rect.bottomright[1]):               
                         objects.collisionLeft = True
                         self.save_collision_object(objects,objs)  
-                        if self.player_hit_box_x(objects,objs):
-                            objects.collisionLeft = False
+                        self.player_hit_box_x(objects,objs)
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function left_collision: ", Error)
     
@@ -84,12 +83,10 @@ class _CollisionEngine:
                 if objects.rect.left < objs.rect.right and objects.rect.right < objs.rect.right:
                     if (objs.rect.topleft[1] < objects.rect.top < objs.rect.bottomleft[1]  or 
                         objs.rect.topleft[1] < objects.rect.centery < objs.rect.bottomleft[1] or 
-                        objs.rect.topleft[1] < objects.rect.bottom - offset < objs.rect.bottomleft[1]):
-                        
+                        objs.rect.topleft[1] < objects.rect.bottom - offset < objs.rect.bottomleft[1]):                  
                         objects.collisionRight = True   
                         self.save_collision_object(objects,objs)  
-                        if self.player_hit_box_x(objects,objs):
-                            objects.collisionRight = False
+                        self.player_hit_box_x(objects,objs)
         except Exception as Error:
             print("runtime errir in CollisionEngine.py. Function right_collision: ", Error)
                                                 
@@ -111,7 +108,7 @@ class _CollisionEngine:
     def player_hit_box_x(self,objects,objs):
         try:
             enemyCollision = False
-            if objs.subClass == 'enemy' or objs.subClass == 'powerup':
+            if (objs.subClass == 'enemy' and not objects.subClass == 'enemy' ) or objs.subClass == 'powerup': 
                                 enemyCollision = True
                                 objects._set_mask()
                                 objs._set_mask()
