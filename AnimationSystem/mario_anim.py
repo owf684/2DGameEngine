@@ -57,159 +57,180 @@ class _mario_anim(anim_util._anim_util):
         self.damage_frame_captured = False
 
     def main_loop(self, objects, input_dict, levelHandler,delta_t):
+        try:
+            if objects.subClass == 'player':
+                if not levelHandler.pause_for_damage:
 
-        if objects.subClass == 'player':
-            if not levelHandler.pause_for_damage:
+                    self.determine_frame_count()
 
-                self.determine_frame_count()
+                    self.handle_run_animations(objects, input_dict)
 
-                self.handle_run_animations(objects, input_dict)
+                    self.handle_jump_animations(objects, input_dict)
 
-                self.handle_jump_animations(objects, input_dict)
+                    self.handle_idle_animations(objects, input_dict)
 
-                self.handle_idle_animations(objects, input_dict)
+                    self.handle_power_ups(objects)
 
-                self.handle_power_ups(objects)
+                    objects.image.set_alpha(self.alpha)
 
-                objects.image.set_alpha(self.alpha)
+                elif levelHandler.pause_for_damage:
 
-            elif levelHandler.pause_for_damage:
+                    self.damage_animation(objects, levelHandler,delta_t)
 
-                self.damage_animation(objects, levelHandler,delta_t)
+                if levelHandler.freeze_damage:
 
-            if levelHandler.freeze_damage:
-                self.alpha = 128
-                if self.determine_time_elapsed() >1500:
+                    self.alpha = 128
+                    
+                    if self.determine_time_elapsed() >1500:
+                        levelHandler.freeze_damage = False
+                else:
+                    self.alpha = 255
 
-                    levelHandler.freeze_damage = False
-
-            else:
-                self.alpha = 255
+        except Exception as Error:
+            print("runtime error in mario_anim. Function main_loop: ", Error)
 
     def damage_animation(self, objects, levelHandler, delta_t):
+        try:      
+            # resets time variables and capture relevant sprites/frame when damaged
+            if not self.damage_frame_captured:
 
-        # resets time variables and capture relevant sprites/frame when damaged
-        if objects.image is None:
-            pass
-        if not self.damage_frame_captured:
+                self.damage_frame = objects.image
 
-            self.damage_frame = objects.image
+                if self.current_sprite == 4 or self.current_sprite == 5:
+                    self.transform_frame = self.mario_sprites[self.current_sprite][self.frame_index]
+                else:
+                    self.transform_frame = self.mario_sprites[self.current_sprite]
 
-            if self.current_sprite == 4 or self.current_sprite == 5:
-                self.transform_frame = self.mario_sprites[self.current_sprite][self.frame_index]
-            else:
-                self.transform_frame = self.mario_sprites[self.current_sprite]
+                self.damage_frame_captured = True
+                self.reset_time_variables()
+                self.last_frame_time_2 = self.determine_time_elapsed()
 
-            self.damage_frame_captured = True
-            self.reset_time_variables()
-            self.last_frame_time_2 = self.determine_time_elapsed()
-
-        # go little
-        if self.damage_count == 0:
+            # go little
+            if self.damage_count == 0:
             
-            objects.image = self.transform_frame
-            objects.image.set_alpha(128)
-            self.set_object(objects)
+                objects.image = self.transform_frame
+                objects.image.set_alpha(128)
+                self.set_object(objects)
 
-        # go big
-        if self.damage_count > 0.4:
-            objects.image = self.damage_frame
-            objects.image.set_alpha(128)
-            self.set_object(objects)
+            # go big
+            if self.damage_count > 0.4:
+                objects.image = self.damage_frame
+                objects.image.set_alpha(128)
+                self.set_object(objects)
 
-        # increment damage count by delta_t. ensures consistent damage animation
-        self.damage_count += delta_t
+            # increment damage count by delta_t. ensures consistent damage animation
+            self.damage_count += delta_t
 
-        # reset damage count
-        if self.damage_count > 0.8:
-            self.damage_count = 0
+            # reset damage count
+            if self.damage_count > 0.8:
+                self.damage_count = 0
 
-        # check elapsed time
-        if self.determine_time_elapsed() > 1200:
+            # check elapsed time
+            if self.determine_time_elapsed() > 1200:
 
-            # reset flags
-            levelHandler.pause_for_damage = False
-            self.damage_frame_captured = False
+                # reset flags
+                levelHandler.pause_for_damage = False
+                self.damage_frame_captured = False
 
-            # set flags
-            levelHandler.decrease_power = True
-            levelHandler.freeze_damage = True
+                # set flags
+                levelHandler.decrease_power = True
+                levelHandler.freeze_damage = True
 
-            # restart timer for freeze damage
-            self.reset_time_variables()
-            self.last_frame_time_2 = self.determine_time_elapsed()
+                # restart timer for freeze damage
+                self.reset_time_variables()
+                self.last_frame_time_2 = self.determine_time_elapsed()
 
-            # setup player object image
-            objects.image = self.transform_frame
-            self.current_mario_sprites = self.mario_sprites
-            self.set_object(objects)
+                # setup player object image
+                objects.image = self.transform_frame
+                self.current_mario_sprites = self.mario_sprites
+                self.set_object(objects)
+        except Exception as Error:
+            print("runtime error in mario_anim. function damage_animation: ", Error)
 
     def handle_power_ups(self,objects):
-        if objects.power_up == 0 and self.current_power != objects.power_up:
-            self.current_mario_sprites = self.mario_sprites
-            objects.image = self.current_mario_sprites[0]
-            self.set_object(objects)
-            self.current_power = objects.power_up
+        try:
+            if objects.power_up == 0 and self.current_power != objects.power_up:
+                self.current_mario_sprites = self.mario_sprites
+                objects.image = self.current_mario_sprites[0]
+                self.set_object(objects)
+                self.current_power = objects.power_up
 
-        if objects.power_up == 1 and self.current_power != objects.power_up:
-            self.current_mario_sprites = self.super_mario_sprites
-            objects.image = self.current_mario_sprites[0]
-            self.set_object(objects)
+            if objects.power_up == 1 and self.current_power != objects.power_up:
+                self.current_mario_sprites = self.super_mario_sprites
+                objects.image = self.current_mario_sprites[0]
+                objects.position[1] -= 32
+                self.set_object(objects)
 
-            self.current_power = objects.power_up
 
+                self.current_power = objects.power_up
+        except Exception as Error:
+            print("runtime error in mario_anim. Function handle_power_ups: ", Error)
     def handle_run_animations(self, objects, input_dict):
+        try:
+            if input_dict['l-shift'] == '1':
+                self.frame_duration = 50
+            else:
+                self.frame_duration = 80
 
-        if input_dict['l-shift'] == '1':
-            self.frame_duration = 50
-        else:
-            self.frame_duration = 80
+            if input_dict['right'] == '1':
 
-        if input_dict['right'] == '1':
+                if not self.jumping:
+                    objects.image = self.current_mario_sprites[4][self.frame_index]
+                    self.current_sprite = 4
 
-            if not self.jumping:
-                objects.image = self.current_mario_sprites[4][self.frame_index]
-                self.current_sprite = 4
+                    self.x_direction = 1
+                elif objects.collisionDown and self.jumping:
+                    self.jumping = False
 
-                self.x_direction = 1
-            elif objects.collisionDown and self.jumping:
-                self.jumping = False
+            if input_dict['left'] == '-1':
 
-        if input_dict['left'] == '-1':
-
-            if not self.jumping:
-                objects.image = self.current_mario_sprites[5][self.frame_index]
-                self.current_sprite = 5
-                self.x_direction = -1
-            elif objects.collisionDown and self.jumping:
-                self.jumping = False
+                if not self.jumping:
+                    objects.image = self.current_mario_sprites[5][self.frame_index]
+                    self.current_sprite = 5
+                    self.x_direction = -1
+                elif objects.collisionDown and self.jumping:
+                    self.jumping = False
+        except Exception as Error:
+            print("runtime error in mario_anim. Function handle_run_animations: ", Error)
 
     def handle_idle_animations(self, objects, input_dict):
-        if input_dict['right'] == '0' and input_dict['left'] == '0':
-            if self.x_direction == 1 and not self.jumping:
-                objects.image = self.current_mario_sprites[0]
-                self.current_sprite = 0
-            elif self.x_direction == -1 and not self.jumping:
-                objects.image = self.current_mario_sprites[1]
-                self.current_sprite = 1
-            elif objects.collisionDown and self.jumping:
-                self.jumping = False
-
+        try:
+            
+            if input_dict['right'] == '0' and input_dict['left'] == '0':
+                if self.x_direction == 1 and not self.jumping:
+                    objects.image = self.current_mario_sprites[0]
+                    self.current_sprite = 0
+                elif self.x_direction == -1 and not self.jumping:
+                    objects.image = self.current_mario_sprites[1]
+                    self.current_sprite = 1
+                elif objects.collisionDown and self.jumping:
+                    self.jumping = False
+        except Exception as Error:
+            print("runtime error in mario_anim. Function handle_idle_animations: ", Error)
+    
     def handle_jump_animations(self, objects, input_dict):
-
-        if objects.velocityY > 0:
-            if self.x_direction == 1:
-                objects.image = self.current_mario_sprites[3]
-                self.current_sprite = 3
-                self.jumping = True
-            elif self.x_direction == -1:
-                objects.image = self.current_mario_sprites[2]
-                self.current_sprite = 2
-                self.jumping = True
-            if objects.collisionDown and self.jumping:
-                self.jumping = False
+        try:
+            if objects.velocityY > 0:
+                if self.x_direction == 1:
+                    objects.image = self.current_mario_sprites[3]
+                    self.current_sprite = 3
+                    self.jumping = True
+                elif self.x_direction == -1:
+                    objects.image = self.current_mario_sprites[2]
+                    self.current_sprite = 2
+                    self.jumping = True
+                if objects.collisionDown and self.jumping:
+                    self.jumping = False
+        except Exception as Error:
+            print("runtime error in mario_anim. Function handle_jump_animations: ", Error)
+            
+    
     def set_object(self, objects):
+        try:
 
-        objects._set_sprite_size(objects.image)
-        objects._set_rect(objects.sprite_size)
-        objects._set_mask()
+            objects._set_sprite_size(objects.image)
+            objects._set_rect(objects.sprite_size)
+            objects._set_mask()
+            
+        except Exception as Error:
+            print("runtime error in mario_anim. Function set_object: ", Error)
