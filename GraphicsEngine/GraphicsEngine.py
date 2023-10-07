@@ -69,6 +69,8 @@ class _GraphicsEngine:
 			pygame.draw.rect(self.screen,(255,0,0),objects.rect,2)
 			if objects.hit_box is not None:
 				pygame.draw.rect(self.screen,(255,0,0),objects.hit_box,2)
+			if objects.kill_box is not None:
+				pygame.draw.rect(self.screen,(255,0,0),objects.kill_box,2)
 
 		# Update the display
 		pygame.display.flip()

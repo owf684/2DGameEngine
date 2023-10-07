@@ -60,14 +60,12 @@ class _EnemyEngine:
         inRangeY = 32
         x_distance = objects.position[0] - self.player_position[0]
         y_distance = objects.position[1] - self.player_position[1]
-        print(x_distance)
         if objects.subClass == 'enemy':
             if abs(x_distance) < inRangeX and abs(y_distance) <= inRangeY:
-                if x_distance < 0:    #
+                if x_distance < 0:    
                     objects.x_direction = 1
                 if x_distance > 0:
                     objects.x_direction = -1
-                    print("changing_direction")
 
     # if objects.collisionRight:
     #	objects.x_direction = 1

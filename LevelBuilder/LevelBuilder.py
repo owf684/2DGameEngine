@@ -514,6 +514,7 @@ class _LevelBuilder:
 			if temp_subClass == 'player':
 
 				GameObjects.append(PlayerObject._PlayerObject())
+				
 			else:
 				GameObjects.append(GameObject._GameObject())
 			GameObjects[-1].subClass = object_elem.find("subClass").text
@@ -532,6 +533,7 @@ class _LevelBuilder:
 			if GameObjects[-1].subClass == 'player':
 				GameObjects[-1].initial_position = copy.deepcopy(self.spawn_point)
 				GameObjects[-1].position = copy.deepcopy(self.spawn_point)
+				GameObjects[-1]._set_kill_box(GameObjects[-1].sprite_size,32)
 			collisionList.append(GameObjects[-1])
 			if GameObjects[-1].subClass == 'enemy':
 				GameObjects[-1].x_direction = -1
