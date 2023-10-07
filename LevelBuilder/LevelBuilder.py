@@ -528,7 +528,7 @@ class _LevelBuilder:
 			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
 			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
 			GameObjects[-1]._set_mask()
-
+			GameObjects[-1]._set_hit_box(GameObjects[-1].sprite_size,8)
 			if GameObjects[-1].subClass == 'player':
 				GameObjects[-1].initial_position = copy.deepcopy(self.spawn_point)
 				GameObjects[-1].position = copy.deepcopy(self.spawn_point)

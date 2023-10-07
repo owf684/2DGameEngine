@@ -13,6 +13,7 @@ class _GameObject:
 		self.image = None
 		self.sprite_size = [0,0]
 		self.rect = None
+		self.hit_box = None
 		self.imagePath=''
 		self.animation_state = 0
 		self.position = pygame.math.Vector2(0,0)
@@ -96,6 +97,9 @@ class _GameObject:
 
 	def _set_rect(self,sprite_size):
 		self.rect = pygame.Rect(self.position[0],self.position[1],sprite_size[0],sprite_size[1])
+	
+	def _set_hit_box(self, sprite_size, y_offset):
+		self.hit_box = pygame.Rect(self.position[0], self.position[1]- y_offset, sprite_size[0],sprite_size[1]/4)
 
 	def _set_init_xPos(self,x_position):
 		self.initial_position[0] = x_position

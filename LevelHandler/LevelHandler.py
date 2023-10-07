@@ -47,6 +47,10 @@ class _LevelHandler:
 			for objects in GameObjects:
 				if objects.subClass != 'player':
 					objects.rect.x -= PlayerEngine.x_displacement
+					if objects.hit_box is not None:
+
+						objects.hit_box.x -= PlayerEngine.x_displacement
+
 				if isinstance(objects,BlockObject._BlockObject):
 					if objects.item is not None:
 						objects.item.position[0] -= PlayerEngine.x_displacement

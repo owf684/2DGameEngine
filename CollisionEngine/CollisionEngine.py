@@ -94,6 +94,10 @@ class _CollisionEngine:
         try:
             collisionObject.rect.x = collisionObject.position[0]
             collisionObject.rect.y = collisionObject.position[1]
+            if collisionObject.hit_box is not None:
+                collisionObject.hit_box.x = collisionObject.position[0]
+                collisionObject.hit_box.y = collisionObject.position[1] - 8
+                
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function updateRectPosition: ", Error)
 
@@ -146,8 +150,9 @@ class _CollisionEngine:
     def game_object_hit_box(self,objects,objs):
         try:
 
-            if objs.subClass =='enemy' and objects.subClass == 'player':        
-                if objs.rect.left  < objects.rect.centerx < objs.rect.right:
+            if objs.subClass =='enemy' and objects.subClass == 'player':  
+                if objs.hitbox.colliderect(objects.rect):      
+                #if objs.rect.left  < objects.rect.centerx < objs.rect.right:
                     objects.onEnemy = True
                     objs.isHit = True
             if objs.subClass == 'powerup' and objects.subClass == 'player':

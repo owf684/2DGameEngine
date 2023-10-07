@@ -82,6 +82,7 @@ PlayerObjects._set_image_path('./Assets/PlayerSprites/mario_32x32_idle_right.png
 PlayerObjects._set_image()
 PlayerObjects._set_sprite_size(PlayerObjects.image)
 PlayerObjects._set_rect(PlayerObjects.sprite_size)
+PlayerObjects._set_hit_box(PlayerObjects.sprite_size,16)
 PlayerObjects._set_mask()
 GameObjects.append(PlayerObjects)
 
