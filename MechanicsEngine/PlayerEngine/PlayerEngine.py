@@ -43,10 +43,13 @@ class _PlayerEngine(anim_util._anim_util):
                 self.scroll_level = False
 
     def handle_power_ups(self, objects):
-        if objects.collisionObject is not None:
+        print(objects.powerUp)
+        if objects.powerUp:
+            print("powerup detected")
             if objects.collisionObject.subClass == 'powerup':
                 if "super_mushroom" in objects.collisionObject.imagePath:
                     objects.power_up = 1
+                    objects.powerUp = False
 
     def handle_damage(self, objects, levelHandler):
         if objects.isHit:
@@ -60,7 +63,6 @@ class _PlayerEngine(anim_util._anim_util):
         if levelHandler.decrease_power:
             objects.power_up = 0
             levelHandler.decrease_power = False
-        print(objects.power_up)
 
     def onEnemy(self, objects):
         if objects.subClass == 'player':

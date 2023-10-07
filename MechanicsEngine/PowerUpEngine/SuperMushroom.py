@@ -42,6 +42,5 @@ class _SuperMushroom:
                 if objects.collisionRight:
                     objects.x_direction = -1
 
-        if objects.collisionObject is not None:
-            if objects.collisionObject.subClass == 'player' and objects.collisionObject.power_up == 1:
-                self.destroy = True
+        if objects.isHit:
+            self.destroy = True

@@ -56,6 +56,7 @@ class _CollisionEngine:
                     objects.collisionDown = True
                     self.save_collision_object(objects,objs)  
                     self.game_object_hit_box(objects,objs)
+                    self.player_hit_box_y(objects,objs)
                     if not objects.jumping:
                         objects.position[1] = objs.rect.top - objects.rect.height       
         except Exception as Error:
@@ -63,16 +64,15 @@ class _CollisionEngine:
                                 
     def left_collision(self,objects,objs):
         try:
-            offset = objects.rect.width/2
+            offset = objects.rect.width/3
             if objects.rect.left - offset< objs.rect.right:
                 if objects.rect.right > objs.rect.left and objects.rect.right > objs.rect.right:
                     if (objs.rect.topright[1] < objects.rect.top < objs.rect.bottomright[1] or 
                         objs.rect.topright[1] < objects.rect.centery < objs.rect.bottomright[1] or 
                         objs.rect.topright[1] < objects.rect.bottom - offset< objs.rect.bottomright[1]):               
-                        
                         objects.collisionLeft = True
                         self.save_collision_object(objects,objs)  
-                        self.player_hit_box(objects,objs)
+                        self.player_hit_box_x(objects,objs)
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function left_collision: ", Error)
     
@@ -87,7 +87,7 @@ class _CollisionEngine:
                         
                         objects.collisionRight = True   
                         self.save_collision_object(objects,objs)  
-                        self.player_hit_box(objects,objs)
+                        self.player_hit_box_x(objects,objs)
         except Exception as Error:
             print("runtime errir in CollisionEngine.py. Function right_collision: ", Error)
                                                 
@@ -106,23 +106,42 @@ class _CollisionEngine:
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function save_collision_object: ", Error)       
 
-    def player_hit_box(self,objects,objs):
+    def player_hit_box_x(self,objects,objs):
         try:
 
             if objs.subClass == 'enemy' or objs.subClass == 'powerup':
                                 objects._set_mask()
                                 objs._set_mask()
-                                if not objects.image_mask.overlap(objs.image_mask, (
+                                if objects.image_mask.overlap(objs.image_mask, (
                                 objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
-                                    objects.collisionRight = False 
-                                else:
+                                
                                     if objects.subClass == 'player' and objs.subClass == 'enemy':
                                         if objects.rect.top < objs.rect.centery < objects.rect.bottom:
                                             objects.isHit = True
-                                    elif objects.subClass == 'player' and objs.subClass == 'powerup':
+                
+                                    if objects.subClass == 'player' and objs.subClass == 'powerup':
                                         objs.isHit = True
+                                        objects.powerUp = True
+                                        self.save_collision_object(objects,objs)
+                         
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function player_hit_box: ", Error)
+    
+    def player_hit_box_y(self,objects,objs):
+        try: 
+            if objects.subClass == 'enemy' and objs.subClass == 'player':
+                objs.isHit = True
+            if objects.subClass == 'powerup' and objs.subClass == 'player':
+                objects.isHit = True
+                objs.powerUp = True
+                self.save_collision_object(objs,objects)
+            if objects.subClass == 'player' and objs.subClass == 'enemy':
+                objs.isHit = True
+                objects.powerUp = True
+                self.save_collision_object(objects,objs)
+                
+        except Exception as Error:
+            print("runtime error in CollisionEngine. Function payer_hit_box_y: ", Error)
 
     def game_object_hit_box(self,objects,objs):
         try:
