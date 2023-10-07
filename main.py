@@ -32,6 +32,7 @@ import EnemyEngine
 import AnimationSystem
 import BlockEngine
 import PowerUpEngine
+import PlayerObject
 
 # Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -75,14 +76,14 @@ PUP = PowerUpEngine._PowerUpEngine()
 
 # Initialize GameObjects
 GameObjects = list()
-PlayerObject = GameObject._GameObject()
-PlayerObject._set_sub_class('player')
-PlayerObject._set_image_path('./Assets/PlayerSprites/mario_32x32_idle_right.png')
-PlayerObject._set_image()
-PlayerObject._set_sprite_size(PlayerObject.image)
-PlayerObject._set_rect(PlayerObject.sprite_size)
-PlayerObject._set_mask()
-GameObjects.append(PlayerObject)
+PlayerObjects = PlayerObject._PlayerObject()
+PlayerObjects._set_sub_class('player')
+PlayerObjects._set_image_path('./Assets/PlayerSprites/mario_32x32_idle_right.png')
+PlayerObjects._set_image()
+PlayerObjects._set_sprite_size(PlayerObjects.image)
+PlayerObjects._set_rect(PlayerObjects.sprite_size)
+PlayerObjects._set_mask()
+GameObjects.append(PlayerObjects)
 
 # Initialize Level Objects
 levelObjects = list()

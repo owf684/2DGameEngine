@@ -3,6 +3,7 @@ import sys
 sys.path.append('./GameObjects')
 import GameObject
 import BlockObject
+import PlayerObject
 import copy
 import glob
 import os
@@ -509,7 +510,12 @@ class _LevelBuilder:
 		root = tree.getroot()
 
 		for object_elem in root.findall("object"):
-			GameObjects.append(GameObject._GameObject())
+			temp_subClass = object_elem.find("subClass").text
+			if temp_subClass == 'player':
+
+				GameObjects.append(PlayerObject._PlayerObject())
+			else:
+				GameObjects.append(GameObject._GameObject())
 			GameObjects[-1].subClass = object_elem.find("subClass").text
 			GameObjects[-1].imagePath = object_elem.find("imagePath").text
 			x_position = float(object_elem.find("position_x").text)
