@@ -10,11 +10,17 @@ class _EnemyEngine:
         self.goomba_troops = list()
         self.change_dir = False
         self.thread_started = False
-
+        self.player_position = [0,0]
+        self.player_direction = 1
     def main_loop(self, GameObjects, PlayerEngine, GraphicsEngine, objects):
-
+        self.get_player_attr(objects)
         self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine, objects)
+        self.enemy_ai(GameObjects,PlayerEngine, GraphicsEngine, objects)
 
+    def get_player_attr(self,objects):
+        if objects.subClass == 'player':
+            self.player_position = objects.position
+            self.player_direction = objects.x_direction
     def move_enemy(self, GameObjects, PlayerEngine, GraphicsEngine, objects):
 
         if objects.subClass == 'enemy':
@@ -40,12 +46,28 @@ class _EnemyEngine:
                 objects.position[0] -= PlayerEngine.x_displacement
 
     def change_direction(self, objects):
-        if objects.collisionObject.subClass != "player":
+        if objects.collisionObject is not None:
 
-            if objects.collisionLeft:
-                objects.x_direction = 1
-            if objects.collisionRight:
-                objects.x_direction = -1
+            if objects.collisionObject.subClass != "player":
+
+                if objects.collisionLeft:
+                    objects.x_direction = 1
+                if objects.collisionRight:
+                    objects.x_direction = -1
+
+    def enemy_ai(self, GameObjects, PlayerEngine, GraphicsEngine, objects):
+        inRangeX = 128
+        inRangeY = 32
+        x_distance = objects.position[0] - self.player_position[0]
+        y_distance = objects.position[1] - self.player_position[1]
+        print(x_distance)
+        if objects.subClass == 'enemy':
+            if abs(x_distance) < inRangeX and abs(y_distance) <= inRangeY:
+                if x_distance < 0:    #
+                    objects.x_direction = 1
+                if x_distance > 0:
+                    objects.x_direction = -1
+                    print("changing_direction")
 
     # if objects.collisionRight:
     #	objects.x_direction = 1
