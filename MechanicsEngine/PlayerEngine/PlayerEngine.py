@@ -43,12 +43,13 @@ class _PlayerEngine(anim_util._anim_util):
                 self.scroll_level = False
 
     def handle_power_ups(self, objects):
+        print("PlayerEngine.py::objects.power_up= ", objects.power_up)
+        print("PlayerEngine.py::self.superMario= ", self.superMario)
         if objects.powerUp:
-            if objects.collisionObject.subClass == 'powerup':
-                if "super_mushroom" in objects.collisionObject.imagePath:
-                    objects.power_up = 1
-                    self.superMario = True
-                    objects.powerUp = False
+            if "super_mushroom" in objects.collisionObject.imagePath:
+                objects.power_up = 1
+                self.superMario = True
+                objects.powerUp = False
 
     def handle_damage(self, objects, levelHandler):
         if objects.isHit:
@@ -63,6 +64,8 @@ class _PlayerEngine(anim_util._anim_util):
         elif objects.position[1] > self.screen_width:
             levelHandler.load_level = True
             levelHandler.edit_mode = True
+        if objects.power_up == 0 and not objects.powerUp:
+            self.superMario = False
 
         if levelHandler.decrease_power:
             objects.power_up = 0
