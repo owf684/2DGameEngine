@@ -47,6 +47,7 @@ class _PlayerEngine(anim_util._anim_util):
             if objects.collisionObject.subClass == 'powerup':
                 if "super_mushroom" in objects.collisionObject.imagePath:
                     objects.power_up = 1
+                    self.superMario = True
                     objects.powerUp = False
 
     def handle_damage(self, objects, levelHandler):
@@ -54,6 +55,7 @@ class _PlayerEngine(anim_util._anim_util):
             if objects.power_up > 0:
                 objects.isHit = False
                 levelHandler.pause_for_damage = True
+                self.superMario = False
 
             elif objects.power_up == 0 and not levelHandler.freeze_damage:
                 levelHandler.load_level = True

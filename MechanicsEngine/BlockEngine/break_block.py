@@ -10,6 +10,7 @@ class _break_block():
     def __init__(self):
         self.step = 0.1
 
+
     def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t, objects):
         if isinstance(objects, BlockObject._BlockObject):
             self.handle_break_blocks(objects, PlayerEngine)
@@ -30,8 +31,7 @@ class _break_block():
                 objects.hit = False
                 objects.push_block_trigger = True
                 objects.release_item_trigger = True
-                objects.reset_time_variables()
-                objects.last_frame_time_2 = objects.determine_time_elapsed()
+            
 
     def push_block_animation(self, objects):
 

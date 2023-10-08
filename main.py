@@ -137,7 +137,7 @@ while running:
 			EE.main_loop(GameObjects, PlE, GE,objects)
 			
 			# Animation System
-			AS.main_loop(objects, input_dict, LH, delta_t)
+			AS.main_loop(objects, GameObjects, levelObjects, input_dict, LH, delta_t, PlE, GE)
 
 			# Block Engine
 			BE.main_loop(GameObjects, levelObjects, PlE, delta_t,objects)
