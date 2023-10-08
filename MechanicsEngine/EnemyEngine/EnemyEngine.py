@@ -8,17 +8,19 @@ import BlockObject
 class _EnemyEngine():
 
     def __init__(self):
-        self.enemy_index = 0
-        self.goomba_troops = list()
-        self.change_dir = False
-        self.thread_started = False
         self.player_position = [0,0]
         self.player_direction = 1
+
     def main_loop(self, GameObjects, PlayerEngine, GraphicsEngine, objects):
         self.get_player_attr(objects)
-        self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine, objects)
-        self.enemy_ai(GameObjects,PlayerEngine, GraphicsEngine, objects)
 
+        if not objects.timer_started:
+
+            self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine, objects)
+            self.enemy_ai(GameObjects, PlayerEngine, GraphicsEngine, objects)
+        
+        self.isHit(objects, GameObjects, GraphicsEngine)
+    
     def get_player_attr(self,objects):
         if objects.subClass == 'player':
             self.player_position = objects.position
@@ -33,7 +35,8 @@ class _EnemyEngine():
                 self.change_position(objects)
 
     def isHit(self, objects, GameObjects, GraphicsEngine):
-        if objects.isHit:
+        if objects.destroy:
+            objects.destroy = False
             GameObjects.remove(objects)
             GraphicsEngine.render_buffer.remove(objects)
 
@@ -58,7 +61,8 @@ class _EnemyEngine():
                     objects.x_direction = -1
             if isinstance(objects.collisionObject,BlockObject._BlockObject):
                 if objects.collisionObject.changeHit:
-                    objects.isHit = True
+                    objects.isHit = True 
+                    objects.fromUnder = True
                     objects.collisionObject.changeHit = False
             
 

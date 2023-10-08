@@ -14,6 +14,8 @@ class _anim_util:
         self.damage_frame_index = 0
         self.damage_frame_index_captured = False
 
+        self.timer_started = False
+        self.destroy_time = 0
         # variables used in damage handling
         self.current_time_2 = 0
         self.elapsed_time_2 = 0

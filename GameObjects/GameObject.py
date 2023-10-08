@@ -1,11 +1,16 @@
 
 import pygame
+import sys
+sys.path.append("./AnimationSystem")
+import anim_util
 
-class _GameObject:
+class _GameObject(anim_util._anim_util):
 
 
 	def __init__(self):
 		#Object stupid subclass 
+		super().__init__()
+
 		#[player,platform,enemy]
 		self.subClass = ''
 
@@ -22,7 +27,8 @@ class _GameObject:
 		self.isRendered = False
 		self.image_mask = None
 		self.power_up = 0
-
+		self.destroy = False
+		self.fromUnder = False
 		#scrolling data
 		self.scrollOffset = 0
 		self.scrolling = False

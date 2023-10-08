@@ -27,22 +27,27 @@ class _CollisionEngine:
                             objs.subClass != 'environment'):
                         
                         self.detectCollisions(objects, objs)
+    
             except Exception as Error:
                 print("runtime error in CollisionEngine.py. Function main_loop: ", Error)
 
     def detectCollisions(self, objects, objs):
         try:
-            self.left_collision(objects,objs)
-            self.right_collision(objects,objs)
-            self.up_collision(objects, objs)
-            self.down_collision(objects, objs)
+        
+            if not objects.fromUnder:
+
+                self.left_collision(objects,objs)
+                self.right_collision(objects,objs)
+                self.up_collision(objects, objs)  
+                self.down_collision(objects, objs)
+
         except Exception as Error:
             print("runtime error in CollisionEngine.py Function detectCollisions: ", Error)
 
     def up_collision(self, objects, objs):
         try:
             if objects.rect.colliderect(objs.rect):
-                if abs(objs.rect.bottom - objects.rect.top) < objs.rect.height:
+                if abs(objs.rect.bottom - objects.rect.top) < objs.rect.height and not objs.fromUnder:
                     objects.collisionUp = True
                     self.save_collision_object(objects, objs)
                     self.level_object_hit_box(objects,objs)     
@@ -57,7 +62,7 @@ class _CollisionEngine:
                     self.save_collision_object(objects,objs)  
                     self.game_object_hit_box(objects,objs)
                     self.player_hit_box_y(objects,objs)
-                    if not objects.jumping:
+                    if not objects.jumping and not objs.timer_started and not objects.timer_started:
                         objects.position[1] = objs.rect.top - objects.rect.height       
         except Exception as Error:
             print('runtime error in CollisionEngine.py. Function down_collision: ', Error)
@@ -121,7 +126,7 @@ class _CollisionEngine:
                 if objects.image_mask.overlap(objs.image_mask, (
                     objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
 
-                    if objects.subClass == 'player' and objs.subClass == 'enemy':
+                    if objects.subClass == 'player' and objs.subClass == 'enemy' and not objs.timer_started:
                         if objects.rect.top+10 < objs.rect.centery < objects.rect.bottom-10:
                             objects.isHit = True
                     if objects.subClass == 'player' and objs.subClass == 'powerup':
@@ -139,7 +144,7 @@ class _CollisionEngine:
     
     def player_hit_box_y(self,objects,objs):
         try: 
-            if objects.subClass == 'enemy' and objs.subClass == 'player':
+            if objects.subClass == 'enemy' and objs.subClass == 'player' and not objects.timer_started:
                 objs.isHit = True
             if objects.subClass == 'powerup' and objs.subClass == 'player':
                 objects.isHit = True
@@ -156,12 +161,15 @@ class _CollisionEngine:
     def game_object_hit_box(self,objects,objs):
         try:
 
-            if objs.subClass =='enemy' and objects.subClass == 'player':  
+            if objs.subClass =='enemy' and objects.subClass == 'player' and not objs.timer_started:  
                 print("CollisionEngine.py::Checking enemy and player rect collision")
                 if objs.hit_box.colliderect(objects.kill_box):      
                     print("CollisionEngine.py::rect between enemy and player detected")
                     objects.onEnemy = True
                     objs.isHit = True
+            elif objs.subClass == 'enemy' and objects.subClass == 'player' and objs.timer_started:
+                objects.collisionDown = False
+
             if objs.subClass == 'powerup' and objects.subClass == 'player':
                 objs.isHit = True
         except Exception as Error:
