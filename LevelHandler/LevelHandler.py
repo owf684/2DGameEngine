@@ -16,6 +16,7 @@ class _LevelHandler:
 		self.pause_for_damage = False
 		self.freeze_damage = False
 		self.decrease_power = False
+		self.edit_mode = False
 		# Question Block List
 		self.question_blocks = list()
 

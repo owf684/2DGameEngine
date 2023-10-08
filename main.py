@@ -148,6 +148,10 @@ while running:
 		# Level Handler
 		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB, EE)
 
+		if LH.edit_mode:
+			LB.edit = True
+			LH.edit_mode = False
+			
 	# Level Builder
 	LB.main_loop(input_dict, GE.screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
 
