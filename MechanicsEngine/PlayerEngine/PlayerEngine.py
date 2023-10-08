@@ -57,6 +57,8 @@ class _PlayerEngine(anim_util._anim_util):
 
             elif objects.power_up == 0 and not levelHandler.freeze_damage:
                 levelHandler.load_level = True
+        elif objects.position[1] > self.screen_width:
+            levelHandler.load_level = True
 
         if levelHandler.decrease_power:
             objects.power_up = 0
