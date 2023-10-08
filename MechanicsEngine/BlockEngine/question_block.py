@@ -65,6 +65,7 @@ class _question_block:
             item.position[1] -= objects.rect.height
             item.rect.y = item.position[1]
             item.pause_physics = False
+            item.x_direction = -1
             item._set_mask()
             objects.item = None
             objects.release_item_trigger = False    

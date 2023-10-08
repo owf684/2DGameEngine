@@ -504,8 +504,7 @@ class _LevelBuilder:
 
 		print("loading GameObjects...")
 		GameObjects.clear()
-		#clear levelObjects list
-		#levelObjects = list()
+	
 		tree = ET.parse("./WorldData/"+level_string+"/GameObjects.xml")
 		root = tree.getroot()
 
