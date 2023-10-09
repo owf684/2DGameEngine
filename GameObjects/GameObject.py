@@ -36,6 +36,7 @@ class _GameObject(anim_util._anim_util):
 		#Physics Data
 		self.velocityX = 0
 		self.velocityY = 0
+		self.velocityX1 = 0
 		self.accelerationX = 1500
 		self.accelerationY = 0
 		self.forceX = 0

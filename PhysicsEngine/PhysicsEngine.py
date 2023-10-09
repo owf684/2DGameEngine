@@ -43,11 +43,11 @@ class _PhysicsEngine:
 
         if objects.isRendered and not objects.pause_physics and not levelHandler.trigger_death_animation:
 
-            objects.velocity_X1 = objects.velocityX * objects.x_direction
+            objects.velocityX1 = objects.velocityX * objects.x_direction
 
             if delta_t != 0:
 
-                objects.x_acceleration = objects.velocity_X1 / delta_t
+                objects.x_acceleration = objects.velocityX1 / delta_t
 
             else:
                 objects.x_acceleration = 0
@@ -57,7 +57,7 @@ class _PhysicsEngine:
                     objects.subClass == 'powerup' and objects.collisionSubClass == 'player') or (
                     objects.subClass == 'enemy'   and objects.collisionSubClass == 'player'):
                 
-                objects.x_displacement = objects.velocity_X1 * delta_t + (
+                objects.x_displacement = objects.velocityX1 * delta_t + (
                         0.5 * objects.x_acceleration * math.pow(delta_t, 2))
             else:
                 objects.x_displacement = 0

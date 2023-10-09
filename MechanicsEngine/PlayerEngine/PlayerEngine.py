@@ -87,7 +87,7 @@ class _PlayerEngine(anim_util._anim_util):
             objects.jumping = True
 
         self.total_y_displacement += objects.y_displacement
-        if self.total_y_displacement >= 100:
+        if self.total_y_displacement >= 90:
             self.reached_max_height = True
 
         if objects.collisionUp:
@@ -109,13 +109,29 @@ class _PlayerEngine(anim_util._anim_util):
         self.set_scroll_state(objects, input_dict, levelHandler)
 
         if input_dict['right'] == '1':
-            objects.velocityX = 100 * self.runningFactor
             objects.x_direction = 1
+
+            if objects.velocityX >= 100*self.runningFactor:
+                objects.velociyX = 100 * self.runningFactor
+            else:
+                objects.velocityX += 10 * self.runningFactor
+
         elif input_dict['left'] == '-1':
-            objects.velocityX = 100 * self.runningFactor
             objects.x_direction = -1
+
+            if objects.velocityX > 100*self.runningFactor:
+                objects.velocityX = 100 *self.runningFactor
+            else:
+                objects.velocityX += 10 * self.runningFactor
+
         else:
-            objects.velocityX = 0
+            print(objects.velocityX)
+            if objects.velocityX > 0:
+                objects.velocityX -= 5
+            elif objects.velocityX < 0:
+                objects.velocityX += 5
+            else:
+                objects.velocityX = 0
 
         if input_dict['l-shift'] == '1':
             self.runningFactor = 1.5
