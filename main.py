@@ -128,7 +128,7 @@ while running:
 			PE.main_loop(objects, delta_t, LH)
 
 			# Collision Engine
-			CE.main_loop(objects, GE, input_dict)
+			CE.main_loop(objects, GE, LH)
 
 			# PlayerMechanics Engine
 			PlE.main_loop(objects, delta_t, input_dict, CE, LH)
