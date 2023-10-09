@@ -31,7 +31,7 @@ class _PlayerEngine(anim_util._anim_util):
 
     def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler):
         if objects.subClass == 'player':
-            if not levelHandler.pause_for_damage:
+            if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation:
                 self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine, levelHandler)
                 self.jump(objects, delta_t, input_dict)
                 self.onEnemy(objects)
@@ -39,12 +39,12 @@ class _PlayerEngine(anim_util._anim_util):
             self.handle_power_ups(objects)
             
 
-            if levelHandler.pause_for_damage:
+            if levelHandler.pause_for_damage or levelHandler.trigger_death_animation:
                 self.scroll_level = False
 
     def handle_power_ups(self, objects):
-        print("PlayerEngine.py::objects.power_up= ", objects.power_up)
-        print("PlayerEngine.py::self.superMario= ", self.superMario)
+        # print("PlayerEngine.py::objects.power_up= ", objects.power_up)
+        #print("PlayerEngine.py::self.superMario= ", self.superMario)
         if objects.powerUp:
             if "super_mushroom" in objects.collisionObject.imagePath:
                 objects.power_up = 1
@@ -53,12 +53,15 @@ class _PlayerEngine(anim_util._anim_util):
 
     def handle_damage(self, objects, levelHandler):
         if objects.isHit:
+            if objects.power_up == 0:
+                levelHandler.trigger_death_animation = True
+                print("PlayerEngine.py::levelHandler.trigger_death_animation=", levelHandler.trigger_death_animation)
             if objects.power_up > 0:
                 objects.isHit = False
                 levelHandler.pause_for_damage = True
                 self.superMario = False
 
-            elif objects.power_up == 0 and not levelHandler.freeze_damage:
+            elif objects.power_up == 0 and not levelHandler.freeze_damage and not levelHandler.trigger_death_animation:
                 levelHandler.load_level = True
                 levelHandler.edit_mode = True
         elif objects.position[1] > self.screen_width:

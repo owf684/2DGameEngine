@@ -15,7 +15,7 @@ class _PhysicsEngine:
     def main_loop(self, objects, delta_t, levelHandler):
         if not levelHandler.pause_for_damage:
             self.simulate_gravity(objects, delta_t)
-            self.x_position(objects, delta_t)
+            self.x_position(objects, delta_t, levelHandler)
 
     def simulate_gravity(self, objects, delta_t):
 
@@ -39,9 +39,9 @@ class _PhysicsEngine:
                 objects.y_displacement = 0
                 objects.velocityY = 0
 
-    def x_position(self, objects, delta_t):
+    def x_position(self, objects, delta_t, levelHandler):
 
-        if objects.isRendered and not objects.pause_physics:
+        if objects.isRendered and not objects.pause_physics and not levelHandler.trigger_death_animation:
 
             objects.velocity_X1 = objects.velocityX * objects.x_direction
 

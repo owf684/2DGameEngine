@@ -12,6 +12,7 @@ class _mario_anim(anim_util._anim_util):
         self.frame_duration = 100
 
         self.jumping = False
+        self.latch = False
 
         # mario sprites
         self.mario_sprites = list()
@@ -21,6 +22,8 @@ class _mario_anim(anim_util._anim_util):
         self.jump_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_jump_right.png").convert_alpha()
         self.run_right = self.extract_frames("./Assets/PlayerSprites/mario_32x32_run_right.png", 3, 32, 32)
         self.run_left = self.extract_frames("./Assets/PlayerSprites/mario_32x32_run_left.png", 3, 32, 32)
+        self.death = pygame.image.load("./Assets/PlayerSprites/mario_32x32_death.png").convert_alpha()
+
         self.mario_sprites.append(self.idle_right)
         self.mario_sprites.append(self.idle_left)
         self.mario_sprites.append(self.jump_left)
@@ -56,10 +59,10 @@ class _mario_anim(anim_util._anim_util):
         self.transform_frame = self.idle_right
         self.damage_frame_captured = False
 
-    def main_loop(self, objects, input_dict, levelHandler,delta_t):
+    def main_loop(self, objects, input_dict, levelHandler,delta_t, PlayerEngine):
         try:
             if objects.subClass == 'player':
-                if not levelHandler.pause_for_damage:
+                if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation:
 
                     self.determine_frame_count()
 
@@ -75,7 +78,11 @@ class _mario_anim(anim_util._anim_util):
 
                 elif levelHandler.pause_for_damage:
 
-                    self.damage_animation(objects, levelHandler,delta_t)
+                    self.damage_animation(objects, levelHandler,delta_t, PlayerEngine)
+
+                if levelHandler.trigger_death_animation:
+                    print("mario_anim.py::calling death_animation()")
+                    self.death_animation(objects,levelHandler,delta_t, PlayerEngine)
 
                 if levelHandler.freeze_damage:
 
@@ -89,7 +96,31 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("runtime error in mario_anim. Function main_loop: ", Error)
 
-    def damage_animation(self, objects, levelHandler, delta_t):
+    def death_animation(self, objects,levelHandler,delta_t, PlayerEngine):
+        if not self.damage_frame_captured:
+
+            objects.image = self.death
+            self.reset_time_variables()
+            self.last_frame_time_2 = self.determine_time_elapsed()
+    
+            self.damage_frame_captured = True
+        time_elapsed = self.determine_time_elapsed()
+        if time_elapsed > 500 and not self.latch:
+            objects.velocityY = 500
+            self.latch = True
+            objects.fromUnder = True
+            objects.rect.width = 0
+            objects.rect.height = 0
+        if self.latch:
+            objects.collisionUp = False
+        if time_elapsed > 3000:
+            levelHandler.load_level = True
+            levelHandler.trigger_death_animation = False
+            self.damage_frame_captured = False
+            PlayerEngine.superMario = False
+            self.latch = False
+            objects.fromUnder = False
+    def damage_animation(self, objects, levelHandler, delta_t, PlayerEngine):
         try:      
             # resets time variables and capture relevant sprites/frame when damaged
             if not self.damage_frame_captured:
@@ -131,6 +162,7 @@ class _mario_anim(anim_util._anim_util):
                 # reset flags
                 levelHandler.pause_for_damage = False
                 self.damage_frame_captured = False
+                PlayerEngine.superMario = False
 
                 # set flags
                 levelHandler.decrease_power = True

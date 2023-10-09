@@ -13,7 +13,7 @@ class _AnimationSystem:
     def main_loop(self, objects, GameObjects, levelObjects, input_dict, levelHandler, delta_t, PlayerEngine, GraphicsEngine):
 
         self.question_block.main_loop(levelHandler)
-        self.mario_anim.main_loop(objects, input_dict, levelHandler, delta_t)
+        self.mario_anim.main_loop(objects, input_dict, levelHandler, delta_t,PlayerEngine)
         self.goomba_anim.main_loop(objects)
         self.breakable_brick_anim.main_loop(objects,GameObjects, levelObjects, PlayerEngine, GraphicsEngine)
 
