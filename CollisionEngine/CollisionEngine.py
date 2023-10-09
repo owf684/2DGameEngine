@@ -8,7 +8,7 @@ class _CollisionEngine:
     def __init__(self):
         self.collision_tolerance = 10
 
-    def main_loop(self, objects, GraphicsEngine, input_dict):
+    def main_loop(self, objects, GraphicsEngine, levelHandler):
 
         # Reset collisions 
         objects.collisionDown = False
@@ -26,18 +26,18 @@ class _CollisionEngine:
                             objects.subClass == 'powerup') and 
                             objs.subClass != 'environment'):
                         
-                        self.detectCollisions(objects, objs)
+                        self.detectCollisions(objects, objs, levelHandler)
     
             except Exception as Error:
                 print("runtime error in CollisionEngine.py. Function main_loop: ", Error)
 
-    def detectCollisions(self, objects, objs):
+    def detectCollisions(self, objects, objs, levelHandler):
         try:
         
             if not objects.fromUnder:
 
-                self.left_collision(objects,objs)
-                self.right_collision(objects,objs)
+                self.left_collision(objects,objs,levelHandler)
+                self.right_collision(objects,objs, levelHandler)
                 self.up_collision(objects, objs)  
                 self.down_collision(objects, objs)
 
@@ -48,9 +48,11 @@ class _CollisionEngine:
         try:
             if objects.rect.colliderect(objs.rect):
                 if abs(objs.rect.bottom - objects.rect.top) < objs.rect.height and not objs.fromUnder:
-                    objects.collisionUp = True
-                    self.save_collision_object(objects, objs)
-                    self.level_object_hit_box(objects,objs)     
+                    if objs.rect.left <= objects.rect.centerx <= objs.rect.right:
+                        
+                        objects.collisionUp = True
+                        self.save_collision_object(objects, objs)
+                        self.level_object_hit_box(objects,objs)     
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function up_collision: ", Error) 
 
@@ -76,7 +78,7 @@ class _CollisionEngine:
         except Exception as Error:
             print('runtime error in CollisionEngine.py. Function down_collision: ', Error)
                                 
-    def left_collision(self,objects,objs):
+    def left_collision(self,objects,objs, levelHandler):
         try:
             x_tolerance = 8
             y_tolerance = 10
@@ -90,7 +92,7 @@ class _CollisionEngine:
                     objs.rect.topright[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomright[1]):               
 
                     self.save_collision_object(objects,objs)  
-                    objects.collisionLeft = self.player_hit_box_x(objects,objs)
+                    objects.collisionLeft = self.player_hit_box_x(objects,objs, levelHandler)
                     if objects.collisionLeft and objects.subClass == 'player':
                         objects.position[0] = objs.rect.right+3
                      
@@ -98,7 +100,7 @@ class _CollisionEngine:
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function left_collision: ", Error)
     
-    def right_collision(self,objects,objs):
+    def right_collision(self,objects,objs, levelHandler):
         try:
             x_tolerance = 8
             y_tolerance = 10
@@ -113,7 +115,7 @@ class _CollisionEngine:
                         objs.rect.topleft[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomleft[1]):     
                         
                         self.save_collision_object(objects,objs)  
-                        objects.collisionRight = self.player_hit_box_x(objects,objs)
+                        objects.collisionRight = self.player_hit_box_x(objects,objs, levelHandler)
                         if objects.collisionRight and objects.subClass == 'player':
                             objects.position[0] = objs.rect.left - objects.rect.width-3
                         
@@ -144,7 +146,7 @@ class _CollisionEngine:
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function save_collision_object: ", Error)       
 
-    def player_hit_box_x(self,objects,objs):
+    def player_hit_box_x(self,objects,objs,levelHandler):
         try:
             
             if (objs.subClass == 'enemy' and not objects.subClass == 'enemy' ) or objs.subClass == 'powerup': 
@@ -153,7 +155,7 @@ class _CollisionEngine:
                 if objects.image_mask.overlap(objs.image_mask, (
                     objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
 
-                    if objects.subClass == 'player' and objs.subClass == 'enemy' and not objs.timer_started:
+                    if objects.subClass == 'player' and objs.subClass == 'enemy' and not objs.timer_started and not levelHandler.freeze_damage:
                         if objects.rect.top+5 < objs.rect.centery < objects.rect.bottom-5:
                             objects.isHit = True
                     if objects.subClass == 'player' and objs.subClass == 'powerup':

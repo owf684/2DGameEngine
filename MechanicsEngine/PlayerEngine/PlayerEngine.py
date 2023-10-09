@@ -35,9 +35,9 @@ class _PlayerEngine(anim_util._anim_util):
                 self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine, levelHandler)
                 self.jump(objects, delta_t, input_dict)
                 self.onEnemy(objects)
-
+                self.handle_damage(objects, levelHandler)
             self.handle_power_ups(objects)
-            self.handle_damage(objects, levelHandler)
+            
 
             if levelHandler.pause_for_damage:
                 self.scroll_level = False
