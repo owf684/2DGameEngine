@@ -78,9 +78,9 @@ class _CollisionEngine:
                                 
     def left_collision(self,objects,objs):
         try:
-            x_tolerance = 10
-            y_tolerance = 8
-            if abs(objects.rect.left-objs.rect.right) < x_tolerance and objects.x_direction == -1:
+            x_tolerance = 5
+            y_tolerance = 10
+            if abs(objects.rect.left-objs.rect.right) < 16 and objects.x_direction == -1:
                 if (objs.rect.topright[1] < objects.rect.top < objs.rect.bottomright[1] or 
                     objs.rect.topright[1] < objects.rect.centery < objs.rect.bottomright[1] or 
                     objs.rect.topright[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomright[1]):               
@@ -88,15 +88,18 @@ class _CollisionEngine:
                     self.save_collision_object(objects,objs)  
                     objects.collisionLeft = self.player_hit_box_x(objects,objs)
                     if objects.collisionLeft and objects.subClass == 'player':
-                        objects.position[0] = objs.rect.right
+                        if abs(objects.rect.left-objs.rect.right)<x_tolerance:
+                            objects.position[0] = objs.rect.right
+                     
+                        
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function left_collision: ", Error)
     
     def right_collision(self,objects,objs):
         try:
-            x_tolerance = 10
-            y_tolerance = 8
-            if abs(objs.rect.left-objects.rect.right) < x_tolerance and objects.x_direction == 1:
+            x_tolerance = 5
+            y_tolerance = 10
+            if abs(objs.rect.left-objects.rect.right) < 16 and objects.x_direction == 1:
                 if (objs.rect.topleft[1] < objects.rect.top < objs.rect.bottomleft[1]  or 
                         objs.rect.topleft[1] < objects.rect.centery < objs.rect.bottomleft[1] or 
                         objs.rect.topleft[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomleft[1]):     
@@ -104,7 +107,9 @@ class _CollisionEngine:
                         self.save_collision_object(objects,objs)  
                         objects.collisionRight = self.player_hit_box_x(objects,objs)
                         if objects.collisionRight and objects.subClass == 'player':
-                            objects.position[0] = objs.rect.left - objects.rect.width
+                            if abs(objs.rect.left-objects.rect.right) < x_tolerance:
+                                objects.position[0] = objs.rect.left - objects.rect.width
+                        
 
 
         except Exception as Error:
@@ -118,7 +123,7 @@ class _CollisionEngine:
                 collisionObject.hit_box.x = collisionObject.position[0]
                 collisionObject.hit_box.y = collisionObject.position[1] - 8
             if collisionObject.kill_box is not None:
-                collisionObject.kill_box.x = collisionObject.position[0]+7
+                collisionObject.kill_box.x = collisionObject.position[0]+8
                 collisionObject.kill_box.y = collisionObject.position[1] + collisionObject.image.get_height()-8
         
         except Exception as Error:
@@ -142,7 +147,7 @@ class _CollisionEngine:
                     objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
 
                     if objects.subClass == 'player' and objs.subClass == 'enemy' and not objs.timer_started:
-                        if objects.rect.top+10 < objs.rect.centery < objects.rect.bottom-10:
+                        if objects.rect.top+5 < objs.rect.centery < objects.rect.bottom-5:
                             objects.isHit = True
                     if objects.subClass == 'player' and objs.subClass == 'powerup':
                         objs.isHit = True
