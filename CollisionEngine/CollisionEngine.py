@@ -56,45 +56,60 @@ class _CollisionEngine:
 
     def down_collision(self, objects, objs):
         try:
-            if objects.rect.colliderect(objs.rect):
+            if objects.rect.colliderect(objs.rect) and objects.subClass != 'player':
                 if abs(objs.rect.top - objects.rect.bottom) < objs.rect.height:
                     objects.collisionDown = True
                     self.save_collision_object(objects,objs)  
                     self.game_object_hit_box(objects,objs)
-                    self.player_hit_box_y(objects,objs)
-                    if not objects.jumping and not objs.timer_started and not objects.timer_started:
-                        objects.position[1] = objs.rect.top - objects.rect.height       
+                    self.player_hit_box_y(objects,objs)                 
+                    objects.position[1] = objs.rect.top - objects.rect.height 
+            elif objects.kill_box is not None and objects.kill_box.colliderect(objs.rect):
+                    if abs(objs.rect.top - objects.rect.bottom) < objs.rect.height:
+                        objects.collisionDown = True
+                        self.save_collision_object(objects,objs)  
+                        self.game_object_hit_box(objects,objs)
+                        self.player_hit_box_y(objects,objs)
+                        if not objs.timer_started and not objects.timer_started:
+                                objects.position[1] = objs.rect.top - objects.rect.height                     
+                   
+
         except Exception as Error:
             print('runtime error in CollisionEngine.py. Function down_collision: ', Error)
                                 
     def left_collision(self,objects,objs):
         try:
-            offset = objects.rect.width/2
-            if objects.rect.left - offset< objs.rect.right:
-                if objects.rect.right > objs.rect.left and objects.rect.right > objs.rect.right:
-                    if (objs.rect.topright[1] < objects.rect.top < objs.rect.bottomright[1] or 
-                        objs.rect.topright[1] < objects.rect.centery < objs.rect.bottomright[1] or 
-                        objs.rect.topright[1] < objects.rect.bottom - offset< objs.rect.bottomright[1]):               
+            x_tolerance = 10
+            y_tolerance = 8
+            if abs(objects.rect.left-objs.rect.right) < x_tolerance and objects.x_direction == -1:
+                if (objs.rect.topright[1] < objects.rect.top < objs.rect.bottomright[1] or 
+                    objs.rect.topright[1] < objects.rect.centery < objs.rect.bottomright[1] or 
+                    objs.rect.topright[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomright[1]):               
 
-                        self.save_collision_object(objects,objs)  
-                        objects.collisionLeft = self.player_hit_box_x(objects,objs)
+                    self.save_collision_object(objects,objs)  
+                    objects.collisionLeft = self.player_hit_box_x(objects,objs)
+                    if objects.collisionLeft and objects.subClass == 'player':
+                        objects.position[0] = objs.rect.right
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function left_collision: ", Error)
     
     def right_collision(self,objects,objs):
         try:
-            offset = objects.rect.width/2
-            if objects.rect.right + offset > objs.rect.left:
-                if objects.rect.left < objs.rect.right and objects.rect.right < objs.rect.right:
-                    if (objs.rect.topleft[1] < objects.rect.top < objs.rect.bottomleft[1]  or 
+            x_tolerance = 10
+            y_tolerance = 8
+            if abs(objs.rect.left-objects.rect.right) < x_tolerance and objects.x_direction == 1:
+                if (objs.rect.topleft[1] < objects.rect.top < objs.rect.bottomleft[1]  or 
                         objs.rect.topleft[1] < objects.rect.centery < objs.rect.bottomleft[1] or 
-                        objs.rect.topleft[1] < objects.rect.bottom - offset < objs.rect.bottomleft[1]):                  
-   
+                        objs.rect.topleft[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomleft[1]):     
+                        
                         self.save_collision_object(objects,objs)  
                         objects.collisionRight = self.player_hit_box_x(objects,objs)
+                        if objects.collisionRight and objects.subClass == 'player':
+                            objects.position[0] = objs.rect.left - objects.rect.width
+
+
         except Exception as Error:
-            print("runtime errir in CollisionEngine.py. Function right_collision: ", Error)
-                                                
+            print("runtime error in CollisionEngine.py::function right_collision2(): ", Error)
+ 
     def updateRectPosition(self, collisionObject):
         try:
             collisionObject.rect.x = collisionObject.position[0]
@@ -103,7 +118,7 @@ class _CollisionEngine:
                 collisionObject.hit_box.x = collisionObject.position[0]
                 collisionObject.hit_box.y = collisionObject.position[1] - 8
             if collisionObject.kill_box is not None:
-                collisionObject.kill_box.x = collisionObject.position[0]+3
+                collisionObject.kill_box.x = collisionObject.position[0]+7
                 collisionObject.kill_box.y = collisionObject.position[1] + collisionObject.image.get_height()-8
         
         except Exception as Error:

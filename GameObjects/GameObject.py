@@ -109,7 +109,7 @@ class _GameObject(anim_util._anim_util):
 		self.hit_box = pygame.Rect(self.position[0], self.position[1]- y_offset, sprite_size[0],sprite_size[1]/2)
 
 	def _set_kill_box(self, sprite_size, y_offset):
-		self.kill_box = pygame.Rect(self.position[0], self.position[1]+ y_offset, 26,sprite_size[1]/2)
+		self.kill_box = pygame.Rect(self.position[0], self.position[1]+ y_offset, 18,sprite_size[1]/4)
 	
 	def _set_init_xPos(self,x_position):
 		self.initial_position[0] = x_position

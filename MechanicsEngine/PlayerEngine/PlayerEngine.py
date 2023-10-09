@@ -12,7 +12,7 @@ class _PlayerEngine(anim_util._anim_util):
 
     def __init__(self):
         super().__init__()
-        self.gravity = 9.8 * 100
+        self.gravity = 9.8 * 150
         self.y_displacement = 0
         self.x_displacement = 0
         self.x_direction = 0
@@ -84,7 +84,7 @@ class _PlayerEngine(anim_util._anim_util):
             objects.jumping = True
 
         self.total_y_displacement += objects.y_displacement
-        if self.total_y_displacement >= 80:
+        if self.total_y_displacement >= 100:
             self.reached_max_height = True
 
         if objects.collisionUp:
