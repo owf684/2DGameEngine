@@ -26,8 +26,9 @@ class _breakable_break_anim(anim_util._anim_util):
                     objects.timer_started = True
                     objects.last_frame_time_2 = objects.determine_time_elapsed()
                     objects.image = self.brick_pieces[self.frame_index]
-                    objects.velocityY = 300
+                    objects.velocityY = 500
                     objects.velocityX = -30
+                    objects.fromUnder = True
                     #objects.position[1] -= 32
                     self.set_object(objects)
                     self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0]) + 16, copy.deepcopy(objects.position[1])     , 30 )
@@ -59,7 +60,7 @@ class _breakable_break_anim(anim_util._anim_util):
         levelObjects[-1].last_frame_time_2 = levelObjects[-1].determine_time_elapsed()        
         levelObjects[-1].image = self.brick_pieces[self.frame_index]
         self.set_object(levelObjects[-1])
-        levelObjects[-1].velocityY = 300
+        levelObjects[-1].velocityY = 500
         levelObjects[-1].position = [x,y]
         levelObjects[-1].isRendered = True
         levelObjects[-1].velocityX = vx

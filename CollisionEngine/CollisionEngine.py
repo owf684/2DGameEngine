@@ -78,9 +78,13 @@ class _CollisionEngine:
                                 
     def left_collision(self,objects,objs):
         try:
-            x_tolerance = 5
+            x_tolerance = 8
             y_tolerance = 10
-            if abs(objects.rect.left-objs.rect.right) < 16 and objects.x_direction == -1:
+            if objs.subClass == 'enemy':
+                x2_tolerance = 16
+            else:
+                x2_tolerance = 10           
+            if abs(objects.rect.left-objs.rect.right) < x2_tolerance and objects.x_direction == -1:
                 if (objs.rect.topright[1] < objects.rect.top < objs.rect.bottomright[1] or 
                     objs.rect.topright[1] < objects.rect.centery < objs.rect.bottomright[1] or 
                     objs.rect.topright[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomright[1]):               
@@ -88,8 +92,7 @@ class _CollisionEngine:
                     self.save_collision_object(objects,objs)  
                     objects.collisionLeft = self.player_hit_box_x(objects,objs)
                     if objects.collisionLeft and objects.subClass == 'player':
-                        if abs(objects.rect.left-objs.rect.right)<x_tolerance:
-                            objects.position[0] = objs.rect.right
+                        objects.position[0] = objs.rect.right+3
                      
                         
         except Exception as Error:
@@ -97,9 +100,14 @@ class _CollisionEngine:
     
     def right_collision(self,objects,objs):
         try:
-            x_tolerance = 5
+            x_tolerance = 8
             y_tolerance = 10
-            if abs(objs.rect.left-objects.rect.right) < 16 and objects.x_direction == 1:
+            if objs.subClass == 'enemy':
+                x2_tolerance = 16
+            else:
+                x2_tolerance = 10
+
+            if abs(objs.rect.left-objects.rect.right) < x2_tolerance and objects.x_direction == 1:
                 if (objs.rect.topleft[1] < objects.rect.top < objs.rect.bottomleft[1]  or 
                         objs.rect.topleft[1] < objects.rect.centery < objs.rect.bottomleft[1] or 
                         objs.rect.topleft[1] < objects.rect.bottom - y_tolerance < objs.rect.bottomleft[1]):     
@@ -107,8 +115,7 @@ class _CollisionEngine:
                         self.save_collision_object(objects,objs)  
                         objects.collisionRight = self.player_hit_box_x(objects,objs)
                         if objects.collisionRight and objects.subClass == 'player':
-                            if abs(objs.rect.left-objects.rect.right) < x_tolerance:
-                                objects.position[0] = objs.rect.left - objects.rect.width
+                            objects.position[0] = objs.rect.left - objects.rect.width-3
                         
 
 
