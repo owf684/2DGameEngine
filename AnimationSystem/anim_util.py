@@ -13,6 +13,16 @@ class _anim_util:
 
         self.damage_frame_index = 0
         self.damage_frame_index_captured = False
+        self.damage_frame = None
+        self.damage_count = 0
+
+        
+        self.powerup_frame_index = 0
+        self.powerup_frame_captured = False
+        self.powerup_frame = None
+        self.powerup_count = 0
+        
+        self.transform_frame = None
 
         self.timer_started = False
         self.destroy_time = 0
