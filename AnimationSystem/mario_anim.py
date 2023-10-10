@@ -14,6 +14,7 @@ class _mario_anim(anim_util._anim_util):
         self.jumping = False
         self.latch = False
 
+
         # mario sprites
         self.mario_sprites = list()
         self.idle_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_idle_right.png").convert_alpha()
@@ -62,7 +63,7 @@ class _mario_anim(anim_util._anim_util):
     def main_loop(self, objects, input_dict, levelHandler,delta_t, PlayerEngine):
         try:
             if objects.subClass == 'player':
-                if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation:
+                if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
 
                     self.determine_frame_count()
 
@@ -84,6 +85,10 @@ class _mario_anim(anim_util._anim_util):
                     print("mario_anim.py::calling death_animation()")
                     self.death_animation(objects,levelHandler,delta_t, PlayerEngine)
 
+                if levelHandler.trigger_powerup_animation:
+                    print("mario_anim.py::trigger_powerup_animation= ", levelHandler.trigger_powerup_animation)
+                    self.power_up_animation(objects,levelHandler,delta_t,PlayerEngine)
+
                 if levelHandler.freeze_damage:
 
                     self.alpha = 128
@@ -95,6 +100,17 @@ class _mario_anim(anim_util._anim_util):
 
         except Exception as Error:
             print("runtime error in mario_anim. Function main_loop: ", Error)
+
+    def power_up_animation(self, objects, levelHandler, delta_t, PlayerEngine):
+        if not self.latch:
+            self.reset_time_variables()
+            self.last_time_frame_2 = self.determine_time_elapsed()
+            self.latch = True
+        self.scaleConstant += self.scaleIncrement
+        objects.image = pygame.transform.scale(objects.image,(objects.image.get_width(),objects.image.get_height()*self.scaleConstant))
+        if self.determine_time_elapsed() > 10000:
+            levelHandler.trigger_powerup_animation = False
+            print("marion_anim.py::trigger_powerup_animation= ", levelHandler.trigger_powerup_animation)
 
     def death_animation(self, objects,levelHandler,delta_t, PlayerEngine):
         if not self.damage_frame_captured:

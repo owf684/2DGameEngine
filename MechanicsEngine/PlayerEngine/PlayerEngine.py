@@ -36,17 +36,19 @@ class _PlayerEngine(anim_util._anim_util):
                 self.jump(objects, delta_t, input_dict)
                 self.onEnemy(objects, input_dict, levelHandler)
                 self.handle_damage(objects, levelHandler)
-            self.handle_power_ups(objects)
+            self.handle_power_ups(objects, levelHandler)
             
 
             if levelHandler.pause_for_damage or levelHandler.trigger_death_animation:
                 self.scroll_level = False
 
-    def handle_power_ups(self, objects):
+    def handle_power_ups(self, objects, levelHandler):
         # print("PlayerEngine.py::objects.power_up= ", objects.power_up)
         #print("PlayerEngine.py::self.superMario= ", self.superMario)
         if objects.powerUp:
             if "super_mushroom" in objects.collisionObject.imagePath:
+                levelHandler.trigger_powerup_animation = True
+
                 objects.power_up = 1
                 self.superMario = True
                 objects.powerUp = False

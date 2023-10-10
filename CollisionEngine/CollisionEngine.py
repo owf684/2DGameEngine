@@ -40,13 +40,7 @@ class _CollisionEngine:
                 self.right_collision(objects,objs, levelHandler)
                 self.up_collision(objects, objs)  
                 self.down_collision(objects, objs, levelHandler)
-                if objects.subClass == 'player':
-
-                    print("CollisionEngine.py::collisionUp= ", objects.collisionUp)
-                    print("CollisionEngine.py::collisionDown= ", objects.collisionDown)
-                    print("CollisionEngine.py::collisionLeft= ", objects.collisionLeft)
-                    print("CollisionEngine.py::collisionRight= ", objects.collisionRight)
-
+                
         except Exception as Error:
             print("runtime error in CollisionEngine.py Function detectCollisions: ", Error)
 
@@ -203,9 +197,7 @@ class _CollisionEngine:
         try:
 
             if objs.subClass =='enemy' and objects.subClass == 'player' and not objs.timer_started:  
-                print("CollisionEngine.py::Checking enemy and player rect collision")
                 if objs.hit_box.colliderect(objects.kill_box):      
-                    print("CollisionEngine.py::rect between enemy and player detected")
                     objects.onEnemy = True
                     objs.isHit = True
             elif objs.subClass == 'enemy' and objects.subClass == 'player' and objs.timer_started:
