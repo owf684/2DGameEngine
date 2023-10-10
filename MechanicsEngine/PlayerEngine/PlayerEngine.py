@@ -34,7 +34,7 @@ class _PlayerEngine(anim_util._anim_util):
             if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation:
                 self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine, levelHandler)
                 self.jump(objects, delta_t, input_dict)
-                self.onEnemy(objects)
+                self.onEnemy(objects, input_dict, levelHandler)
                 self.handle_damage(objects, levelHandler)
             self.handle_power_ups(objects)
             
@@ -74,13 +74,14 @@ class _PlayerEngine(anim_util._anim_util):
             objects.power_up = 0
             levelHandler.decrease_power = False
 
-    def onEnemy(self, objects):
+    def onEnemy(self, objects,input_dict, levelHandler):
         if objects.subClass == 'player':
             if objects.onEnemy:
                 objects.velocityY = 250
-                objects.jumping = True
+                objects.velocityX = 125
+                objects.jumping = True            
                 objects.onEnemy = False
-
+   
     def jump(self, objects, delta_t, input_dict):
         if input_dict['up'] == '1' and not self.reached_max_height:
             objects.velocityY = 300
@@ -125,11 +126,10 @@ class _PlayerEngine(anim_util._anim_util):
                 objects.velocityX += 10 * self.runningFactor
 
         else:
-            print(objects.velocityX)
             if objects.velocityX > 0:
-                objects.velocityX -= 5
+                objects.velocityX -= 300*delta_t
             elif objects.velocityX < 0:
-                objects.velocityX += 5
+                objects.velocityX += 300*delta_t
             else:
                 objects.velocityX = 0
 
@@ -144,12 +144,12 @@ class _PlayerEngine(anim_util._anim_util):
     def set_scroll_state(self, objects, input_dict, levelHandler):
 
         # handle level scrolling left
-        if objects.position[0] >= self.screen_width / 2 and self.x_direction > 0 and input_dict['right'] == '1':
+        if objects.position[0] >= self.screen_width / 2 and self.x_direction > 0 and (input_dict['right'] == '1' or objects.onEnemy):
             self.scroll_level = True
             objects.scrolling = True
         # handle level scrolling right
-        elif objects.position[0] < self.screen_width / 2 and self.x_direction < 0 and input_dict[
-            'left'] == '-1' and levelHandler.scroll_offset > 0:
+        elif objects.position[0] < self.screen_width / 2 and self.x_direction < 0 and (input_dict[
+            'left'] == '-1' or objects.onEnemy) and levelHandler.scroll_offset > 0:
             self.scroll_level = True
             objects.scrolling = True
         else:
