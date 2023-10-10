@@ -11,7 +11,7 @@ class _goomba_anim(anim_util._anim_util):
         self.onEnemy = False
         self.goomba_idle = pygame.image.load("./Assets/EnemySprites/Goomba/goomba_32x32_idle.png").convert_alpha()
         self.goomba_walk = self.extract_frames("./Assets/EnemySprites/Goomba/sprite_sheet/goomba_32x32_walk.png" ,2 ,32 ,32)
-        self.goomba_death = pygame.image.load("./Assets/EnemySprites/Goomba/goomba_32x32_death.png").convert_alpha()
+        self.goomba_death = pygame.image.load("./Assets/EnemySprites/Goomba/states/goomba_32x32_death.png").convert_alpha()
         self.frame_duration = 200
         self.frame_count = 2
 

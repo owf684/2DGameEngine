@@ -6,6 +6,7 @@ sys.path.append('./GameObjects')
 sys.path.append('./AnimationSystem')
 import anim_util
 import BlockObject
+import FirePower
 
 
 class _PlayerEngine(anim_util._anim_util):
@@ -28,26 +29,59 @@ class _PlayerEngine(anim_util._anim_util):
         self.jump_latch = False
         self.runningFactor = 1
         self.supressDamage = False
-
-    def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler):
+        self.latch = False
+    def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler,GameObjects):
         if objects.subClass == 'player':
             if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation:
                 self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine, levelHandler)
                 self.jump(objects, delta_t, input_dict)
                 self.onEnemy(objects, input_dict, levelHandler)
                 self.handle_damage(objects, levelHandler)
+                self.handle_power(objects,input_dict,levelHandler,GameObjects)
+
             self.handle_power_ups(objects, levelHandler)
             
-
             if levelHandler.pause_for_damage or levelHandler.trigger_death_animation:
                 self.scroll_level = False
 
+        if isinstance(objects,FirePower._FirePower):
+            self.handle_firePower(objects)    
+    def handle_firePower(self,objects):
+        if objects.collisionDown:
+            objects.velocityY = 150
+        if objects.collisionRight or objects.collisionLeft:
+            if objects.collisionObject.subClass == 'enemy':
+                objects.collisionObject.fromUnder = True
+            objects.isHit = True
     def handle_power_ups(self, objects, levelHandler):
-        # print("PlayerEngine.py::objects.power_up= ", objects.power_up)
-        #print("PlayerEngine.py::self.superMario= ", self.superMario)
+
         if objects.powerUp:
-            if "super_mushroom" in objects.collisionObject.imagePath and not objects.power_up == 1:
+            if "super_mushroom" in objects.collisionObject.imagePath and objects.power_up < 1:
                 levelHandler.trigger_powerup_animation = True
+                objects.power_up = 1
+                objects.collisionObject.isHit = True
+            if "flower_power" in objects.collisionObject.imagePath and not objects.power_up == 2:
+                levelHandler.trigger_powerup_animation = True
+                objects.collisionObject.isHit = True
+                objects.power_up = 2
+    def handle_power(self,objects,input_dict,levelHandler, GameObjects):
+            if input_dict['attack'] == '1' and not self.latch:
+                self.latch = True
+                firePowerObject = FirePower._FirePower()
+                firePowerObject.velocityX = 200
+                firePowerObject.position = copy.deepcopy(objects.position)
+                firePowerObject.imagePath = './Assets/PlayerSprites/FlowerPowerMario/fire_ball.png'                
+                firePowerObject._set_image()
+                firePowerObject._set_sprite_size(firePowerObject.image)
+                firePowerObject._set_rect(firePowerObject.sprite_size)
+                firePowerObject.isRendered = True
+                firePowerObject.jumping = True
+                firePowerObject.x_direction = objects.x_direction
+                
+                GameObjects.append(firePowerObject)
+            elif input_dict['attack'] == '0' and self.latch:
+                self.latch = False
+  
 
     def handle_damage(self, objects, levelHandler):
         if objects.isHit:
@@ -130,7 +164,6 @@ class _PlayerEngine(anim_util._anim_util):
                 objects.velocityX += 300*delta_t
             else:
                 objects.velocityX = 0
-        print(objects.velocityX)
         if input_dict['l-shift'] == '1':
             self.runningFactor = 1.5
         else:

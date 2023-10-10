@@ -2,6 +2,7 @@ import copy
 import sys
 sys.path.append("./GameObjects")
 import BlockObject
+import FirePower
 
 class _CollisionEngine:
 
@@ -23,7 +24,8 @@ class _CollisionEngine:
                 if objects != objs:
                     if ((   objects.subClass == 'player' or 
                             objects.subClass == 'enemy' or 
-                            objects.subClass == 'powerup') and 
+                            objects.subClass == 'powerup' or 
+                            isinstance(objects, FirePower._FirePower)) and 
                             objs.subClass != 'environment'):
                         
                         self.detectCollisions(objects, objs, levelHandler)
@@ -71,7 +73,8 @@ class _CollisionEngine:
                         self.game_object_hit_box(objects,objs)
                         self.player_hit_box_y(objects,objs, levelHandler)
                         if not objs.timer_started and not objects.timer_started:
-                                objects.position[1] = objs.rect.top - objects.rect.height                     
+                                objects.position[1] = objs.rect.top - objects.rect.height  
+                               
                    
 
         except Exception as Error:
@@ -151,11 +154,14 @@ class _CollisionEngine:
             if (objs.subClass == 'enemy' and not objects.subClass == 'enemy' ) or objs.subClass == 'powerup': 
                 objects._set_mask()
                 objs._set_mask()
+    
                 if objects.image_mask.overlap(objs.image_mask, (
-                   objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
+                   objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):  
                     if objects.subClass == 'player' and objs.subClass == 'enemy' and not objs.timer_started and not levelHandler.freeze_damage:
                         if objects.rect.top+5 < objs.rect.centery < objects.rect.bottom-5:
                             objects.isHit = True
+
+                if objects.rect.rectcollide(objs.rect):             
                     if objects.subClass == 'player' and objs.subClass == 'powerup':
                         objs.isHit = True
                         objects.powerUp = True
@@ -175,9 +181,9 @@ class _CollisionEngine:
 
             objects._set_mask()
             objs._set_mask()
-            if objects.image_mask.overlap(objs.image_mask, (
-                objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
-            
+            #if objects.image_mask.overlap(objs.image_mask, (
+            #    objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
+            if objects.rect.colliderect(objs.rect):
                 if objects.subClass == 'powerup' and objs.subClass == 'player':
                     objects.isHit = True
                     objs.powerUp = True

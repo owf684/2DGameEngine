@@ -17,13 +17,13 @@ class _mario_anim(anim_util._anim_util):
 
         # mario sprites
         self.mario_sprites = list()
-        self.idle_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_idle_right.png").convert_alpha()
-        self.idle_left = pygame.image.load('./Assets/PlayerSprites/mario_32x32_idle_left.png').convert_alpha()
-        self.jump_left = pygame.image.load("./Assets/PlayerSprites/mario_32x32_jump_left.png").convert_alpha()
-        self.jump_right = pygame.image.load("./Assets/PlayerSprites/mario_32x32_jump_right.png").convert_alpha()
-        self.run_right = self.extract_frames("./Assets/PlayerSprites/mario_32x32_run_right.png", 3, 32, 32)
-        self.run_left = self.extract_frames("./Assets/PlayerSprites/mario_32x32_run_left.png", 3, 32, 32)
-        self.death = pygame.image.load("./Assets/PlayerSprites/mario_32x32_death.png").convert_alpha()
+        self.idle_right = pygame.image.load("./Assets/PlayerSprites/mario/mario_32x32_idle_right.png").convert_alpha()
+        self.idle_left = pygame.image.load('./Assets/PlayerSprites/mario/mario_32x32_idle_left.png').convert_alpha()
+        self.jump_left = pygame.image.load("./Assets/PlayerSprites/mario/mario_32x32_jump_left.png").convert_alpha()
+        self.jump_right = pygame.image.load("./Assets/PlayerSprites/mario/mario_32x32_jump_right.png").convert_alpha()
+        self.run_right = self.extract_frames("./Assets/PlayerSprites/mario/mario_32x32_run_right.png", 3, 32, 32)
+        self.run_left = self.extract_frames("./Assets/PlayerSprites/mario/mario_32x32_run_left.png", 3, 32, 32)
+        self.death = pygame.image.load("./Assets/PlayerSprites/mario/mario_32x32_death.png").convert_alpha()
 
         self.mario_sprites.append(self.idle_right)
         self.mario_sprites.append(self.idle_left)
@@ -34,18 +34,36 @@ class _mario_anim(anim_util._anim_util):
 
         # super mario sprites
         self.super_mario_sprites = list()
-        self.super_mario_idle_right = pygame.image.load("./Assets/PlayerSprites/SuperMario_64x32_idle_right.png").convert_alpha()
-        self.super_mario_idle_left = pygame.image.load("./Assets/PlayerSprites/SuperMario_64x32_idle_left.png").convert_alpha()
-        self.super_mario_jump_left = pygame.image.load("./Assets/PlayerSprites/SuperMario_64x32_jump_left.png").convert_alpha()
-        self.super_mario_jump_right = pygame.image.load("./Assets/PlayerSprites/SuperMario_64x32_jump_right.png").convert_alpha()
-        self.super_mario_run_right = self.extract_frames("./Assets/PlayerSprites/SuperMario_64x32_run_right.png", 3, 32, 64)
-        self.super_mario_run_left = self.extract_frames("./Assets/PlayerSprites/SuperMario_64x32_run_left.png", 3, 32, 64)
+        self.super_mario_idle_right = pygame.image.load("./Assets/PlayerSprites/SuperMario/SuperMario_64x32_idle_right.png").convert_alpha()
+        self.super_mario_idle_left = pygame.image.load("./Assets/PlayerSprites/SuperMario/SuperMario_64x32_idle_left.png").convert_alpha()
+        self.super_mario_jump_left = pygame.image.load("./Assets/PlayerSprites/SuperMario/SuperMario_64x32_jump_left.png").convert_alpha()
+        self.super_mario_jump_right = pygame.image.load("./Assets/PlayerSprites/SuperMario/SuperMario_64x32_jump_right.png").convert_alpha()
+        self.super_mario_run_right = self.extract_frames("./Assets/PlayerSprites/SuperMario/SuperMario_64x32_run_right.png", 3, 32, 64)
+        self.super_mario_run_left = self.extract_frames("./Assets/PlayerSprites/SuperMario/SuperMario_64x32_run_left.png", 3, 32, 64)
         self.super_mario_sprites.append(self.super_mario_idle_right)
         self.super_mario_sprites.append(self.super_mario_idle_left)
         self.super_mario_sprites.append(self.super_mario_jump_left)
         self.super_mario_sprites.append(self.super_mario_jump_right)
         self.super_mario_sprites.append(self.super_mario_run_right)
         self.super_mario_sprites.append(self.super_mario_run_left)
+
+
+        self.flower_power_mario_idle_right = pygame.image.load("./Assets/PlayerSprites/FlowerPowerMario/FlowerPowerMario_idle_right.png").convert_alpha()
+        self.flower_power_mario_run_right = self.extract_frames("./Assets/PlayerSprites/FlowerPowerMario/FlowerPowerMario_run_right.png",3,32,64)
+        self.flower_power_mario_jump_right = pygame.image.load("./Assets/PlayerSprites/FlowerPowerMario/FlowerPowerMario_jump_right.png").convert_alpha()
+        self.flower_power_mario_idle_left = pygame.transform.flip(self.flower_power_mario_idle_right,True,False)
+        self.flower_power_mario_run_left = list()
+        for frames in self.flower_power_mario_run_right:
+            self.flower_power_mario_run_left.append(pygame.transform.flip(frames, True, False))
+
+        self.flower_power_mario_jump_left = pygame.transform.flip(self.flower_power_mario_jump_right, True , False)
+        self.flower_power_mario_sprites = list()
+        self.flower_power_mario_sprites.append(self.flower_power_mario_idle_right)
+        self.flower_power_mario_sprites.append(self.flower_power_mario_idle_left)
+        self.flower_power_mario_sprites.append(self.flower_power_mario_jump_left)
+        self.flower_power_mario_sprites.append(self.flower_power_mario_jump_right)
+        self.flower_power_mario_sprites.append(self.flower_power_mario_run_right)
+        self.flower_power_mario_sprites.append(self.flower_power_mario_run_left)
 
         self.super_mario_transform = self.extract_frames("./Assets/PlayerSprites/SuperMario_32x64_powerup_transform.png",7,32,64)
         self.current_mario_sprites = self.mario_sprites
@@ -61,8 +79,11 @@ class _mario_anim(anim_util._anim_util):
         self.transform_frame = self.idle_right
         self.damage_frame_captured = False
 
-    def main_loop(self, objects, input_dict, levelHandler,delta_t, PlayerEngine):
+    def main_loop(self, animaton_system, objects, input_dict, levelHandler,delta_t, PlayerEngine):
         try:
+            if animaton_system.reset_animations:
+                self.current_mario_sprites = self.mario_sprites
+                animaton_system.reset_animations = False
             if objects.subClass == 'player':
                 if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
 
@@ -126,12 +147,17 @@ class _mario_anim(anim_util._anim_util):
                 levelHandler.trigger_powerup_animation = False
                 self.powerup_frame_captured = False
                 objects.powerup = False
-                objects.collisionObject.imagePath = 'None'
+                #objects.collisionObject.imagePath = 'None'
                 #set flags
                 PlayerEngine.superMario = True
-                objects.power_up = 1
+
                 # setup player object image
-                self.current_mario_sprites = self.super_mario_sprites
+                if objects.power_up == 1:
+
+                    self.current_mario_sprites = self.super_mario_sprites
+                if objects.power_up == 2:
+                    self.current_mario_sprites = self.flower_power_mario_sprites
+
                 self.set_object(objects)
             
         except Exception as Error:
@@ -160,6 +186,7 @@ class _mario_anim(anim_util._anim_util):
             self.damage_frame_captured = False
             PlayerEngine.superMario = False
             self.latch = False
+            self.current_mario_sprites = self.mario_sprites
             objects.fromUnder = False
     def damage_animation(self, objects, levelHandler, delta_t, PlayerEngine):
         try:      
@@ -231,11 +258,15 @@ class _mario_anim(anim_util._anim_util):
             if objects.power_up == 1 and self.current_power != objects.power_up:
                 self.current_mario_sprites = self.super_mario_sprites
                 objects.image = self.current_mario_sprites[0]
-                objects.position[1] -= 32
                 self.set_object(objects)
-
-
                 self.current_power = objects.power_up
+
+            if objects.power_up == 2 and self.current_power != objects.power_up:
+                self.current_mario_sprites = self.flower_power_mario_sprites
+                objects.image = self.current_mario_sprites[0]
+                self.set_object(objects)
+                self.current_power = objects.power_up
+
         except Exception as Error:
             print("runtime error in mario_anim. Function handle_power_ups: ", Error)
     def handle_run_animations(self, objects, input_dict):

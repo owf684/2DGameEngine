@@ -1,7 +1,7 @@
 import sys
 sys.path.append("./GameObject")
 import BlockObject
-
+import FirePower
 class _LevelHandler:
 
 

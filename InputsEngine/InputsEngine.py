@@ -20,7 +20,8 @@ class _InputsEngine:
 			"arrow_vert"	: "0",
 			"arrow_hori"	: "0",
 			"l_shift"		: "0",
-			"edit"    		: "0"
+			"edit"    		: "0",
+			"attack"		: "0"
 		}
 
 	def main_loop(self,GameObjects,delta,pygame_events):
@@ -93,6 +94,11 @@ class _InputsEngine:
 					self.input_dict['edit'] = '1'
 				else:
 					self.input_dict['edit'] = '0'
+					
+				if keys[pygame.K_SPACE]:
+					self.input_dict['attack'] = '1'
+				else:
+					self.input_dict['attack'] = '0'
 
 		mouse_buttons = pygame.mouse.get_pressed()
 

@@ -78,7 +78,7 @@ PUP = PowerUpEngine._PowerUpEngine()
 GameObjects = list()
 PlayerObjects = PlayerObject._PlayerObject()
 PlayerObjects._set_sub_class('player')
-PlayerObjects._set_image_path('./Assets/PlayerSprites/mario_32x32_idle_right.png')
+PlayerObjects._set_image_path('./Assets/PlayerSprites/mario/mario_32x32_idle_right.png')
 PlayerObjects._set_image()
 PlayerObjects._set_sprite_size(PlayerObjects.image)
 PlayerObjects._set_rect(PlayerObjects.sprite_size)
@@ -131,7 +131,7 @@ while running:
 			CE.main_loop(objects, GE, LH)
 
 			# PlayerMechanics Engine
-			PlE.main_loop(objects, delta_t, input_dict, CE, LH)
+			PlE.main_loop(objects, delta_t, input_dict, CE, LH, GameObjects)
 
 			# Enemy Engine
 			EE.main_loop(GameObjects, PlE, GE,objects)
@@ -151,6 +151,7 @@ while running:
 		if LH.edit_mode:
 			LB.edit = True
 			LH.edit_mode = False
+			AS.reset_animations = True
 			
 	# Level Builder
 	LB.main_loop(input_dict, GE.screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)

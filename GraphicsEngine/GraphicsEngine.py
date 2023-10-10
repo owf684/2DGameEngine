@@ -1,6 +1,9 @@
 
 import pygame
 import copy
+import sys
+sys.path.append('./GameObjects')
+import FirePower
 
 class _GraphicsEngine:
 	def __init__(self):
@@ -100,7 +103,7 @@ class _GraphicsEngine:
 					self.render_buffer.append(objects)
 					objects.isRendered = True
 
-			if objects.subClass == 'enemy' or objects.subClass =='powerup':
+			if objects.subClass == 'enemy' or objects.subClass =='powerup' or isinstance(objects,FirePower._FirePower):
 				
 				if objects not in self.render_buffer:
 
