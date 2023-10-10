@@ -203,6 +203,7 @@ class _LevelBuilder:
 			levelObjects[-1]._set_image()
 			levelObjects[-1]._set_mask()
 			levelObjects[-1].position = copy.deepcopy(self.snap_position)
+			levelObjects[-1].x_direction = 0
 			levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
 			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
 			if levelObjects[-1].sprite_size[0] == 16 and levelObjects[-1].sprite_size[1] == 16:
@@ -478,6 +479,7 @@ class _LevelBuilder:
 			y_position = float(object_elem.find("position_y").text)
 			levelObjects[-1].position[0] = x_position
 			levelObjects[-1].position[1] = y_position
+			levelObjects[-1].x_direction = 0
 			levelObjects[-1].initial_position = copy.deepcopy(levelObjects[-1].position)
 			levelObjects[-1]._set_image_path(levelObjects[-1]._get_image_path())
 			levelObjects[-1]._set_image()		
