@@ -47,6 +47,7 @@ class _mario_anim(anim_util._anim_util):
         self.super_mario_sprites.append(self.super_mario_run_right)
         self.super_mario_sprites.append(self.super_mario_run_left)
 
+        self.super_mario_transform = self.extract_frames("./Assets/PlayerSprites/SuperMario_32x64_powerup_transform.png",7,32,64)
         self.current_mario_sprites = self.mario_sprites
 
         self.x_direction = 1
@@ -82,11 +83,9 @@ class _mario_anim(anim_util._anim_util):
                     self.damage_animation(objects, levelHandler,delta_t, PlayerEngine)
 
                 if levelHandler.trigger_death_animation:
-                    print("mario_anim.py::calling death_animation()")
                     self.death_animation(objects,levelHandler,delta_t, PlayerEngine)
 
                 if levelHandler.trigger_powerup_animation:
-                    print("mario_anim.py::trigger_powerup_animation= ", levelHandler.trigger_powerup_animation)
                     self.power_up_animation(objects,levelHandler,delta_t,PlayerEngine)
 
                 if levelHandler.freeze_damage:
@@ -102,15 +101,41 @@ class _mario_anim(anim_util._anim_util):
             print("runtime error in mario_anim. Function main_loop: ", Error)
 
     def power_up_animation(self, objects, levelHandler, delta_t, PlayerEngine):
-        if not self.latch:
-            self.reset_time_variables()
-            self.last_time_frame_2 = self.determine_time_elapsed()
-            self.latch = True
-        self.scaleConstant += self.scaleIncrement
-        objects.image = pygame.transform.scale(objects.image,(objects.image.get_width(),objects.image.get_height()*self.scaleConstant))
-        if self.determine_time_elapsed() > 10000:
-            levelHandler.trigger_powerup_animation = False
-            print("marion_anim.py::trigger_powerup_animation= ", levelHandler.trigger_powerup_animation)
+        try:      
+            # resets time variables and capture relevant sprites/frame when damaged
+            if not self.powerup_frame_captured:
+                self.frame_count = 7
+                self.frame_duration = 150
+                objects.position[1] -= 32
+                self.powerup_frame_captured = True
+                if objects.x_direction == 1:
+
+                    objects.image = pygame.transform.flip(self.super_mario_transform[0],True,False)
+                self.set_object(objects)
+            print("mario_anim.py::self.frame_index= ", self.frame_index)
+            self.determine_frame_count()
+            if objects.x_direction == 1:
+                objects.image = pygame.transform.flip(self.super_mario_transform[self.frame_index],True,False)
+            else:
+                objects.image = self.super_mario_transform[self.frame_index]
+
+            if self.frame_index >= 6:
+                # reset flags
+                print("mario_anim.py::resetting variables")
+                self.frame_count = 3
+                levelHandler.trigger_powerup_animation = False
+                self.powerup_frame_captured = False
+                objects.powerup = False
+                objects.collisionObject.imagePath = 'None'
+                #set flags
+                PlayerEngine.superMario = True
+                objects.power_up = 1
+                # setup player object image
+                self.current_mario_sprites = self.super_mario_sprites
+                self.set_object(objects)
+            
+        except Exception as Error:
+            print("runtime error in mario_anim.py::function powerup_animation(): ", Error)
 
     def death_animation(self, objects,levelHandler,delta_t, PlayerEngine):
         if not self.damage_frame_captured:

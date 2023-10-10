@@ -46,12 +46,8 @@ class _PlayerEngine(anim_util._anim_util):
         # print("PlayerEngine.py::objects.power_up= ", objects.power_up)
         #print("PlayerEngine.py::self.superMario= ", self.superMario)
         if objects.powerUp:
-            if "super_mushroom" in objects.collisionObject.imagePath:
+            if "super_mushroom" in objects.collisionObject.imagePath and not objects.power_up == 1:
                 levelHandler.trigger_powerup_animation = True
-
-                objects.power_up = 1
-                self.superMario = True
-                objects.powerUp = False
 
     def handle_damage(self, objects, levelHandler):
         if objects.isHit:
@@ -128,13 +124,13 @@ class _PlayerEngine(anim_util._anim_util):
                 objects.velocityX += 10 * self.runningFactor
 
         else:
-            if objects.velocityX > 0:
+            if objects.velocityX > 20:
                 objects.velocityX -= 300*delta_t
-            elif objects.velocityX < 0:
+            elif objects.velocityX < -20:
                 objects.velocityX += 300*delta_t
             else:
                 objects.velocityX = 0
-
+        print(objects.velocityX)
         if input_dict['l-shift'] == '1':
             self.runningFactor = 1.5
         else:

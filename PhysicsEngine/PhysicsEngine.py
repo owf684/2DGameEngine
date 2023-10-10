@@ -14,10 +14,10 @@ class _PhysicsEngine:
 
     def main_loop(self, objects, delta_t, levelHandler):
         if not levelHandler.pause_for_damage:
-            self.simulate_gravity(objects, delta_t)
+            self.simulate_gravity(objects, delta_t, levelHandler)
             self.x_position(objects, delta_t, levelHandler)
 
-    def simulate_gravity(self, objects, delta_t):
+    def simulate_gravity(self, objects, delta_t, levelHandler):
 
         '''
 		KINEMATIC EQUATIONS
@@ -26,7 +26,7 @@ class _PhysicsEngine:
 		V(t) = VY + a * t
 		'''
 
-        if objects.isRendered and not objects.pause_physics:
+        if objects.isRendered and not objects.pause_physics and ( not levelHandler.trigger_powerup_animation or objects.subClass == 'powerup') :
 
             objects.velocityY -= self.gravity * delta_t
 
@@ -41,7 +41,7 @@ class _PhysicsEngine:
 
     def x_position(self, objects, delta_t, levelHandler):
 
-        if objects.isRendered and not objects.pause_physics and not levelHandler.trigger_death_animation:
+        if objects.isRendered and not objects.pause_physics and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
 
             objects.velocityX1 = objects.velocityX * objects.x_direction
 
