@@ -65,10 +65,12 @@ class _PlayerEngine(anim_util._anim_util):
                 objects.collisionObject.isHit = True
                 objects.power_up = 2
     def handle_power(self,objects,input_dict,levelHandler, GameObjects):
-            if input_dict['attack'] == '1' and not self.latch:
+            if input_dict['attack'] == '1' and not self.latch and objects.power_up == 2:
+
                 self.latch = True
                 firePowerObject = FirePower._FirePower()
-                firePowerObject.velocityX = 200
+                firePowerObject.velocityX = 300
+                firePowerObject.velocityY = 50
                 firePowerObject.position = copy.deepcopy(objects.position)
                 firePowerObject.imagePath = './Assets/PlayerSprites/FlowerPowerMario/fire_ball.png'                
                 firePowerObject._set_image()
@@ -77,7 +79,11 @@ class _PlayerEngine(anim_util._anim_util):
                 firePowerObject.isRendered = True
                 firePowerObject.jumping = True
                 firePowerObject.x_direction = objects.x_direction
-                
+                firePowerObject.position[1] += 10
+                if firePowerObject.x_direction == 1:
+                    firePowerObject.position[0] += 37
+                else:
+                    firePowerObject.position[0] -= 10
                 GameObjects.append(firePowerObject)
             elif input_dict['attack'] == '0' and self.latch:
                 self.latch = False

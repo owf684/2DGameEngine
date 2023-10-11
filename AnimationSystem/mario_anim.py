@@ -14,7 +14,8 @@ class _mario_anim(anim_util._anim_util):
         self.jumping = False
         self.latch = False
 
-
+        self.shoot_latch = False
+        self.pause_animation = False
         # mario sprites
         self.mario_sprites = list()
         self.idle_right = pygame.image.load("./Assets/PlayerSprites/mario/mario_32x32_idle_right.png").convert_alpha()
@@ -65,6 +66,12 @@ class _mario_anim(anim_util._anim_util):
         self.flower_power_mario_sprites.append(self.flower_power_mario_run_right)
         self.flower_power_mario_sprites.append(self.flower_power_mario_run_left)
 
+        self.flower_power_shoot_right = pygame.image.load("./Assets/PlayerSprites/FlowerPowerMario/FlowerPowerMario_shoot_right.png").convert_alpha()
+        self.flower_power_shoot_left = pygame.transform.flip(self.flower_power_shoot_right,True,False)
+        self.flower_power_shoot = list()
+        self.flower_power_shoot.append(self.flower_power_shoot_right)
+        self.flower_power_shoot.append(self.flower_power_shoot_left)
+
         self.super_mario_transform = self.extract_frames("./Assets/PlayerSprites/SuperMario_32x64_powerup_transform.png",7,32,64)
         self.current_mario_sprites = self.mario_sprites
 
@@ -88,14 +95,17 @@ class _mario_anim(anim_util._anim_util):
                 if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
 
                     self.determine_frame_count()
+                    if not self.pause_animation:
 
-                    self.handle_run_animations(objects, input_dict)
+                        self.handle_run_animations(objects, input_dict)
 
-                    self.handle_jump_animations(objects, input_dict)
+                        self.handle_jump_animations(objects, input_dict)
 
-                    self.handle_idle_animations(objects, input_dict)
+                        self.handle_idle_animations(objects, input_dict)
 
                     self.handle_power_ups(objects)
+
+                    self.handle_fire_power(objects,input_dict)
 
                     objects.image.set_alpha(self.alpha)
 
@@ -121,6 +131,22 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("runtime error in mario_anim. Function main_loop: ", Error)
 
+    def handle_fire_power(self,objects,input_dict):
+        if objects.power_up == 2 and input_dict['attack'] == '1' and not self.shoot_latch:
+            self.reset_time_variables()
+            self.last_frame_time_2 = self.determine_time_elapsed()
+            self.pause_animation = True
+            self.shoot_latch = True
+
+            if objects.x_direction == 1:
+
+                objects.image = self.flower_power_shoot[0]
+            else:
+                objects.image = self.flower_power_shoot[1]
+        elif input_dict['attack'] == '0' and self.shoot_latch:
+            self.shoot_latch = False
+        if self.pause_animation and self.determine_time_elapsed() > 100:
+            self.pause_animation = False
     def power_up_animation(self, objects, levelHandler, delta_t, PlayerEngine):
         try:      
             # resets time variables and capture relevant sprites/frame when damaged
