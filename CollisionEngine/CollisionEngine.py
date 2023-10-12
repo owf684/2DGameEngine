@@ -82,7 +82,6 @@ class _CollisionEngine:
                                 
     def left_collision(self,objects,objs, levelHandler):
         try:
-            x_tolerance = 8
             y_tolerance = 10
             if objs.subClass == 'enemy':
                 x2_tolerance = 16
@@ -95,16 +94,15 @@ class _CollisionEngine:
 
                     self.save_collision_object(objects,objs)  
                     objects.collisionLeft = self.player_hit_box_x(objects,objs, levelHandler)
-                    if objects.collisionLeft and objects.subClass == 'player':
-                        objects.position[0] = objs.rect.right+3
-                     
-                        
+                    if objects.collisionLeft:
+                        if objects.subClass == 'player':
+                            objects.position[0] = objs.rect.right+3
+                                                    
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function left_collision: ", Error)
     
     def right_collision(self,objects,objs, levelHandler):
         try:
-            x_tolerance = 8
             y_tolerance = 10
             if objs.subClass == 'enemy':
                 x2_tolerance = 16
@@ -118,10 +116,9 @@ class _CollisionEngine:
                         
                         self.save_collision_object(objects,objs)  
                         objects.collisionRight = self.player_hit_box_x(objects,objs, levelHandler)
-                        if objects.collisionRight and objects.subClass == 'player':
-                            objects.position[0] = objs.rect.left - objects.rect.width-3
-                        
-
+                        if objects.collisionRight:
+                            if objects.subClass == 'player':
+                                objects.position[0] = objs.rect.left - objects.rect.width-3
 
         except Exception as Error:
             print("runtime error in CollisionEngine.py::function right_collision2(): ", Error)
@@ -152,35 +149,36 @@ class _CollisionEngine:
         try:
             if not isinstance(objects,FirePower._FirePower):
 
+                #handle enemy/powerup interaction with player and environment 
                 if (objs.subClass == 'enemy' and not objects.subClass == 'enemy' ) or objs.subClass == 'powerup': 
                     objects._set_mask()
                     objs._set_mask()
     
                     if objects.image_mask.overlap(objs.image_mask, (
                        objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):  
+                        
                         if objects.subClass == 'player' and objs.subClass == 'enemy' and not objs.timer_started and not levelHandler.freeze_damage:
                             if objects.rect.top+5 < objs.rect.centery < objects.rect.bottom-5:
                                 objects.isHit = True
 
-                    if objects.rect.colliderect(objs.rect):             
                         if objects.subClass == 'player' and objs.subClass == 'powerup':
                             objs.isHit = True
                             objects.powerUp = True
                             self.save_collision_object(objects,objs)
+                        
+                        if objects.subClass != 'player':
+                            return True
 
                     return False
                 else:
                     return True
 
-            elif isinstance(objects,FirePower._FirePower) and objs.subClass == 'enemy':
+            elif isinstance(objects,FirePower._FirePower) and objs.subClass != 'player':
                 objs.isHit = True
+                objs.hit = True
                 return True
-            elif isinstance(objects,FirePower._FirePower) and objs.subClass != 'enemy':
-                if objects.rect.colliderect(objs):
-
-                    return True
             else:
-                return False
+                return True
 
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function player_hit_box: ", Error)
@@ -195,7 +193,7 @@ class _CollisionEngine:
             objs._set_mask()
             #if objects.image_mask.overlap(objs.image_mask, (
             #    objs.position[0] - objects.position[0], objs.position[1] - objects.position[1])):
-            if objects.rect.colliderect(objs.rect):
+            if objects.rect.colliderect(objs.rect) and not isinstance(objects,FirePower._FirePower):
                 if objects.subClass == 'powerup' and objs.subClass == 'player':
                     objects.isHit = True
                     objs.powerUp = True
@@ -204,6 +202,10 @@ class _CollisionEngine:
                     objs.isHit = True
                     objects.powerUp = True
                     self.save_collision_object(objects,objs)
+                return True
+            elif isinstance(objects,FirePower._FirePower) and objs.subClass != 'player':
+                objs.hit = True
+                objs.isHit = True
                 return True
             else:
                 return False

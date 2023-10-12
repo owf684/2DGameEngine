@@ -49,7 +49,7 @@ class _PlayerEngine(anim_util._anim_util):
     def handle_firePower(self,objects):
         if objects.collisionDown:
             objects.velocityY = 150
-        if objects.collisionRight or objects.collisionLeft:
+        if (objects.collisionRight or objects.collisionLeft) and objects.collisionObject.subClass != 'player':
             if objects.collisionObject.subClass == 'enemy':
                 objects.collisionObject.fromUnder = True
             objects.isHit = True

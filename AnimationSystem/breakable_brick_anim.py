@@ -29,8 +29,8 @@ class _breakable_break_anim(anim_util._anim_util):
                     objects.velocityY = 500
                     objects.velocityX = -30
                     objects.fromUnder = True
-                    objects.rect.width = 0
-                    objects.rect.height = 0
+                    #objects.rect.width = 0
+                    #objects.rect.height = 0
                     #objects.position[1] -= 32
                     self.set_object(objects)
                     self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0]) + 16, copy.deepcopy(objects.position[1])     , 30 )
@@ -67,6 +67,6 @@ class _breakable_break_anim(anim_util._anim_util):
         levelObjects[-1].isRendered = True
         levelObjects[-1].velocityX = vx
         levelObjects[-1].fromUnder = True
-        levelObjects[-1].rect.width = 0
-        levelObjects[-1].rect.height = 0        
+        #levelObjects[-1].rect.width = 0
+        #levelObjects[-1].rect.height = 0        
         print(levelObjects[-1].timer_started)
