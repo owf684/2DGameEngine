@@ -16,6 +16,7 @@ class _mario_anim(anim_util._anim_util):
 
         self.shoot_latch = False
         self.pause_animation = False
+
         # mario sprites
         self.mario_sprites = list()
         self.idle_right = pygame.image.load("./Assets/PlayerSprites/mario/mario_32x32_idle_right.png").convert_alpha()
@@ -54,6 +55,7 @@ class _mario_anim(anim_util._anim_util):
         self.flower_power_mario_jump_right = pygame.image.load("./Assets/PlayerSprites/FlowerPowerMario/FlowerPowerMario_jump_right.png").convert_alpha()
         self.flower_power_mario_idle_left = pygame.transform.flip(self.flower_power_mario_idle_right,True,False)
         self.flower_power_mario_run_left = list()
+
         for frames in self.flower_power_mario_run_right:
             self.flower_power_mario_run_left.append(pygame.transform.flip(frames, True, False))
 
@@ -361,12 +363,12 @@ class _mario_anim(anim_util._anim_util):
     
     def handle_jump_animations(self, objects, input_dict):
         try:
-            if objects.velocityY > 0:
-                if self.x_direction == 1:
+            if objects.jumping:
+                if objects.x_direction == 1:
                     objects.image = self.current_mario_sprites[3]
                     self.current_sprite = 3
                     self.jumping = True
-                elif self.x_direction == -1:
+                elif objects.x_direction == -1:
                     objects.image = self.current_mario_sprites[2]
                     self.current_sprite = 2
                     self.jumping = True
