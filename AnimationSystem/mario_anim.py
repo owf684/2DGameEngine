@@ -105,7 +105,7 @@ class _mario_anim(anim_util._anim_util):
 
                     self.handle_power_ups(objects)
 
-                    self.handle_fire_power(objects,input_dict)
+                    self.handle_fire_power(objects,input_dict, PlayerEngine)
 
                     objects.image.set_alpha(self.alpha)
 
@@ -131,22 +131,35 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("runtime error in mario_anim. Function main_loop: ", Error)
 
-    def handle_fire_power(self,objects,input_dict):
-        if objects.power_up == 2 and input_dict['attack'] == '1' and not self.shoot_latch:
-            self.reset_time_variables()
-            self.last_frame_time_2 = self.determine_time_elapsed()
-            self.pause_animation = True
-            self.shoot_latch = True
+    def handle_fire_power(self,objects,input_dict, PlayerEngine):
+        try:
 
-            if objects.x_direction == 1:
+            if objects.power_up == 2 and input_dict['attack'] == '1' and not self.shoot_latch and not PlayerEngine.delay_power:
+            
+                self.reset_time_variables()
+                self.last_frame_time_2 = self.determine_time_elapsed()
+                self.pause_animation = True
+                self.shoot_latch = True
 
-                objects.image = self.flower_power_shoot[0]
-            else:
-                objects.image = self.flower_power_shoot[1]
-        elif input_dict['attack'] == '0' and self.shoot_latch:
-            self.shoot_latch = False
-        if self.pause_animation and self.determine_time_elapsed() > 100:
-            self.pause_animation = False
+                if objects.x_direction == 1:
+
+                    objects.image = self.flower_power_shoot[0]
+                else:
+                
+                    objects.image = self.flower_power_shoot[1]
+        
+            elif input_dict['attack'] == '0' and self.shoot_latch:
+            
+                self.shoot_latch = False
+        
+            if self.pause_animation and self.determine_time_elapsed() > 100:
+            
+                self.pause_animation = False
+        
+        except Exception as Error:
+        
+            print("runtime Error in mario_anim.py::Function handle_fire_power(): ", Error)
+
     def power_up_animation(self, objects, levelHandler, delta_t, PlayerEngine):
         try:      
             # resets time variables and capture relevant sprites/frame when damaged
@@ -190,30 +203,37 @@ class _mario_anim(anim_util._anim_util):
             print("runtime error in mario_anim.py::function powerup_animation(): ", Error)
 
     def death_animation(self, objects,levelHandler,delta_t, PlayerEngine):
-        if not self.damage_frame_captured:
+        try:
 
-            objects.image = self.death
-            self.reset_time_variables()
-            self.last_frame_time_2 = self.determine_time_elapsed()
+            if not self.damage_frame_captured:
+
+                objects.image = self.death
+                self.reset_time_variables()
+                self.last_frame_time_2 = self.determine_time_elapsed()
     
-            self.damage_frame_captured = True
-        time_elapsed = self.determine_time_elapsed()
-        if time_elapsed > 500 and not self.latch:
-            objects.velocityY = 500
-            self.latch = True
-            objects.fromUnder = True
-            objects.rect.width = 0
-            objects.rect.height = 0
-        if self.latch:
-            objects.collisionUp = False
-        if time_elapsed > 3000:
-            levelHandler.load_level = True
-            levelHandler.trigger_death_animation = False
-            self.damage_frame_captured = False
-            PlayerEngine.superMario = False
-            self.latch = False
-            self.current_mario_sprites = self.mario_sprites
-            objects.fromUnder = False
+                self.damage_frame_captured = True
+            time_elapsed = self.determine_time_elapsed()
+            if time_elapsed > 500 and not self.latch:
+                objects.velocityY = 500
+                self.latch = True
+                objects.fromUnder = True
+                objects.rect.width = 0
+                objects.rect.height = 0
+            if self.latch:
+                objects.collisionUp = False
+            if time_elapsed > 3000:
+                levelHandler.load_level = True
+                levelHandler.trigger_death_animation = False
+                self.damage_frame_captured = False
+                PlayerEngine.superMario = False
+                self.latch = False
+                self.current_mario_sprites = self.mario_sprites
+                objects.fromUnder = False
+        
+        except Exception as Error:
+
+            print("runtime error in mario_anim.py::Function death_animation(): ", Error)
+    
     def damage_animation(self, objects, levelHandler, delta_t, PlayerEngine):
         try:      
             # resets time variables and capture relevant sprites/frame when damaged
@@ -295,6 +315,7 @@ class _mario_anim(anim_util._anim_util):
 
         except Exception as Error:
             print("runtime error in mario_anim. Function handle_power_ups: ", Error)
+
     def handle_run_animations(self, objects, input_dict):
         try:
             if input_dict['l-shift'] == '1':
