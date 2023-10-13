@@ -23,6 +23,7 @@ class _GraphicsEngine:
 
 		#render buffer
 		self.render_buffer = list()
+		self.unrendered_size = 32
 		self.levelObjectsIndex = 0
 		self.GameObjectsIndex = 0
 		self.environment_sprites = list()
@@ -84,7 +85,7 @@ class _GraphicsEngine:
 		for objects in levelObjects:
 			if objects not in self.render_buffer:
 		
-				if not objects.position[0] < -objects.sprite_size[0] and not objects.position[0] > self.screen_width:
+				if not objects.position[0] < -objects.sprite_size[0]-self.unrendered_size and not objects.position[0] > self.screen_width+self.unrendered_size:
 					if objects.subClass == 'environment':
 						self.render_buffer.insert(0,objects) # using insert ensures player is always drawn last.
 					else:
@@ -92,7 +93,7 @@ class _GraphicsEngine:
 
 			if objects in self.render_buffer:
 
-				if objects.position[0] < -objects.sprite_size[0] or objects.position[0] > self.screen_width:
+				if objects.position[0] < -objects.sprite_size[0]-self.unrendered_size or objects.position[0] > self.screen_width+self.unrendered_size:
 					self.render_buffer.remove(objects)
 
 
