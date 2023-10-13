@@ -30,10 +30,12 @@ class _PlayerEngine(anim_util._anim_util):
         self.runningFactor = 1
         self.supressDamage = False
         self.latch = False
-        self.shoot_limit = 2
+        self.shoot_limit = 3
         self.shots_taken = 0
         self.delay_power = False
-        self.shoot_delay_milliseconds = 1000
+        self.time_after_shot = False
+        self.shoot_delay_milliseconds = 500 # used to reset shots_taken after shots exceeds limit
+        self.shoot_reset_milliseconds = 250 # used to reset shots_taken if shots do not exceed limit
 
     def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler,GameObjects):
         try:
@@ -47,7 +49,8 @@ class _PlayerEngine(anim_util._anim_util):
                     self.onEnemy(objects, input_dict, levelHandler)
                     self.handle_damage(objects, levelHandler)
                     self.handle_flower_power_action(objects,input_dict,levelHandler,GameObjects)
-
+                    if self.time_after_shot:
+                        self.shoot_reset()
                     if self.delay_power:
                         self.delay_flower_power()
             
@@ -62,6 +65,11 @@ class _PlayerEngine(anim_util._anim_util):
         except Exception as Error:
 
             print("runtime error in PlayerEngine.py::Function main_loop(): ", Error)
+
+    def shoot_reset(self):
+        if self.determine_time_elapsed() > self.shoot_reset_milliseconds and not self.delay_power:
+            self.time_after_shot = False
+            self.shots_taken = 0
 
     def delay_flower_power(self):
         try:
@@ -119,35 +127,38 @@ class _PlayerEngine(anim_util._anim_util):
             if input_dict['attack'] == '1' and not self.latch and objects.power_up == 2 and not self.delay_power:
                 self.shots_taken += 1
                 
-                if self.shots_taken >= self.shoot_limit:
+                self.latch =   True
+  
+                if self.shots_taken > self.shoot_limit:
                     self.delay_power = True
                     self.reset_time_variables()
                     self.last_frame_time_2 = self.determine_time_elapsed()
-
-                self.latch =   True
-
-                # Create FirePower Object
-                firePowerObject = FirePower._FirePower()
-                firePowerObject.velocityX = 300
-                firePowerObject.velocityY = 50
-                firePowerObject.position = copy.deepcopy(objects.position)
-                firePowerObject.imagePath = './Assets/PlayerSprites/FlowerPowerMario/fire_ball.png'                
-                firePowerObject._set_image()
-                firePowerObject._set_sprite_size(firePowerObject.image)
-                firePowerObject._set_rect(firePowerObject.sprite_size)
-                firePowerObject.isRendered = True
-                firePowerObject.jumping = True
-                firePowerObject.x_direction = objects.x_direction
-                firePowerObject.position[1] += 10
-                
-                # handle direction and position accordingly
-                if firePowerObject.x_direction == 1:
-                    firePowerObject.position[0] += 37
                 else:
-                    firePowerObject.position[0] -= 10
+                    self.reset_time_variables()
+                    self.last_frame_time_2 = self.determine_time_elapsed()
+                    self.time_after_shot = True
+                    # Create FirePower Object
+                    firePowerObject = FirePower._FirePower()
+                    firePowerObject.velocityX = 300
+                    firePowerObject.velocityY = 50
+                    firePowerObject.position = copy.deepcopy(objects.position)
+                    firePowerObject.imagePath = './Assets/PlayerSprites/FlowerPowerMario/fire_ball.png'                
+                    firePowerObject._set_image()
+                    firePowerObject._set_sprite_size(firePowerObject.image)
+                    firePowerObject._set_rect(firePowerObject.sprite_size)
+                    firePowerObject.isRendered = True
+                    firePowerObject.jumping = True
+                    firePowerObject.x_direction = objects.x_direction
+                    firePowerObject.position[1] += 10
+                
+                    # handle direction and position accordingly
+                    if firePowerObject.x_direction == 1:
+                        firePowerObject.position[0] += 37
+                    else:
+                        firePowerObject.position[0] -= 10
                
-               # add to GameObjects to be processed in Render Buffer later
-                GameObjects.append(firePowerObject)
+                   # add to GameObjects to be processed in Render Buffer later
+                    GameObjects.append(firePowerObject)
             
             elif input_dict['attack'] == '0' and self.latch:
                 
