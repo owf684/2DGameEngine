@@ -33,14 +33,14 @@ class _PlayerEngine(anim_util._anim_util):
         self.shoot_limit = 2
         self.shots_taken = 0
         self.delay_power = False
-        self.shoot_delay_milliseconds = 1500
+        self.shoot_delay_milliseconds = 1000
 
     def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler,GameObjects):
         try:
 
             if objects.subClass == 'player':
 
-                if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation:
+                if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
                 
                     self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine, levelHandler)
                     self.jump(objects, delta_t, input_dict)
@@ -53,7 +53,7 @@ class _PlayerEngine(anim_util._anim_util):
             
                 self.handle_power_ups(objects, levelHandler)
             
-                if levelHandler.pause_for_damage or levelHandler.trigger_death_animation:
+                if levelHandler.pause_for_damage or levelHandler.trigger_death_animation or levelHandler.trigger_powerup_animation:
                     self.scroll_level = False
 
             if isinstance(objects,FirePower._FirePower):
@@ -82,12 +82,13 @@ class _PlayerEngine(anim_util._anim_util):
             
                 objects.velocityY = 150
         
-            if (objects.collisionRight or objects.collisionLeft) and objects.collisionObject.subClass != 'player':
+            '''if (objects.collisionRight or objects.collisionLeft) and objects.collisionObject.subClass != 'player':
+                
+                #if objects.collisionObject.subClass == 'enemy':
+                #    objects.collisionObject.fromUnder = True
             
-                if objects.collisionObject.subClass == 'enemy':
-                    objects.collisionObject.fromUnder = True
+                objects.isHit = True'''
             
-                objects.isHit = True
         except Exception as Error:
 
             print("runtime error in PlayerEngine.py::handle_flower_power(): ", Error)
