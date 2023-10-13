@@ -19,6 +19,8 @@ class _breakable_break_anim(anim_util._anim_util):
         self.break_brick(objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine)
 
     def break_brick(self, objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine):
+        print("breakable_brick_anim.py::break_brick(): len(levelObjects) = ", len(levelObjects))
+
         if "break" in objects.imagePath:
             if objects.hit and PlayerEngine.superMario:
                 if not objects.timer_started:
@@ -29,9 +31,6 @@ class _breakable_break_anim(anim_util._anim_util):
                     objects.velocityY = 500
                     objects.velocityX = -30
                     objects.fromUnder = True
-                    #objects.rect.width = 0
-                    #objects.rect.height = 0
-                    #objects.position[1] -= 32
                     self.set_object(objects)
                     self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0]) + 16, copy.deepcopy(objects.position[1])     , 30 )
                     self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0])     , copy.deepcopy(objects.position[1]) - 32, -35 )
@@ -41,8 +40,9 @@ class _breakable_break_anim(anim_util._anim_util):
             if objects.timer_started:
                 objects.image = self.brick_pieces[self.frame_index]
                 if objects.determine_time_elapsed() > 5000:
-                    print("hello?")
                     objects.timer_started = False
+                    objects.hit = False
+                    levelObjects.remove(objects)
         
 
     def set_object(self, objects):
@@ -67,6 +67,4 @@ class _breakable_break_anim(anim_util._anim_util):
         levelObjects[-1].isRendered = True
         levelObjects[-1].velocityX = vx
         levelObjects[-1].fromUnder = True
-        #levelObjects[-1].rect.width = 0
-        #levelObjects[-1].rect.height = 0        
-        print(levelObjects[-1].timer_started)
+     
