@@ -1,6 +1,9 @@
 import pygame
 import sys
 sys.path.append('./GameObjects')
+sys.path.append('./UIEngine')
+
+import ItemContainer
 import GameObject
 import BlockObject
 import PlayerObject
@@ -8,6 +11,7 @@ import copy
 import glob
 import os
 import xml.etree.ElementTree as ET
+
 class _LevelBuilder:
 
 
@@ -44,6 +48,8 @@ class _LevelBuilder:
 		self.spawn_point = (0,0)
 		self.spawn_point_loaded = False
 
+		self.ui_elements = list()
+
 		'''
 		0 = Basic Platform Blocks
 		1 = Enemies
@@ -72,6 +78,41 @@ class _LevelBuilder:
 		self.category_container.append(self.environment_sprites)
 		self.category_container.append(self.power_up_sprites)
 
+		self.initiliaze_builder_ui()
+
+	def initiliaze_builder_ui(self):
+		self.ui_elements.clear()
+		y_position = 32
+		x_position = (self.screen_width/2) - len(self.category_container[self.category_selection_index])*64/2
+		for items in self.category_container[self.category_selection_index]:
+			item_container = ItemContainer._ItemContainer()
+
+			# set images
+			item_container.set_active_image("./Assets/UI/ItemContainer_selected.png")
+			item_container.set_inactive_image('./Assets/UI/ItemContainer.png')
+			item_container.active_image = item_container.item_inactive_image
+			
+			# set position
+			item_container.position = [x_position,y_position] 
+
+			#get items image scaled dimensions
+			x_scale_factor = items.image.get_width()/36
+			y_scale_factor = items.image.get_height()/36
+
+			if x_scale_factor > y_scale_factor:
+				scale_factor = x_scale_factor
+			else:
+				scale_factor = y_scale_factor
+
+			item_container.item_image = pygame.transform.scale(items.image, (items.image.get_width()/x_scale_factor, items.image.get_height()/y_scale_factor))
+			item_container.item_image_path = items.imagePath
+			item_container.item_position = [x_position + item_container.active_image.get_width()/4,y_position + item_container.active_image.get_height()/4]
+
+			#increment x by adding size of width
+			x_position += 64
+
+			self.ui_elements.append(item_container)
+			
 	def initialize_building_blocks(self):
 		block_list = glob.glob('./Assets/Platforms/*.png')
 
@@ -213,6 +254,7 @@ class _LevelBuilder:
 
 	
 		if selected_block._get_sub_class() == 'enemy':
+
 			#add GameObjects
 			GameObjects.append(GameObject._GameObject())
 			GameObjects[-1]._set_sub_class(copy.deepcopy(selected_block._get_sub_class()))
@@ -270,9 +312,17 @@ class _LevelBuilder:
 
 		selected_category = self.category_container[self.category_selection_index]
 
-		if selected_category[self.selected_block_index] not in GraphicsEngine.render_buffer:
-			GraphicsEngine.render_buffer.append(selected_category[self.selected_block_index])
-
+		for uie in self.ui_elements:
+			print(uie.item_image_path)
+			print(selected_category[self.selected_block_index].imagePath)
+			if uie.item_image_path == selected_category[self.selected_block_index].imagePath:
+				uie.isActive = True
+			else:
+				uie.isActive = False
+			if uie.isActive:
+				uie.active_image = uie.item_selected_image
+			else:
+				uie.active_image = uie.item_inactive_image
 
 	def handle_user_input(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):
 
@@ -290,15 +340,18 @@ class _LevelBuilder:
 		if input_dict['arrow_hori'] == '1' and not self.category_select_key:
 			self.category_select_key = True
 			self.category_selection_index += 1
+			self.initiliaze_builder_ui()
 		elif input_dict['arrow_hori'] == '-1' and not self.category_select_key:
 			self.category_select_key = True
 			self.category_selection_index -= 1
+			self.initiliaze_builder_ui()
 		elif input_dict['arrow_hori'] == '0':
 			self.category_select_key = False
 
 
 		if self.block_select_key or self.category_select_key:
 			levelHandler.clear_render_buffer = True
+
 		#handles save data
 		if input_dict["create-level"] == "1" and not self.create_level_select:
 			self.create_level_select = True
@@ -538,3 +591,6 @@ class _LevelBuilder:
 			collisionList.append(GameObjects[-1])
 			if GameObjects[-1].subClass == 'enemy':
 				GameObjects[-1].x_direction = -1
+
+
+		

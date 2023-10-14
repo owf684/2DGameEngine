@@ -61,6 +61,9 @@ class _GraphicsEngine:
 			for y in range(0, self.screen_height, self.grid_size):
 				pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
 
+			for uie in levelBuilder.ui_elements:
+				self.screen.blit(uie.active_image, (uie.position[0], uie.position[1]))
+				self.screen.blit(uie.item_image,(uie.item_position[0],uie.item_position[1]) )
 
 		if levelHandler.clear_render_buffer:
 			self.render_buffer.clear()
