@@ -19,7 +19,6 @@ class _breakable_break_anim(anim_util._anim_util):
         self.break_brick(objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine)
 
     def break_brick(self, objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine):
-        print("breakable_brick_anim.py::break_brick(): len(levelObjects) = ", len(levelObjects))
 
         if "break" in objects.imagePath:
             if objects.hit and PlayerEngine.superMario:
