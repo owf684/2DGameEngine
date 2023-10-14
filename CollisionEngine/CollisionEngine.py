@@ -168,7 +168,7 @@ class _CollisionEngine:
 
                 if objects.subClass == 'enemy':
                     if objs.subClass == 'player':
-                        if objs.rect.top+5 < objects.rect.centery < objs.rect.bottom-5 and not objects.timer_started and not levelHandler.freeze_damge:
+                        if objs.rect.top+5 < objects.rect.centery < objs.rect.bottom-5 and not objects.timer_started and not levelHandler.freeze_damage:
                             objs.isHit = True
                             self.save_collision_object(objects,objs)                        
                         return False              
