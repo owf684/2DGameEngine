@@ -211,12 +211,9 @@ class _LevelBuilder:
 			self.scroll_offset_magnitude = levelHandler.scroll_offset/levelHandler.scroll_offset
 		else:
 			self.scroll_offset_magnitude = 1
-		print("mouse_position: " + str(self.mouse_position))
-		print("scroll_delta: " + str(levelHandler.scroll_delta))
 		self.snap_position[0] = int((self.mouse_position[0] - abs(levelHandler.scroll_delta))/self.grid_size)*self.grid_size + abs(levelHandler.scroll_delta)
 		#get y snap value
 		self.snap_position[1] = int(self.mouse_position[1]/self.grid_size)*self.grid_size
-		print("snap_position: " + str(self.snap_position))
 		#draw the placement sqaure
 		square_rect = pygame.Rect(self.snap_position[0], self.snap_position[1], self.scan_block_size, self.scan_block_size)
 		
@@ -314,8 +311,6 @@ class _LevelBuilder:
 		selected_category = self.category_container[self.category_selection_index]
 
 		for uie in self.ui_elements:
-			print(uie.item_image_path)
-			print(selected_category[self.selected_block_index].imagePath)
 			if uie.item_image_path == selected_category[self.selected_block_index].imagePath:
 				uie.isActive = True
 			else:
@@ -502,7 +497,7 @@ class _LevelBuilder:
 
 	def load_level(self,GameObjects,levelObjects,collisionList,level_string,screen,levelHandler):
 		self.spawn_point_loaded = False
-		levelHandler.scroll_offset = 0
+		#levelHandler.scroll_offset = 0
 		levelHandler.clear_render_buffer =True
 		screen.fill((0,0,0))
 	
