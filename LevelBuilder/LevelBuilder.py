@@ -83,6 +83,7 @@ class _LevelBuilder:
 	def initiliaze_builder_ui(self):
 		self.ui_elements.clear()
 		y_position = 32
+		self.limit_selection_index()
 		x_position = (self.screen_width/2) - len(self.category_container[self.category_selection_index])*64/2
 		for items in self.category_container[self.category_selection_index]:
 			item_container = ItemContainer._ItemContainer()
@@ -104,7 +105,7 @@ class _LevelBuilder:
 			else:
 				scale_factor = y_scale_factor
 
-			item_container.item_image = pygame.transform.scale(items.image, (items.image.get_width()/x_scale_factor, items.image.get_height()/y_scale_factor))
+			item_container.item_image = pygame.transform.scale(items.image, (items.image.get_width()/scale_factor, items.image.get_height()/scale_factor))
 			item_container.item_image_path = items.imagePath
 			item_container.item_position = [x_position + item_container.active_image.get_width()/4,y_position + item_container.active_image.get_height()/4]
 
