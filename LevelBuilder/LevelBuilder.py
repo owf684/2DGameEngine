@@ -120,8 +120,9 @@ class _LevelBuilder:
 
 	def initialize_item_sprites(self):
 		item_list = glob.glob("./Assets/Items/*.png")
+
 		for items in item_list:
-			new_item = GameObject._GameObject()
+			new_item = BlockObject._BlockObject()
 			new_item._set_sub_class('item')
 			new_item._set_image_path(items)
 			new_item._set_image()
@@ -236,7 +237,7 @@ class _LevelBuilder:
 			if objects.rect.collidepoint(self.snap_position):
 				self.can_place_block = False
 		for objects in levelObjects:
-			if objects.rect.collidepoint(self.snap_position) and self.category_selection_index != 3:
+			if objects.rect.collidepoint(self.snap_position) and self.category_selection_index != 3 and self.category_selection_index != 4:
 				self.can_place_block = False
 
 		pygame.draw.rect(screen, self.block_color, square_rect)
@@ -250,8 +251,8 @@ class _LevelBuilder:
 		if selected_block._get_sub_class() == 'platform':
 
 			#add first platform
-			levelObjects.append(BlockObject._BlockObject)
-			levelObjects[-1]._set_sub_class(selected_block._get_sub_class())
+			levelObjects.append(BlockObject._BlockObject())
+			levelObjects[-1]._set_sub_class(selected_block.subClass)
 			levelObjects[-1]._set_image_path(selected_block._get_image_path())
 			levelObjects[-1]._set_image()
 			levelObjects[-1]._set_mask()
@@ -294,7 +295,6 @@ class _LevelBuilder:
 
 		if selected_block._get_sub_class() == 'powerup' or selected_block._get_sub_class() == 'item':
 
-
 			#add GameObjects
 			new_object = BlockObject._BlockObject()
 			new_object._set_sub_class(copy.deepcopy(selected_block._get_sub_class()))
@@ -312,7 +312,7 @@ class _LevelBuilder:
 						objects.item = new_object
 						add = False
 
-			if add and isinstance(new_object,BlockObject._BlockObject) and new_object.subClass != 'item':
+			if add and new_object.subClass != 'item':
 				GameObjects.append(new_object)
 				collisionList.append(GameObjects[-1])
 
@@ -390,13 +390,7 @@ class _LevelBuilder:
 		elif input_dict["load-level"] == "0":
 			self.load_level_select = False
 
-
-
-		#
-
 	def limit_selection_index(self):
-
-
 		if self.category_selection_index < 0:
 			self.category_selection_index = 0
 		elif self.category_selection_index >= len(self.category_container):
@@ -425,7 +419,6 @@ class _LevelBuilder:
 	def save_level_objects(self,levelObjects,level_string):
 
 		#get level number
-
 		root = ET.Element("objects")
 		obj = list()
 		for objects in levelObjects:
