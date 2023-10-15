@@ -507,7 +507,7 @@ class _LevelBuilder:
 
 	def load_level(self,GameObjects,levelObjects,collisionList,level_string,screen,levelHandler):
 		self.spawn_point_loaded = False
-		#levelHandler.scroll_offset = 0
+		levelHandler.scroll_offset = 0
 		levelHandler.clear_render_buffer =True
 		screen.fill((0,0,0))
 	
