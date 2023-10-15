@@ -26,14 +26,12 @@ class _question_block:
                 self.question_block_animation(objects)
                 self.question_block_hit(objects)
             if objects.release_item_trigger:
-                self.release_item(objects, GameObjects)
+                self.release_item(objects, GameObjects, levelObjects)
             if objects.pauseHit:
                 if objects.determine_time_elapsed() > 300:
                     objects.pauseHit = False
     def handle_question_blocks(self, objects, PlayerEngine):
 
-        # if objects.collisionObject is not None and objects.collisionObject.collisionSubClass == 'player':
-        # print("hello!")
         if objects.hit:
             if "Question" in objects.imagePath:
                 objects.hit = False
@@ -58,15 +56,17 @@ class _question_block:
             objects.changeHit = False
             objects.theta = 1
 
-    def release_item(self, objects, GameObjects):
+    def release_item(self, objects, GameObjects, levelObjects):
 
         if objects.item is not None:
+            print("question_block.py::release_item::item.subClass:: ", objects.item.subClass)
             item = objects.item
             item.position[1] -= objects.rect.height
             item.rect.y = item.position[1]
             item.pause_physics = False
             item.x_direction = -1
             item._set_mask()
+            item.item_released = True
             objects.item = None
             objects.release_item_trigger = False    
             GameObjects.append(item)

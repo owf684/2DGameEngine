@@ -61,6 +61,7 @@ class _break_block():
                 item.rect.y = item.position[1]
                 item.pause_physics = False
                 item.x_direction = -1
+                item.item_released = True
                 push_block_object.item = None
                 item._set_mask()
                 self.release_item_trigger = False     
