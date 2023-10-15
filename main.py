@@ -150,7 +150,7 @@ while running:
 			PUP.main_loop(GameObjects, LH, PlE,GE, objects)
 
 			# Item Engine
-			_ItemEngine.main_loop(objects,levelObjects, LH)
+			_ItemEngine.main_loop(objects,levelObjects, GameObjects, LH, PlE)
 
 		# Level Handler
 		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB, EE)
