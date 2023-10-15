@@ -16,7 +16,7 @@ sys.path.append('./LevelHandler')
 sys.path.append('./AnimationSystem')
 sys.path.append('./MechanicsEngine/BlockEngine')
 sys.path.append('./MechanicsEngine/PowerUpEngine')
-
+sys.path.append('./MechanicsEngine/ItemEngine')
 #Game Libraries
 import GraphicsEngine
 import InputsEngine
@@ -33,6 +33,7 @@ import AnimationSystem
 import BlockEngine
 import PowerUpEngine
 import PlayerObject
+import ItemEngine 
 
 # Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -73,6 +74,9 @@ BE = BlockEngine._BlockEngine()
 
 # Initialize PowerUpEngine
 PUP = PowerUpEngine._PowerUpEngine()
+
+# Initialize ItemEngine
+_ItemEngine = ItemEngine._ItemEngine()
 
 # Initialize GameObjects
 GameObjects = list()
@@ -144,6 +148,9 @@ while running:
 
 			# PowerUp Engine
 			PUP.main_loop(GameObjects, LH, PlE,GE, objects)
+
+			# Item Engine
+			_ItemEngine.main_loop(objects,levelObjects, LH)
 
 		# Level Handler
 		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB, EE)

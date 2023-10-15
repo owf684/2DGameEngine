@@ -54,8 +54,8 @@ class _LevelBuilder:
 		0 = Basic Platform Blocks
 		1 = Enemies
 		2 = Environment 
-		3 = Moving Platforms
-		4 = Collectibles
+		3 = Powerups
+		4 = Items
 		'''
 
 
@@ -72,11 +72,15 @@ class _LevelBuilder:
 		self.power_up_sprites = list()
 		self.initialize_power_up_sprites()
 
+		self.item_sprites = list()
+		self.initialize_item_sprites()
+
 		self.category_container = list()
 		self.category_container.append(self.building_blocks)
 		self.category_container.append(self.enemy_sprites)
 		self.category_container.append(self.environment_sprites)
 		self.category_container.append(self.power_up_sprites)
+		self.category_container.append(self.item_sprites)
 
 		self.initiliaze_builder_ui()
 
@@ -113,12 +117,23 @@ class _LevelBuilder:
 			x_position += 64
 
 			self.ui_elements.append(item_container)
-			
+
+	def initialize_item_sprites(self):
+		item_list = glob.glob("./Assets/Items/*.png")
+		for items in item_list:
+			new_item = GameObject._GameObject()
+			new_item._set_sub_class('item')
+			new_item._set_image_path(items)
+			new_item._set_image()
+			new_item._set_sprite_size(new_item.image)
+			new_item._set_rect(new_item.sprite_size)
+			self.item_sprites.append(new_item)
+
 	def initialize_building_blocks(self):
 		block_list = glob.glob('./Assets/Platforms/*.png')
 
 		for blocks in block_list:
-			new_block = GameObject._GameObject()
+			new_block = BlockObject._BlockObject()
 			new_block._set_sub_class('platform')
 			new_block._set_image_path(blocks)
 			new_block._set_image()
@@ -129,7 +144,6 @@ class _LevelBuilder:
 			self.building_blocks.append(new_block)
 	
 	def initialize_enemy_sprites(self):
-
 		enemy_list = glob.glob('./Assets/EnemySprites/Goomba/*.png')
 		for enemy in enemy_list:
 			new_enemy = GameObject._GameObject()
@@ -199,7 +213,7 @@ class _LevelBuilder:
 						levelHandler.clear_render_buffer = True
 						break
 			for objects in levelObjects:
-				if objects.subClass == 'platform' or objects.subClass == 'environment':
+				if objects.subClass == 'platform' or objects.subClass == 'environment' or objects.subClass == 'item':
 					if objects.rect.collidepoint(self.mouse_position):
 						levelObjects.remove(objects)
 						levelHandler.clear_render_buffer = True
@@ -236,7 +250,7 @@ class _LevelBuilder:
 		if selected_block._get_sub_class() == 'platform':
 
 			#add first platform
-			levelObjects.append(GameObject._GameObject())
+			levelObjects.append(BlockObject._BlockObject)
 			levelObjects[-1]._set_sub_class(selected_block._get_sub_class())
 			levelObjects[-1]._set_image_path(selected_block._get_image_path())
 			levelObjects[-1]._set_image()
@@ -278,7 +292,7 @@ class _LevelBuilder:
 			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
 			levelObjects[-1].scroll_offset = copy.deepcopy((levelHandler.scroll_offset))
 
-		if selected_block._get_sub_class() == 'powerup':
+		if selected_block._get_sub_class() == 'powerup' or selected_block._get_sub_class() == 'item':
 
 
 			#add GameObjects
@@ -291,7 +305,6 @@ class _LevelBuilder:
 			new_object.initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
 			new_object._set_sprite_size(GameObjects[-1].image)
 			new_object._set_rect(GameObjects[-1].sprite_size)
-
 			add = True
 			for objects in levelObjects:
 				if isinstance(objects,BlockObject._BlockObject):
@@ -299,9 +312,13 @@ class _LevelBuilder:
 						objects.item = new_object
 						add = False
 
-			if add:
+			if add and isinstance(new_object,BlockObject._BlockObject) and new_object.subClass != 'item':
 				GameObjects.append(new_object)
 				collisionList.append(GameObjects[-1])
+
+			if add and new_object.subClass == 'item':
+				levelObjects.append(new_object)
+				collisionList.append(levelObjects[-1])
 
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
 			
