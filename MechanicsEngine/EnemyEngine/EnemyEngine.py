@@ -35,7 +35,7 @@ class _EnemyEngine():
                 self.change_position(objects)
 
     def isHit(self, objects, GameObjects, GraphicsEngine):
-        if objects.destroy:
+        if objects.destroy and objects.subClass == 'enemy':
             objects.destroy = False
             GameObjects.remove(objects)
             GraphicsEngine.render_buffer.remove(objects)
