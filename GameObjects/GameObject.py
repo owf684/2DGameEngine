@@ -48,7 +48,6 @@ class _GameObject(anim_util._anim_util):
 		self.y_displacement =0
 		self.pause_physics = False
 
-		
 		#Collision Data
 		self.collisionDown = False
 		self.collisionLeft = False
@@ -60,8 +59,7 @@ class _GameObject(anim_util._anim_util):
 		self.collisionObjDirection = 0
 		self.collisionObject = None
 		self.hit = False
-
-
+		self.item_released = False
 		#Audio Data
 		self.audioFootSteep = None
 		self.audioAttack = None
