@@ -59,7 +59,7 @@ class _CollisionEngine:
                         if objects.subClass == 'enemy':
                             objects.collisionUp = self.enemy_collision_handler_y(objects,objs, levelHandler, 'up')                 
 
-                        if objects.subClass == 'powerup' or isinstance(objects,FirePower._FirePower):
+                        if objects.subClass == 'powerup' or isinstance(objects,FirePower._FirePower) or objects.subClass=='item':
                             objects.collisionUp = self.powerup_collision_handler_y(objects,objs,levelHandler, 'up')                       
 
                         self.save_collision_object(objects, objs)
@@ -77,7 +77,7 @@ class _CollisionEngine:
                     if objects.subClass == 'enemy':
                         objects.collisionDown = self.enemy_collision_handler_y(objects,objs, levelHandler, 'down')                 
 
-                    if objects.subClass == 'powerup' or isinstance(objects, FirePower._FirePower):
+                    if objects.subClass == 'powerup' or isinstance(objects, FirePower._FirePower) or objects.subClass == 'item':
                         objects.collisionDown = self.powerup_collision_handler_y(objects,objs,levelHandler, 'down')
                         
                     if 'coin' not in objs.imagePath:
@@ -221,7 +221,6 @@ class _CollisionEngine:
                         return False
                     
             elif objs.subClass == 'item' and 'coin' in objs.imagePath:
-                print('destroy coin!')
                 objs.destroy = True
                 self.save_collision_object(objects,objs)
                 return False
@@ -336,7 +335,6 @@ class _CollisionEngine:
                     return False
             
             if objs.subClass == 'item' and 'coin' in objs.imagePath:
-                print('destroy coin!')
                 objs.destroy = True
                 self.save_collision_object(objects,objs)
                 return False
