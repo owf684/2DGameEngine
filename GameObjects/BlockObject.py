@@ -18,3 +18,5 @@ class _BlockObject(GameObject._GameObject, anim_util._anim_util):
         self.pauseHit = False
         self.last_frame_time_2 = 0
         self.item_released = False
+        self.audio_clip = None
+        self.audio_playing = False
