@@ -17,6 +17,7 @@ sys.path.append('./AnimationSystem')
 sys.path.append('./MechanicsEngine/BlockEngine')
 sys.path.append('./MechanicsEngine/PowerUpEngine')
 sys.path.append('./MechanicsEngine/ItemEngine')
+sys.path.append("./AudioEngine")
 #Game Libraries
 import GraphicsEngine
 import InputsEngine
@@ -34,6 +35,7 @@ import BlockEngine
 import PowerUpEngine
 import PlayerObject
 import ItemEngine 
+import AudioEngine
 
 # Initialize Inputs engine
 IE = InputsEngine._InputsEngine()
@@ -77,6 +79,9 @@ PUP = PowerUpEngine._PowerUpEngine()
 
 # Initialize ItemEngine
 _ItemEngine = ItemEngine._ItemEngine()
+
+# initialize AudioEngine
+_AudioEngine = AudioEngine._AudioEngine()
 
 # Initialize GameObjects
 GameObjects = list()
@@ -134,6 +139,9 @@ while running:
 			# Collision Engine
 			CE.main_loop(objects, GE, LH)
 
+			# Audio Engine
+			_AudioEngine.main_loop(objects,LH,PlE)
+
 			# PlayerMechanics Engine
 			PlE.main_loop(objects, delta_t, input_dict, CE, LH, GameObjects)
 
@@ -151,6 +159,8 @@ while running:
 
 			# Item Engine
 			_ItemEngine.main_loop(objects,levelObjects, GameObjects, LH, PlE)
+
+
 
 		# Level Handler
 		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB, EE)
