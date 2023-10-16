@@ -273,7 +273,7 @@ class _mario_anim(anim_util._anim_util):
                 self.damage_count = 0
 
             # check elapsed time
-            if self.determine_time_elapsed() > 1200:
+            if self.determine_time_elapsed() > 600:
 
                 # reset flags
                 levelHandler.pause_for_damage = False
