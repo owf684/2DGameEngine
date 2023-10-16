@@ -36,6 +36,10 @@ class _PlayerEngine(anim_util._anim_util):
         self.time_after_shot = False
         self.shoot_delay_milliseconds = 500 # used to reset shots_taken after shots exceeds limit
         self.shoot_reset_milliseconds = 250 # used to reset shots_taken if shots do not exceed limit
+        self.triggerJumpFX = False
+        self.triggerFlowerPowerAudio = False
+        self.triggerPowerUpAudio = False
+        self.triggerBlockBreakAudio = False
 
     def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler,GameObjects):
         try:
@@ -109,14 +113,18 @@ class _PlayerEngine(anim_util._anim_util):
                 if "super_mushroom" in objects.collisionObject.imagePath and objects.power_up < 1:
                 
                     levelHandler.trigger_powerup_animation = True
+                    self.triggerPowerUpAudio = True
                     objects.power_up = 1
+                    self.superMario = True
                     objects.collisionObject.isHit = True
             
                 if "flower_power" in objects.collisionObject.imagePath and not objects.power_up == 2:
                 
                     levelHandler.trigger_powerup_animation = True
+                    self.triggerPowerUpAudio = True
                     objects.collisionObject.isHit = True
                     objects.power_up = 2
+                    self.superMario = True
 
         except Exception as Error:
 
@@ -128,7 +136,7 @@ class _PlayerEngine(anim_util._anim_util):
                 self.shots_taken += 1
                 
                 self.latch =   True
-  
+                self.triggerFlowerPowerAudio = True
                 if self.shots_taken > self.shoot_limit:
                     self.delay_power = True
                     self.reset_time_variables()
@@ -221,6 +229,7 @@ class _PlayerEngine(anim_util._anim_util):
             if input_dict['up'] == '1' and not self.reached_max_height:
                 objects.velocityY = 300
                 objects.jumping = True
+                self.triggerJumpFX = True
 
             self.total_y_displacement += objects.y_displacement
         
@@ -235,12 +244,12 @@ class _PlayerEngine(anim_util._anim_util):
             
                 self.total_y_displacement = 0
                 objects.jumping = False
-
+                self.triggerJumpFX = False
             if objects.collisionDown and objects.velocityY < 0:
             
                 self.total_y_displacement = 0
                 objects.jumping = False
-            
+                self.triggerJumpFX = False
                 if self.reached_max_height:
                 
                     if input_dict['up'] == '0':
