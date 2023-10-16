@@ -40,6 +40,8 @@ class _PlayerEngine(anim_util._anim_util):
         self.triggerFlowerPowerAudio = False
         self.triggerPowerUpAudio = False
         self.triggerBlockBreakAudio = False
+        self.triggerDeathAudio = False
+        self.triggerPowerDownAudio = False
 
     def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler,GameObjects):
         try:
@@ -183,11 +185,13 @@ class _PlayerEngine(anim_util._anim_util):
             
                 if objects.power_up == 0:
                     levelHandler.trigger_death_animation = True
+                    self.triggerDeathAudio = True
             
                 if objects.power_up > 0:
                     objects.isHit = False
                     levelHandler.pause_for_damage = True
                     self.superMario = False
+                    self.triggerPowerDownAudio = True
 
                 elif objects.power_up == 0 and not levelHandler.freeze_damage and not levelHandler.trigger_death_animation:
                     levelHandler.load_level = True
@@ -196,6 +200,7 @@ class _PlayerEngine(anim_util._anim_util):
             elif objects.position[1] > self.screen_width:
                 levelHandler.load_level = True
                 levelHandler.edit_mode = True
+                self.triggerDeathAudio = True
         
             if objects.power_up == 0 and not objects.powerUp:
                 self.superMario = False
