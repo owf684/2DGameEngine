@@ -23,6 +23,8 @@ class _breakable_break_anim(anim_util._anim_util):
         if "break" in objects.imagePath:
             if objects.hit and PlayerEngine.superMario:
                 if not objects.timer_started:
+                    PlayerEngine.triggerBlockBreakAudio = True
+                    objects.hit = False
                     objects.reset_time_variables()
                     objects.timer_started = True
                     objects.last_frame_time_2 = objects.determine_time_elapsed()
@@ -40,8 +42,8 @@ class _breakable_break_anim(anim_util._anim_util):
                 objects.image = self.brick_pieces[self.frame_index]
                 if objects.determine_time_elapsed() > 5000:
                     objects.timer_started = False
-                    objects.hit = False
-                    levelObjects.remove(objects)
+                    if objects in levelObjects:
+                        levelObjects.remove(objects)
         
 
     def set_object(self, objects):
