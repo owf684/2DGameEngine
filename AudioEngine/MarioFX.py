@@ -35,7 +35,8 @@ class _MarioFX:
             self.handle_death_audio(objects,levelHandler,PlayerEngine)
             self.handle_power_down_audio(objects,levelHandler,PlayerEngine)
     def handle_jump_audio(self,objects,levelHandler,PlayerEngine):
-
+        if PlayerEngine.triggerPowerUpAudio:
+            PlayerEngine.triggerJumpFX = False
         if PlayerEngine.triggerJumpFX and objects.power_up == 0 and not self.mario_jump_playing:
             # Play the sound with an event that triggers when the sound finishes playing
 
@@ -83,6 +84,7 @@ class _MarioFX:
             PlayerEngine.triggerDeathAudio = False
             self.mario_dies.play()
     def handle_power_down_audio(self,objects,levelHandler,PlayerEngine):
-        if PlayerEngine.triggerPowerDownAudio:
+
+        if PlayerEngine.triggerPowerDownAudio and levelHandler.pause_for_damage:
             PlayerEngine.triggerPowerDownAudio = False
             self.mario_powerdown.play()

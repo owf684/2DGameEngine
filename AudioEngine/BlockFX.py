@@ -28,8 +28,9 @@ class _BlockFX:
             self.trigger_block_audio = True
         elif 'break' in objects.imagePath and not PlayerEngine.superMario:
             self.trigger_block_audio = True
-        elif 'break' in objects.imagePath and PlayerEngine.superMario:
-            self.trigger_break_block_audio = True
+        elif 'question_block_hit' in objects.imagePath and levelHandler.trigger_block_fx and self.bump.get_num_channels == 0:
+            levelHandler.trigger_block_fx = False
+            self.bump.play()
 
         if self.trigger_block_audio:
             self.trigger_block_audio = False
@@ -40,7 +41,7 @@ class _BlockFX:
             self.handle_break_block_audio(objects,levelHandler,PlayerEngine)
 
     def handle_block_audio(self, objects,levelHandler,PlayerEngine):
-
+        
         if objects.hit and not self.bump_playing:
             self.bump.play()
             self.bump_playing = True

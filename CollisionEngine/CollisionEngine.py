@@ -54,7 +54,7 @@ class _CollisionEngine:
                     if objs.rect.left-10 <= objects.rect.centerx <= objs.rect.right+10:
                     
                         if objects.subClass == 'player':
-                            objects.collisionUp = self.player_collision_hanlder_y(objects,objs, 'up')
+                            objects.collisionUp = self.player_collision_hanlder_y(objects,objs,levelHandler, 'up')
                     
                         if objects.subClass == 'enemy':
                             objects.collisionUp = self.enemy_collision_handler_y(objects,objs, levelHandler, 'up')                 
@@ -89,7 +89,7 @@ class _CollisionEngine:
                         self.save_collision_object(objects,objs) 
 
                         if objects.subClass == 'player':
-                            objects.collisionDown = self.player_collision_hanlder_y(objects,objs, 'down')
+                            objects.collisionDown = self.player_collision_hanlder_y(objects,objs, levelHandler, 'down')
 
                         if not objs.timer_started and not objects.timer_started and 'coin' not in objs.imagePath:
                                 objects.position[1] = objs.rect.top - objects.rect.height  
@@ -306,7 +306,7 @@ class _CollisionEngine:
         except Exception as Error:
             print("runtime error in CollisionEngine. Function payer_hit_box_y: ", Error)
 
-    def player_collision_hanlder_y(self,objects,objs, Direction):
+    def player_collision_hanlder_y(self,objects,objs, levelHandler,  Direction):
         try:
 
             if objs.subClass =='enemy' and not objs.timer_started and objects.subClass == 'player' and Direction == 'down':  
@@ -320,12 +320,12 @@ class _CollisionEngine:
 
             if isinstance(objs, BlockObject._BlockObject) and not objs.pauseHit and Direction == 'up' and objs.subClass != 'item':
                 if 'break' in objs.imagePath or 'Question' in objs.imagePath:
-
                     if (objs.rect.left < objects.rect.centerx < objs.rect.right):
                         objs.hit = True  
                         objs.changeHit = True
                         objs.pauseHit = True    
-                
+                elif 'question_block_hit' in objs.imagePath:
+                    levelHandler.trigger_block_fx = True
                 return True     
             
             if objects.subClass == 'player' and objs.subClass == 'powerup':

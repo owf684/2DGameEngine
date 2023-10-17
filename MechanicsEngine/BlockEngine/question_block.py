@@ -39,6 +39,7 @@ class _question_block:
                 objects.release_item_trigger = True
                 objects.reset_time_variables()
                 objects.last_frame_time_2 = objects.determine_time_elapsed()     
+    
 
     def question_block_hit(self, questionBlock):
         questionBlock.imagePath = self.hit_state_path
