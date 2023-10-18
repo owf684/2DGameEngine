@@ -325,7 +325,8 @@ class _CollisionEngine:
                         objs.changeHit = True
                         objs.pauseHit = True    
                 elif 'question_block_hit' in objs.imagePath:
-                    levelHandler.trigger_block_fx = True
+                    objs.isHit = True
+                    
                 return True     
             
             if objects.subClass == 'player' and objs.subClass == 'powerup':
