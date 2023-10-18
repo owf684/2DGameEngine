@@ -16,9 +16,6 @@ class _MarioFX:
 
         self.powerup = pygame.mixer.Sound("./Assets/AudioEffects/smb_powerup.wav")
 
-        self.stomp = pygame.mixer.Sound("./Assets/AudioEffects/smb_stomp.wav")
-        self.stomp_playing = False
-
         self.fireball = pygame.mixer.Sound('./Assets/AudioEffects/smb_fireball.wav')
         self.fireball_playing = False
 
@@ -29,7 +26,6 @@ class _MarioFX:
     def main_loop(self,objects,levelHandler,PlayerEngine):
         if objects.subClass == 'player':
             self.handle_jump_audio(objects,levelHandler,PlayerEngine)
-            self.handle_stomp_audio(objects,levelHandler,PlayerEngine)
             self.handle_flower_power_audio(objects,levelHandler,PlayerEngine)
             self.handle_powerup_audio(objects,levelHandler,PlayerEngine)
             self.handle_death_audio(objects,levelHandler,PlayerEngine)
@@ -59,15 +55,6 @@ class _MarioFX:
         if PlayerEngine.triggerDeathAudio:
             self.super_mario_jump.stop()
 
-
-    def handle_stomp_audio(self,objects,levelHandler,PlayerEngine):
-
-        if objects.onEnemy and not self.stomp_playing:
-            self.stomp.play()
-            self.stomp_playing = True
-
-        if self.stomp.get_num_channels() == 0 and self.stomp_playing:
-            self.stomp_playing = False
 
     def handle_flower_power_audio(self,objects,levelHandler,PlayerEngine):
         if PlayerEngine.triggerFlowerPowerAudio:
