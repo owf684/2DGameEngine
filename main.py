@@ -140,7 +140,7 @@ while running:
 			CE.main_loop(objects, GE, LH)
 
 			# Audio Engine
-			_AudioEngine.main_loop(objects,LH,PlE)
+			_AudioEngine.main_loop(objects,LH,PlE, EE)
 
 			# PlayerMechanics Engine
 			PlE.main_loop(objects, delta_t, input_dict, CE, LH, GameObjects)
@@ -149,7 +149,7 @@ while running:
 			EE.main_loop(GameObjects, PlE, GE,objects)
 			
 			# Animation System
-			AS.main_loop(objects, GameObjects, levelObjects, input_dict, LH, delta_t, PlE, GE)
+			AS.main_loop(objects, GameObjects, levelObjects, input_dict, LH, delta_t, PlE, GE, EE)
 
 			# Block Engine
 			BE.main_loop(GameObjects, levelObjects, PlE, delta_t,objects)
