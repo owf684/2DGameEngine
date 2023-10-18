@@ -165,13 +165,17 @@ while running:
 		# Level Handler
 		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB, EE)
 
+
 		if LH.edit_mode:
+	
 			LB.edit = True
 			LH.edit_mode = False
 			AS.reset_animations = True
 			
 	# Level Builder
 	LB.main_loop(input_dict, GE.screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
+	if LB.edit:
+		_AudioEngine.stop_over_world_music()
 
 	delta_t = clock.tick(FPS)/1000
 
