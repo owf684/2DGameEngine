@@ -25,7 +25,7 @@ class _MarioFX:
         self.mario_dies = pygame.mixer.Sound("./Assets/AudioEffects/smb_mario-dies.wav")
 
         self.mario_powerdown = pygame.mixer.Sound("./Assets/AudioEffects/smb_pipe.wav")
-
+        self.number_of_powerdown_plays = 0
     def main_loop(self,objects,levelHandler,PlayerEngine):
         if objects.subClass == 'player':
             self.handle_jump_audio(objects,levelHandler,PlayerEngine)
@@ -87,4 +87,8 @@ class _MarioFX:
 
         if PlayerEngine.triggerPowerDownAudio and levelHandler.pause_for_damage:
             PlayerEngine.triggerPowerDownAudio = False
-            self.mario_powerdown.play()
+            if self.number_of_powerdown_plays == 0:
+                self.mario_powerdown.play()
+            self.number_of_powerdown_plays += 1
+            if self.number_of_powerdown_plays >= 2:
+                self.number_of_powerdown_plays = 0
