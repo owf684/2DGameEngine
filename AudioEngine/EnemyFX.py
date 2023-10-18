@@ -10,6 +10,5 @@ class _EnemyFX:
     def main_loop(self,objects,levelHandler,EnemyEngine):
         
         if EnemyEngine.triggerStompAudio:
-            print("hello corona!")
             self.bump.play()
             EnemyEngine.triggerStompAudio = False
