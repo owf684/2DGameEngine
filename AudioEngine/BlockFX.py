@@ -19,7 +19,7 @@ class _BlockFX:
         self.break_block = pygame.mixer.Sound("./Assets/AudioEffects/smb_breakblock.wav")
         self.break_block_playing = False
 
-
+        self.number_of_bump_plays = 0
         self.trigger_block_audio = False
         self.trigger_break_block_audio = False
     def main_loop(self,objects,levelHandler,PlayerEngine):
@@ -28,9 +28,10 @@ class _BlockFX:
             self.trigger_block_audio = True
         elif 'break' in objects.imagePath and not PlayerEngine.superMario:
             self.trigger_block_audio = True
-        elif 'question_block_hit' in objects.imagePath and levelHandler.trigger_block_fx and self.bump.get_num_channels == 0:
-            levelHandler.trigger_block_fx = False
-            self.bump.play()
+        elif 'break' in objects.imagePath and PlayerEngine.superMario:
+            self.trigger_break_block_audio = True
+        elif 'question_block_hit' in objects.imagePath:
+          self.handle_question_block_hit_audio(objects,levelHandler,PlayerEngine)
 
         if self.trigger_block_audio:
             self.trigger_block_audio = False
@@ -72,3 +73,17 @@ class _BlockFX:
         if PlayerEngine.triggerBlockBreakAudio:
             PlayerEngine.triggerBlockBreakAudio = False
             self.break_block.play()
+
+    def handle_question_block_hit_audio(self,objects,levelHandler,PlayerEngine):
+        if objects.isHit:
+            #only play audio clip once when not already playing
+            if self.number_of_bump_plays == 0 and self.bump.get_num_channels() == 0:
+
+                self.bump.play()
+
+            objects.isHit = False
+
+            #prevents from audio clip from playing twice when it should only play it once
+            self.number_of_bump_plays += 1   
+            if self.number_of_bump_plays >= 2:
+                self.number_of_bump_plays = 0
