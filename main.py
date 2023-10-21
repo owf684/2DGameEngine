@@ -38,44 +38,44 @@ import ItemEngine
 import AudioEngine
 
 # Initialize Inputs engine
-IE = InputsEngine._InputsEngine()
+_InputsEngine = InputsEngine._InputsEngine()
 
 # Initialize UI Engine
-UIE = UIEngine._UIEngine()
+_UIEngine = UIEngine._UIEngine()
 
 # Initialize Physics Engine
-PE = PhysicsEngine._PhysicsEngine()
+_PhysicsEngine = PhysicsEngine._PhysicsEngine()
 
 # Initialize Player Engine
-PlE = PlayerEngine._PlayerEngine()
+_PlayerEngine = PlayerEngine._PlayerEngine()
 
 # Initialize Enemy Engine
-EE = EnemyEngine._EnemyEngine()
+_EnemyEngine = EnemyEngine._EnemyEngine()
 
 # Initialize Platforms Engine
-PfE = PlatformsEngine._PlatformsEngine()
+_PlatformsEngine = PlatformsEngine._PlatformsEngine()
 
 # Initialize Graphics Engine
-GE = GraphicsEngine._GraphicsEngine()
-GE._setScreenSize(1280,720)
+_GraphicsEngine = GraphicsEngine._GraphicsEngine()
+_GraphicsEngine._setScreenSize(1280,720)
 
 # Initialize Collision Engine
-CE = CollisionEngine._CollisionEngine()
+_CollisionEngine = CollisionEngine._CollisionEngine()
 
 # Initialize Level Builder
-LB = LevelBuilder._LevelBuilder()
+_LevelBuilder = LevelBuilder._LevelBuilder()
 
 # Initialize Level Handler
-LH = LevelHandler._LevelHandler()
+_LevelHandler = LevelHandler._LevelHandler()
 
 # Initialize Animation System
-AS = AnimationSystem._AnimationSystem()
+_AnimationSystem = AnimationSystem._AnimationSystem()
 
 # Initialize Block Engine
-BE = BlockEngine._BlockEngine()
+_BlockEngine = BlockEngine._BlockEngine()
 
 # Initialize PowerUpEngine
-PUP = PowerUpEngine._PowerUpEngine()
+_PowerUpEngine = PowerUpEngine._PowerUpEngine()
 
 # Initialize ItemEngine
 _ItemEngine = ItemEngine._ItemEngine()
@@ -122,59 +122,57 @@ while running:
 	pygame_events = pygame.event.get()
 
 	# Inputs Engine | Update our inputs once a frame
-	input_dict = IE.main_loop(GameObjects,delta_t,pygame_events)
+	input_dict = _InputsEngine.main_loop(GameObjects,delta_t,pygame_events)
 
 	# Graphics Engine | Update our graphics once a frame
-	GE.main_loop(GameObjects, levelObjects, LH,LB)
+	_GraphicsEngine.main_loop(GameObjects, levelObjects, _LevelHandler,_LevelBuilder)
 
 	# game and level objects are only updated in play mode
-	if not LB.edit:
+	if not _LevelBuilder.edit:
 
 		# update all game and level objects once a frame
-		for objects in GE.render_buffer:
+		for objects in _GraphicsEngine.render_buffer:
 
 			# Physics Engine | Maintain this order. Physics is always first. Collisions is always second.
-			PE.main_loop(objects, delta_t, LH)
+			_PhysicsEngine.main_loop(objects, delta_t, _LevelHandler)
 
 			# Collision Engine
-			CE.main_loop(objects, GE, LH)
+			_CollisionEngine.main_loop(objects, _GraphicsEngine, _LevelHandler)
 
 			# Audio Engine
-			_AudioEngine.main_loop(objects,LH,PlE, EE)
+			_AudioEngine.main_loop(objects,_LevelHandler,_PlayerEngine, _EnemyEngine)
 
 			# PlayerMechanics Engine
-			PlE.main_loop(objects, delta_t, input_dict, CE, LH, GameObjects)
+			_PlayerEngine.main_loop(objects, delta_t, input_dict, _CollisionEngine, _LevelHandler, GameObjects)
 
 			# Enemy Engine
-			EE.main_loop(GameObjects, PlE, GE,objects)
+			_EnemyEngine.main_loop(GameObjects, _PlayerEngine, _GraphicsEngine,objects)
 			
 			# Animation System
-			AS.main_loop(objects, GameObjects, levelObjects, input_dict, LH, delta_t, PlE, GE, EE)
+			_AnimationSystem.main_loop(objects, GameObjects, levelObjects, input_dict, _LevelHandler, delta_t, _PlayerEngine, _GraphicsEngine, _EnemyEngine)
 
 			# Block Engine
-			BE.main_loop(GameObjects, levelObjects, PlE, delta_t,objects)
+			_BlockEngine.main_loop(GameObjects, levelObjects, _PlayerEngine, delta_t,objects)
 
 			# PowerUp Engine
-			PUP.main_loop(GameObjects, LH, PlE,GE, objects)
+			_PowerUpEngine.main_loop(GameObjects, _LevelHandler, _PlayerEngine,_GraphicsEngine, objects)
 
 			# Item Engine
-			_ItemEngine.main_loop(objects,levelObjects, GameObjects, LH, PlE)
-
-
+			_ItemEngine.main_loop(objects,levelObjects, GameObjects, _LevelHandler, _PlayerEngine)
 
 		# Level Handler
-		LH.main_loop(LH, GameObjects, levelObjects, collisionList, GE.screen, PlE, LB, EE)
+		_LevelHandler.main_loop(_LevelHandler, GameObjects, levelObjects, collisionList, _GraphicsEngine.screen, _PlayerEngine, _LevelBuilder, _EnemyEngine)
 
 
-		if LH.edit_mode:
+		if _LevelHandler.edit_mode:
 	
-			LB.edit = True
-			LH.edit_mode = False
-			AS.reset_animations = True
+			_LevelBuilder.edit = True
+			_LevelHandler.edit_mode = False
+			_AnimationSystem.reset_animations = True
 			
 	# Level Builder
-	LB.main_loop(input_dict, GE.screen, levelObjects, collisionList, LH, PlE, GameObjects,GE)
-	if LB.edit:
+	_LevelBuilder.main_loop(input_dict, _GraphicsEngine.screen, levelObjects, collisionList, _LevelHandler, _PlayerEngine, GameObjects,_GraphicsEngine)
+	if _LevelBuilder.edit:
 		_AudioEngine.stop_over_world_music()
 
 	delta_t = clock.tick(FPS)/1000
