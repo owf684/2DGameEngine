@@ -174,7 +174,6 @@ class _mario_anim(anim_util._anim_util):
 
                     objects.image = pygame.transform.flip(self.super_mario_transform[0],True,False)
                 self.set_object(objects)
-            print("mario_anim.py::self.frame_index= ", self.frame_index)
             self.determine_frame_count()
             if objects.x_direction == 1:
                 objects.image = pygame.transform.flip(self.super_mario_transform[self.frame_index],True,False)
@@ -184,10 +183,10 @@ class _mario_anim(anim_util._anim_util):
             if self.frame_index >= 6:
                 # reset flags
                 print("mario_anim.py::resetting variables")
+                objects.powerUp = False
                 self.frame_count = 3
                 levelHandler.trigger_powerup_animation = False
                 self.powerup_frame_captured = False
-                objects.powerup = False
                 #objects.collisionObject.imagePath = 'None'
                 #set flags
                 PlayerEngine.superMario = True
