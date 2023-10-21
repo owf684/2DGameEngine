@@ -217,6 +217,7 @@ class _CollisionEngine:
                     elif objs.subClass == 'powerup':
                         objs.isHit = True
                         objects.powerUp = True
+                        objects.powerType = objs.imagePath
                         self.save_collision_object(objects,objs)
                         return False
                     
@@ -243,6 +244,7 @@ class _CollisionEngine:
                         elif objs.subClass == 'player':
                             objects.isHit = True
                             objs.powerUp = True
+                            objs.powerType = objects.imagePath
                             self.save_collision_object(objects,objs)
                             return False
                         else:
@@ -283,6 +285,7 @@ class _CollisionEngine:
                 if objects.subClass == 'powerup' and objs.subClass == 'player': # Direction does not matter here
                     objects.isHit = True
                     objs.powerUp = True
+                    objs.powerType = objects.imagePath
                     self.save_collision_object(objs,objects)       
                     return False
                 else:
@@ -332,6 +335,7 @@ class _CollisionEngine:
             if objects.subClass == 'player' and objs.subClass == 'powerup':
                     objs.isHit = True
                     objects.powerUp = True
+                    objects.powerType = objs.imagePath
                     self.save_collision_object(objects,objs) 
                     return False
             
