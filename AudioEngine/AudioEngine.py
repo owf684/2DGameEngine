@@ -18,8 +18,12 @@ class _AudioEngine:
 
     def main_loop(self,objects,levelHandler,PlayerEngine, EnemyEngine):
         try:
+            if not levelHandler.trigger_death_animation and self.MarioFX.mario_dies.get_num_channels() == 0:
 
-            self.overWorldMusic()
+                self.overWorldMusic()
+            else:
+                self.stop_over_world_music()
+
             self.MarioFX.main_loop(objects,levelHandler,PlayerEngine)
             self.BlockFX.main_loop(objects,levelHandler,PlayerEngine)
             self.EnemyFX.main_loop(objects,levelHandler,EnemyEngine)
@@ -45,7 +49,6 @@ class _AudioEngine:
             print("ERROR::AudioEngine.py::set_over_world_music: ", Error)
     def stop_over_world_music(self):
         try:
-            print('hello????')
             if self.over_world_music.get_num_channels() > 0:
 
                 self.over_world_music.stop()
