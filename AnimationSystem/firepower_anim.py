@@ -7,12 +7,15 @@ import FirePower
 class _firepower_anim(anim_util._anim_util):
 
     def __init__(self):
-        super().__init__()
-        self.frame_size = (8,8)
-        self.frame_count = 4
-        self.frame_duration = 100
-        self.fireball_sprites = self.extract_frames("./Assets/PlayerSprites/FlowerPowerMario/fire_ball_sprite_sheet.png",self.frame_count,16,16)
+        try:
 
+            super().__init__()
+            self.frame_size = (8,8)
+            self.frame_count = 4
+            self.frame_duration = 100
+            self.fireball_sprites = self.extract_frames("./Assets/PlayerSprites/FlowerPowerMario/fire_ball_sprite_sheet.png",self.frame_count,16,16)
+        except Exception as Error:
+            print("ERROR::firepower_anim.py::__init__()", Error)
 
 
     def main_loop(self,objects,levelHandler,delta_t,PlayerEngine):

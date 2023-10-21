@@ -6,45 +6,53 @@ import copy
 class _breakable_break_anim(anim_util._anim_util):
 
     def __init__(self):
-        super().__init__()
-        self.help = True
-        self.brick_pieces = self.extract_frames("./Assets/Platforms/breakable_brick_sprite_sheet/breakable_brick_pieces.png", 4, 16, 16)
-        self.frame_size = (16, 16)
-        self.frame_count = 4
-        self.frame_duration = 100
-        
-    def main_loop(self, objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine):
-        self.determine_frame_count()
+        try:
 
-        self.break_brick(objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine)
+            super().__init__()
+            self.help = True
+            self.brick_pieces = self.extract_frames("./Assets/Platforms/breakable_brick_sprite_sheet/breakable_brick_pieces.png", 4, 16, 16)
+            self.frame_size = (16, 16)
+            self.frame_count = 4
+            self.frame_duration = 100
+        except Exception as Error:
+            print("ERROR::breakable_brick_anim.py::__init__()", Error)
+
+    def main_loop(self, objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine):
+        try:
+            self.determine_frame_count()
+
+            self.break_brick(objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine)
+        except Exception as Error:
+            print("ERROR::breakable_brick_anim.py::main_loop()", Error)
 
     def break_brick(self, objects, GameObjects, levelObjects, PlayerEngine, GraphicsEngine):
+        try:
+            if "break" in objects.imagePath:
+                if objects.hit and PlayerEngine.superMario:
+                    if not objects.timer_started:
+                        PlayerEngine.triggerBlockBreakAudio = True
+                        objects.hit = False
+                        objects.reset_time_variables()
+                        objects.timer_started = True
+                        objects.last_frame_time_2 = objects.determine_time_elapsed()
+                        objects.image = self.brick_pieces[self.frame_index]
+                        objects.velocityY = 500
+                        objects.velocityX = -30
+                        objects.fromUnder = True
+                        self.set_object(objects)
+                        self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0]) + 16, copy.deepcopy(objects.position[1])     , 30 )
+                        self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0])     , copy.deepcopy(objects.position[1]) - 32, -35 )
+                        self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0]) + 16, copy.deepcopy(objects.position[1]) - 32, 35 )
+                        objects.isRendered =True
 
-        if "break" in objects.imagePath:
-            if objects.hit and PlayerEngine.superMario:
-                if not objects.timer_started:
-                    PlayerEngine.triggerBlockBreakAudio = True
-                    objects.hit = False
-                    objects.reset_time_variables()
-                    objects.timer_started = True
-                    objects.last_frame_time_2 = objects.determine_time_elapsed()
+                if objects.timer_started:
                     objects.image = self.brick_pieces[self.frame_index]
-                    objects.velocityY = 500
-                    objects.velocityX = -30
-                    objects.fromUnder = True
-                    self.set_object(objects)
-                    self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0]) + 16, copy.deepcopy(objects.position[1])     , 30 )
-                    self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0])     , copy.deepcopy(objects.position[1]) - 32, -35 )
-                    self.create_piece(objects, levelObjects, copy.deepcopy(objects.position[0]) + 16, copy.deepcopy(objects.position[1]) - 32, 35 )
-                    objects.isRendered =True
-
-            if objects.timer_started:
-                objects.image = self.brick_pieces[self.frame_index]
-                if objects.determine_time_elapsed() > 5000:
-                    objects.timer_started = False
-                    if objects in levelObjects:
-                        levelObjects.remove(objects)
-        
+                    if objects.determine_time_elapsed() > 5000:
+                        objects.timer_started = False
+                        if objects in levelObjects:
+                            levelObjects.remove(objects)
+        except Exception as Error:
+             print("ERROR::breakable_brick_anim.py::break_brick()", Error)        
 
     def set_object(self, objects):
         try:
@@ -56,16 +64,18 @@ class _breakable_break_anim(anim_util._anim_util):
             print("Error in breakable_brick_anim::Function set_object: ", Error)
 
     def create_piece(self, objects,levelObjects, x,y,vx):
-        levelObjects.append(BlockObject._BlockObject())
-        levelObjects[-1].imagePath = objects.imagePath
-        levelObjects[-1].reset_time_variables()
-        levelObjects[-1].timer_started = True
-        levelObjects[-1].last_frame_time_2 = levelObjects[-1].determine_time_elapsed()        
-        levelObjects[-1].image = self.brick_pieces[self.frame_index]
-        self.set_object(levelObjects[-1])
-        levelObjects[-1].velocityY = 500
-        levelObjects[-1].position = [x,y]
-        levelObjects[-1].isRendered = True
-        levelObjects[-1].velocityX = vx
-        levelObjects[-1].fromUnder = True
-     
+        try:
+            levelObjects.append(BlockObject._BlockObject())
+            levelObjects[-1].imagePath = objects.imagePath
+            levelObjects[-1].reset_time_variables()
+            levelObjects[-1].timer_started = True
+            levelObjects[-1].last_frame_time_2 = levelObjects[-1].determine_time_elapsed()        
+            levelObjects[-1].image = self.brick_pieces[self.frame_index]
+            self.set_object(levelObjects[-1])
+            levelObjects[-1].velocityY = 500
+            levelObjects[-1].position = [x,y]
+            levelObjects[-1].isRendered = True
+            levelObjects[-1].velocityX = vx
+            levelObjects[-1].fromUnder = True
+        except Exception as Error:
+            print("ERROR::breakable_brick_anim.py::create_piece()", Error)     
