@@ -60,7 +60,6 @@ class _question_block:
     def release_item(self, objects, GameObjects, levelObjects):
 
         if objects.item is not None:
-            print("question_block.py::release_item::item.subClass:: ", objects.item.subClass)
             item = objects.item
             item.position[1] -= objects.rect.height
             item.rect.y = item.position[1]
