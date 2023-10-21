@@ -110,19 +110,21 @@ class _PlayerEngine(anim_util._anim_util):
     def handle_power_ups(self, objects, levelHandler):
         try:
 
-            if objects.powerUp:
+            if objects.powerUp and not levelHandler.pause_for_damage:
             
-                if "super_mushroom" in objects.collisionObject.imagePath and objects.power_up < 1:
-                
+                if "super_mushroom" in objects.powerType and objects.power_up < 1:
+                    objects.powerUp = False
                     levelHandler.trigger_powerup_animation = True
+                    objects.powerType = ''
                     self.triggerPowerUpAudio = True
                     objects.power_up = 1
                     self.superMario = True
                     objects.collisionObject.isHit = True
             
-                if "flower_power" in objects.collisionObject.imagePath and not objects.power_up == 2:
-                
+                if "flower_power" in objects.powerType and not objects.power_up == 2:
+                    objects.powerUp = False
                     levelHandler.trigger_powerup_animation = True
+                    objects.powerType = ''
                     self.triggerPowerUpAudio = True
                     objects.collisionObject.isHit = True
                     objects.power_up = 2
@@ -186,6 +188,7 @@ class _PlayerEngine(anim_util._anim_util):
                 if objects.power_up == 0:
                     levelHandler.trigger_death_animation = True
                     self.triggerDeathAudio = True
+                    objects.jumping = True
             
                 if objects.power_up > 0:
                     objects.isHit = False
