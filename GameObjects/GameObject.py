@@ -22,8 +22,8 @@ class _GameObject(anim_util._anim_util):
 		self.kill_box = None
 		self.imagePath=''
 		self.animation_state = 0
-		self.position = pygame.math.Vector2(0,0)
-		self.initial_position = pygame.math.Vector2(0,0)
+		self.position = [0,0]
+		self.initial_position = [0,0]
 		self.isRendered = False
 		self.image_mask = None
 		self.power_up = 0
