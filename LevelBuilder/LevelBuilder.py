@@ -44,8 +44,7 @@ class _LevelBuilder:
 		self.edit_latch = True
 		self.category_selection_index = 0
 		self.category_select_key = False
-		self.spawn_point = (0,0)
-		self.spawn_point_loaded = False
+		self.spawn_point = [0,0]
 
 		self.ui_elements = list()
 
@@ -137,12 +136,15 @@ class _LevelBuilder:
 			sprite_list.append(new_sprite)
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
-		if input_dict['edit'] == '1' and not self.edit_latch:
+		if input_dict['edit'] == '1' and not self.edit_latch and not levelHandler.trigger_death_animation:
+			if not self.edit:
+				self.load_after_edit(GameObjects,levelObjects,collisionList,'level_1',screen,levelHandler)
 			self.edit = not self.edit
 			self.edit_latch = True
 			levelHandler.clear_render_buffer = True
 		if input_dict['edit'] == '0' and self.edit_latch:
 			self.edit_latch = False
+
 
 		if self.edit:
 			self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects)
@@ -387,14 +389,15 @@ class _LevelBuilder:
 		tree = ET.ElementTree(root)
 		
 		tree.write("./WorldData/"+level_string+"/levelObjects.xml" )
-	def generate_item(self,object_elem):
+
+	def generate_item(self,object_elem, levelHandler):
 		try:
 			item = GameObject._GameObject()
 			item.subClass = object_elem.find("itemSubClass").text
 			item.imagePath = object_elem.find("itemImagePath").text
 			x_position = float(object_elem.find("item_position_x").text)
 			y_position = float(object_elem.find("item_position_y").text)
-			item.position[0] = x_position
+			item.position[0] = x_position - levelHandler.scroll_offset
 			item.position[1] = y_position
 			item.initial_position = copy.deepcopy(item.position)
 			item._set_image_path(item._get_image_path())
@@ -405,7 +408,6 @@ class _LevelBuilder:
 		except:
 
 			return None
-
 
 	def save_game_objects(self,GameObjects,level_string):
 
@@ -425,99 +427,103 @@ class _LevelBuilder:
 			position_y = ET.SubElement(obj[-1],"position_y")
 			position_y.text = str(objects.initial_position[1])
 
-
-
 		tree = ET.ElementTree(root)
 		tree.write("./WorldData/"+level_string+"/GameObjects.xml")
+
+	def load_after_edit(self, GameObjects,levelObjects,collisionList,level_string,screen,levelHandler):
+		levelHandler.clear_render_buffer = True
+		screen.fill((0,0,0))
+		player_position = self.spawn_point
+		for objects in GameObjects:
+			if objects.subClass == 'player':
+				player_position = copy.deepcopy(objects.position)
+		self.load_level_objects(levelObjects,collisionList,level_string,levelHandler)
+		self.load_game_objects(GameObjects,collisionList,level_string,levelHandler)
+
+		for objects in GameObjects:
+			if objects.subClass == 'player':
+				objects.position = player_position
 
 	def load_level(self,GameObjects,levelObjects,collisionList,level_string,screen,levelHandler):
 		self.spawn_point_loaded = False
 		levelHandler.scroll_offset = 0
 		levelHandler.clear_render_buffer =True
 		screen.fill((0,0,0))
-	
-
 		self.load_level_objects(levelObjects,collisionList,level_string,levelHandler)
-		self.load_game_objects(GameObjects,collisionList,level_string)
+		self.load_game_objects(GameObjects,collisionList,level_string,levelHandler)
+		self.load_player_spawn_point(levelObjects,GameObjects)
+
+	def create_loaded_objects(self,objectsList,object_elem, levelHandler):
+		objectsList[-1].subClass = object_elem.find("subClass").text
+		objectsList[-1].imagePath = object_elem.find("imagePath").text
+		x_position = float(object_elem.find("position_x").text)
+		y_position = float(object_elem.find("position_y").text)
+		objectsList[-1].position[0] = x_position - levelHandler.scroll_offset
+		objectsList[-1].position[1] = y_position
+		objectsList[-1].x_direction = 0
+		objectsList[-1].initial_position = copy.deepcopy(objectsList[-1].position)
+		objectsList[-1]._set_image_path(objectsList[-1]._get_image_path())
+		objectsList[-1]._set_image()		
+		objectsList[-1]._set_sprite_size(objectsList[-1].image)
+		objectsList[-1]._set_rect(objectsList[-1].sprite_size)
+		objectsList[-1]._set_mask()	
+
+	def load_player_spawn_point(self,levelObjects,GameObjects):
+		spawn_point_exists = False
+		spawn_point_object = None
+		for objects in levelObjects:
+			if objects.subClass == 'environment':
+				if 'spawn_point' in objects.imagePath:
+					spawn_point_exists = True
+					spawn_point_object = objects				
+		if spawn_point_exists:
+			self.spawn_point = copy.deepcopy(spawn_point_object.initial_position)
+		else:
+			self.spawn_point = [0,0]
+
+		for objects in GameObjects:
+			if objects.subClass == 'player':
+				objects.initial_position = copy.deepcopy(self.spawn_point)
+				objects.position = copy.deepcopy(self.spawn_point)
 
 	def load_level_objects(self,levelObjects,collisionList,level_string,levelHandler):
 		levelObjects.clear()
 		collisionList.clear()
 		levelHandler.question_blocks.clear()
-
-		print("loading level objects...")
-
 		tree = ET.parse("./WorldData/" + level_string +"/levelObjects.xml")
 		root = tree.getroot()
 
 		for object_elem in root.findall("object"):
-			tmp_img_path = object_elem.find("imagePath")
-			if  "Question" or "break" in tmp_img_path:
+			if  "Question" or "break" in object_elem.find("imagePath"):
 				levelObjects.append(BlockObject._BlockObject())
 			else:
 				levelObjects.append(GameObject._GameObject())
-
-			levelObjects[-1].subClass = object_elem.find("subClass").text
-			levelObjects[-1].imagePath = object_elem.find("imagePath").text
-			x_position = float(object_elem.find("position_x").text)
-			y_position = float(object_elem.find("position_y").text)
-			levelObjects[-1].position[0] = x_position
-			levelObjects[-1].position[1] = y_position
-			levelObjects[-1].x_direction = 0
-			levelObjects[-1].initial_position = copy.deepcopy(levelObjects[-1].position)
-			levelObjects[-1]._set_image_path(levelObjects[-1]._get_image_path())
-			levelObjects[-1]._set_image()		
-			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
-			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
-			levelObjects[-1]._set_mask()
-
+			self.create_loaded_objects(levelObjects,object_elem,levelHandler)
+	
 			if object_elem.find('itemImagePath').text != 'None':
-				levelObjects[-1].item = self.generate_item(object_elem)
+				levelObjects[-1].item = self.generate_item(object_elem, levelHandler)
 
 			collisionList.append(levelObjects[-1])
-			if levelObjects[-1].subClass == 'environment':
-				if 'spawn_point' in levelObjects[-1].imagePath:
-					self.spawn_point = copy.deepcopy(levelObjects[-1].initial_position)
-					self.spawn_point_loaded = True
-				elif not self.spawn_point_loaded:
-					self.spawn_point = (0,0)
-
+			
 			if 'Question' in levelObjects[-1].imagePath:
 				levelHandler.question_blocks.append(levelObjects[-1])
 
-	def load_game_objects(self,GameObjects,collisionList,level_string):
+	def load_game_objects(self,GameObjects,collisionList,level_string, levelHandler):
 		GameObjects.clear()
-
-		print("loading GameObjects...")
-		GameObjects.clear()
-	
+		GameObjects.clear()	
 		tree = ET.parse("./WorldData/"+level_string+"/GameObjects.xml")
 		root = tree.getroot()
 
 		for object_elem in root.findall("object"):
 			temp_subClass = object_elem.find("subClass").text
 			if temp_subClass == 'player':
-
-				GameObjects.append(PlayerObject._PlayerObject())
-				
+				GameObjects.append(PlayerObject._PlayerObject())			
 			else:
-				GameObjects.append(GameObject._GameObject())
-			GameObjects[-1].subClass = object_elem.find("subClass").text
-			GameObjects[-1].imagePath = object_elem.find("imagePath").text
-			x_position = float(object_elem.find("position_x").text)
-			y_position = float(object_elem.find("position_y").text)
-			GameObjects[-1].position[0] = x_position
-			GameObjects[-1].position[1] = y_position
-			GameObjects[-1].initial_position = copy.deepcopy(GameObjects[-1].position)
-			GameObjects[-1]._set_image_path(GameObjects[-1]._get_image_path())
-			GameObjects[-1]._set_image()		
-			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
-			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
-			GameObjects[-1]._set_mask()
+				GameObjects.append(GameObject._GameObject())		
+			self.create_loaded_objects(GameObjects,object_elem, levelHandler)
 			GameObjects[-1]._set_hit_box(GameObjects[-1].sprite_size,8)
+
 			if GameObjects[-1].subClass == 'player':
-				GameObjects[-1].initial_position = copy.deepcopy(self.spawn_point)
-				GameObjects[-1].position = copy.deepcopy(self.spawn_point)
 				GameObjects[-1]._set_kill_box(GameObjects[-1].sprite_size,32)
 			collisionList.append(GameObjects[-1])
 			if GameObjects[-1].subClass == 'enemy':
