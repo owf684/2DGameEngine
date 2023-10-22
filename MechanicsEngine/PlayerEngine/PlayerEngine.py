@@ -189,6 +189,7 @@ class _PlayerEngine(anim_util._anim_util):
                     levelHandler.trigger_death_animation = True
                     self.triggerDeathAudio = True
                     objects.jumping = True
+                    objects.velocityY = 0
             
                 if objects.power_up > 0:
                     objects.isHit = False
