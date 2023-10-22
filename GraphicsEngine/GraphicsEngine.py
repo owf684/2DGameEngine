@@ -50,20 +50,7 @@ class _GraphicsEngine:
 		#clear the screen
 		self.screen.fill((92,148,252))
 	
-		if levelBuilder.edit:
 
-			for x in range(0, self.screen_width+int(abs(levelHandler.scroll_offset)), self.grid_size):
-				pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
-				levelHandler.eox = x - abs(levelHandler.scroll_offset)
-				levelHandler.scroll_delta = 1248 - levelHandler.eox
-				levelHandler.screen_width = self.screen_width + int(abs(levelHandler.scroll_offset))
-
-			for y in range(0, self.screen_height, self.grid_size):
-				pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
-
-			for uie in levelBuilder.ui_elements:
-				self.screen.blit(uie.active_image, (uie.position[0], uie.position[1]))
-				self.screen.blit(uie.item_image,(uie.item_position[0],uie.item_position[1]) )
 
 		if levelHandler.clear_render_buffer:
 			self.render_buffer.clear()
@@ -78,6 +65,26 @@ class _GraphicsEngine:
 			#	pygame.draw.rect(self.screen,(255,0,0),objects.hit_box,2)
 			#if objects.kill_box is not None:
 			#	pygame.draw.rect(self.screen,(255,0,0),objects.kill_box,2)
+
+		if levelBuilder.edit:
+
+			for x in range(0, self.screen_width+int(abs(levelHandler.scroll_offset)), self.grid_size):
+				pygame.draw.line(self.screen, self.grid_color, (x-levelHandler.scroll_offset, 0), (x-levelHandler.scroll_offset, self.screen_height))
+				levelHandler.eox = x - abs(levelHandler.scroll_offset)
+				levelHandler.scroll_delta = 1248 - levelHandler.eox
+				levelHandler.screen_width = self.screen_width + int(abs(levelHandler.scroll_offset))
+
+			for y in range(0, self.screen_height, self.grid_size):
+				pygame.draw.line(self.screen, self.grid_color, (0, y), (self.screen_width, y))
+
+			for uie in levelBuilder.ui_elements:
+				self.screen.blit(uie.active_image, (uie.position[0], uie.position[1]))
+				if uie.item_image is not None:
+					self.screen.blit(uie.item_image,(uie.item_position[0],uie.item_position[1]) )
+				if uie.rect is not None:
+					pygame.draw.rect(self.screen,(0,0,255),uie.rect,2)
+
+
 
 		# Update the display
 		pygame.display.flip()
