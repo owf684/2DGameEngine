@@ -15,8 +15,6 @@ class _coin:
                 objects.velocityY = 800
                 objects.jumping = True
 
-            print(objects.velocityY)
-
             if objects.jumping and objects.velocityY < 0:
                 objects.destroy = True
                 
