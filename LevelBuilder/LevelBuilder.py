@@ -39,7 +39,10 @@ class _LevelBuilder:
 		self.create_level_select = False
 		self.load_level_select = False
 		self.patch_level_select = False
-
+		self.level_save_ui = list()
+		self.initialize_level_save_ui()
+		self.level_save_button_state = 0 # 1 = yes 2 = no
+		self.save_state = ''
 		self.edit = False
 		self.edit_latch = True
 		self.category_selection_index = 0
@@ -73,6 +76,15 @@ class _LevelBuilder:
 
 		self.initiliaze_builder_ui()
 
+	def initialize_level_save_ui(self):
+		level_save_ui_elements = glob.glob("./Assets/UI/level_save_ui/*.png")
+		for uie in level_save_ui_elements:
+			item_container = ItemContainer._ItemContainer()
+			item_container.set_active_image(uie)
+			item_container.set_inactive_image(uie)
+			item_container.active_image = item_container.item_inactive_image
+			self.level_save_ui.append(item_container)
+				
 	def initiliaze_builder_ui(self):
 		self.ui_elements.clear()
 		y_position = 32
@@ -104,6 +116,7 @@ class _LevelBuilder:
 
 			#increment x by adding size of width
 			x_position += 64
+			item_container.set_rect()
 
 			self.ui_elements.append(item_container)
 
@@ -136,7 +149,8 @@ class _LevelBuilder:
 			sprite_list.append(new_sprite)
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
-		if input_dict['edit'] == '1' and not self.edit_latch and not levelHandler.trigger_death_animation:
+		print("level_save_button_state: ", self.level_save_button_state)
+		if input_dict['edit'] == '1' and not self.edit_latch and not levelHandler.trigger_death_animation and not self.level_save_button_state == -1:
 			if not self.edit:
 				self.load_after_edit(GameObjects,levelObjects,collisionList,'level_1',screen,levelHandler)
 			self.edit = not self.edit
@@ -145,11 +159,11 @@ class _LevelBuilder:
 		if input_dict['edit'] == '0' and self.edit_latch:
 			self.edit_latch = False
 
-
 		if self.edit:
 			self.poll_mouse(input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects)
 			self.handle_user_input(input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler)
 			self.ui(input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine)
+			self.handle_ui(input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler)
 
 	def poll_mouse(self,input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects):
 
@@ -200,6 +214,13 @@ class _LevelBuilder:
 		for objects in levelObjects:
 			if objects.rect.collidepoint(self.snap_position) and self.category_selection_index != 3 and self.category_selection_index != 4:
 				self.can_place_block = False
+		for objects in self.ui_elements:
+			if objects.rect.collidepoint(self.snap_position):
+				self.can_place_block = False
+				if 'no' in objects.selected_image_path:
+					self.level_save_button_state = 2
+				elif 'yes' in objects.selected_image_path:
+					self.level_save_button_state = 1
 
 		pygame.draw.rect(screen, self.block_color, square_rect)
 		#update the screen
@@ -250,7 +271,6 @@ class _LevelBuilder:
 					objectsList.pop()
 					collisionList.pop()
 
-
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
 		self.limit_selection_index()
 		selected_category = self.category_container[self.category_selection_index]
@@ -263,6 +283,27 @@ class _LevelBuilder:
 				uie.active_image = uie.item_selected_image
 			else:
 				uie.active_image = uie.item_inactive_image
+	def handle_ui(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):
+		if self.level_save_button_state == 1: # poll for user input
+			if self.save_state == 'create':
+				self.save_level(levelObjects,GameObjects)
+				self.save_state = ''
+				self.level_save_button_state = 0
+				self.initiliaze_builder_ui()
+
+			elif self.save_state == 'patch':
+				self.patch_level(levelObjects,GameObjects)	
+				self.save_state = ''
+				self.level_save_button_state = 0
+				self.initiliaze_builder_ui()
+			elif self.save_state == 'reload':
+				self.load_level(GameObjects,levelObjects,collisionList,"level_1",screen,levelHandler)
+				self.save_state = ''
+				self.level_save_button_state = 0
+				self.initiliaze_builder_ui()
+		elif self.level_save_button_state == 2:
+			self.level_save_button_state = 0
+			self.initiliaze_builder_ui()
 
 	def handle_user_input(self,input_dict,levelObjects,collisionList,GameObjects,screen,levelHandler):
 
@@ -288,32 +329,35 @@ class _LevelBuilder:
 		elif input_dict['arrow_hori'] == '0':
 			self.category_select_key = False
 
-
 		if self.block_select_key or self.category_select_key:
 			levelHandler.clear_render_buffer = True
 
 		#handles save data
-		if input_dict["create-level"] == "1" and not self.create_level_select:
+		if input_dict["create-level"] == "1" and not self.create_level_select and self.level_save_button_state == 0:
 			self.create_level_select = True
-
-			self.save_level(levelObjects,GameObjects)
+			self.level_save_button_state = -1
+			self.load_level_save_ui("create")
 		
 		elif input_dict["create-level"] == "0":
 			self.create_level_select = False
 
-		if input_dict["patch-level"] == "1" and not self.patch_level_select:
+		if input_dict["patch-level"] == "1" and not self.patch_level_select and self.level_save_button_state == 0:
 			
 			self.patch_level_select = True
-			self.patch_level(levelObjects,GameObjects)
+			self.level_save_button_state = -1
+			self.load_level_save_ui("patch")
 
 		elif input_dict["patch-level"] == "0":
 			
 			self.patch_level_select = False
 		
 		#handle load data
-		if (input_dict["load-level"] == "1" and not self.load_level_select):
+		if (input_dict["load-level"] == "1" and not self.load_level_select) and self.level_save_button_state == 0:
 			self.load_level_select = True
-			self.load_level(GameObjects,levelObjects,collisionList,"level_1",screen,levelHandler)
+			self.level_save_button_state = -1
+			self.load_level_save_ui("reload")
+
+			#self.load_level(GameObjects,levelObjects,collisionList,"level_1",screen,levelHandler)
 		elif input_dict["load-level"] == "0":
 			self.load_level_select = False
 
@@ -397,9 +441,10 @@ class _LevelBuilder:
 			item.imagePath = object_elem.find("itemImagePath").text
 			x_position = float(object_elem.find("item_position_x").text)
 			y_position = float(object_elem.find("item_position_y").text)
-			item.position[0] = x_position - levelHandler.scroll_offset
+			item.position[0] = x_position - levelHandler.scroll_offset 
 			item.position[1] = y_position
-			item.initial_position = copy.deepcopy(item.position)
+			item.initial_position = copy.deepcopy([x_position,y_position])
+			
 			item._set_image_path(item._get_image_path())
 			item._set_image()
 			item._set_sprite_size(item.image)
@@ -458,10 +503,12 @@ class _LevelBuilder:
 		objectsList[-1].imagePath = object_elem.find("imagePath").text
 		x_position = float(object_elem.find("position_x").text)
 		y_position = float(object_elem.find("position_y").text)
-		objectsList[-1].position[0] = x_position - levelHandler.scroll_offset
+		objectsList[-1].position[0] = x_position
 		objectsList[-1].position[1] = y_position
 		objectsList[-1].x_direction = 0
-		objectsList[-1].initial_position = copy.deepcopy(objectsList[-1].position)
+		objectsList[-1].initial_position = copy.deepcopy(objectsList[-1].position) # always save the inisital position for offsetting the x coordinate
+		objectsList[-1].position[0] = x_position - levelHandler.scroll_offset
+
 		objectsList[-1]._set_image_path(objectsList[-1]._get_image_path())
 		objectsList[-1]._set_image()		
 		objectsList[-1]._set_sprite_size(objectsList[-1].image)
@@ -529,5 +576,30 @@ class _LevelBuilder:
 			if GameObjects[-1].subClass == 'enemy':
 				GameObjects[-1].x_direction = -1
 
+	def load_level_save_ui(self,message):
+		self.save_state = message
+		for uie in self.level_save_ui:
+			if 'menu' in uie.selected_image_path:
+				uie.position[0] = self.screen_width/2 - uie.item_selected_image.get_width()/2
+				uie.position[1] = self.screen_height/2 -uie.item_selected_image.get_height()/2
+				uie.set_rect()
+				self.ui_elements.append(uie)
 
+			if message in uie.selected_image_path:
+				uie.position[0] = self.screen_width/2 - uie.item_selected_image.get_width()/2 
+				uie.position[1] = self.screen_height/2 - uie.item_selected_image.get_height()/2 - 64
+				uie.set_rect()
+				self.ui_elements.append(uie)
+
+			if 'yes' in uie.selected_image_path:
+				uie.position[0] = self.screen_width/2 - uie.item_selected_image.get_width()/2 - 64
+				uie.position[1] = self.screen_height/2 - uie.item_selected_image.get_height()/2 + 64
+				uie.set_rect()
+				self.ui_elements.append(uie)
+
+			if 'no' in uie.selected_image_path:
+				uie.position[0] = self.screen_width/2 - uie.item_selected_image.get_width()/2 + 64
+				uie.position[1] = self.screen_height/2 - uie.item_selected_image.get_height()/2 + 64
+				uie.set_rect()
+				self.ui_elements.append(uie)
 		
