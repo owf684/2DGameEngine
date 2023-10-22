@@ -30,15 +30,14 @@ class _LevelBuilder:
 		self.can_place_block = True
 		self.scroll_offset_magnitude = 1
 		self.scroll_offset_fudge = 0.5
-		self.building_blocks = list()
 
 		self.block_select_key = False
 		self.selected_block_index = 0
 		self.last_selected_index = 0
+
+		# level editing save, load, and patch bools
 		self.create_level_select = False
-
 		self.load_level_select = False
-
 		self.patch_level_select = False
 
 		self.edit = False
@@ -51,30 +50,21 @@ class _LevelBuilder:
 		self.ui_elements = list()
 
 		'''
+		Create and initialize levelBuilder sprites 
 		0 = Basic Platform Blocks
 		1 = Enemies
 		2 = Environment 
 		3 = Powerups
 		4 = Items
 		'''
+		self.building_blocks = list()
+		self.enemy_sprites = list()			# 1
+		self.environment_sprites = list()	# 2
+		self.power_up_sprites = list()		# 3
+		self.item_sprites = list()			# 4
+		self.initialize_all_sprites()		
 
-
-		self.initialize_building_blocks()
-
-		self.enemy_sprites = list()
-
-		self.initialize_enemy_sprites()
-
-
-		self.environment_sprites = list()
-		self.initialize_environment_sprites()
-
-		self.power_up_sprites = list()
-		self.initialize_power_up_sprites()
-
-		self.item_sprites = list()
-		self.initialize_item_sprites()
-
+		'''Add LevelBuilder sprites to category Container'''
 		self.category_container = list()
 		self.category_container.append(self.building_blocks)
 		self.category_container.append(self.enemy_sprites)
@@ -118,65 +108,33 @@ class _LevelBuilder:
 
 			self.ui_elements.append(item_container)
 
-	def initialize_item_sprites(self):
-		item_list = glob.glob("./Assets/Items/*.png")
+	def initialize_all_sprites(self):
 
-		for items in item_list:
-			new_item = BlockObject._BlockObject()
-			new_item._set_sub_class('item')
-			new_item._set_image_path(items)
-			new_item._set_image()
-			new_item._set_sprite_size(new_item.image)
-			new_item._set_rect(new_item.sprite_size)
-			self.item_sprites.append(new_item)
+		self.initialize_sprites("./Assets/Items/*.png","BlockObject",'item',self.item_sprites)
 
-	def initialize_building_blocks(self):
-		block_list = glob.glob('./Assets/Platforms/*.png')
-
-		for blocks in block_list:
-			new_block = BlockObject._BlockObject()
-			new_block._set_sub_class('platform')
-			new_block._set_image_path(blocks)
-			new_block._set_image()
-			new_block.position = [self.screen_width/2,self.screen_height/20]
-			new_block._set_sprite_size(new_block.image)
-			new_block._set_rect(new_block.sprite_size)
-
-			self.building_blocks.append(new_block)
+		self.initialize_sprites("./Assets/Platforms/*.png",'BlockObject','platform',self.building_blocks)
 	
-	def initialize_enemy_sprites(self):
-		enemy_list = glob.glob('./Assets/EnemySprites/Goomba/*.png')
-		for enemy in enemy_list:
-			new_enemy = GameObject._GameObject()
-			new_enemy._set_sub_class('enemy')
-			new_enemy._set_image_path(enemy)
-			new_enemy._set_image()
-			new_enemy.position = [self.screen_width/2,self.screen_height/20]
-			new_enemy._set_sprite_size(new_enemy.image)
-			new_enemy._set_rect(new_enemy.sprite_size)
-			self.enemy_sprites.append(new_enemy)
-	def initialize_environment_sprites(self):
-		environment_list = glob.glob('./Assets/EnvironmentSprites/*.png')
-		for sprites in environment_list:
-			new_sprite = GameObject._GameObject()
-			new_sprite._set_sub_class('environment')
-			new_sprite._set_image_path(sprites)
+		self.initialize_sprites("./Assets/EnemySprites/Goomba/*.png",'GameObject','enemy',self.enemy_sprites)
+	
+		self.initialize_sprites("./Assets/EnvironmentSprites/*.png", 'GameObject','environment',self.environment_sprites)
+
+		self.initialize_sprites('./Assets/PowerUps/*.png', 'GameObject','powerup',self.power_up_sprites)
+		
+	def initialize_sprites(self,sprites_path, object_type, sub_class, sprite_list):
+		png_list = glob.glob(sprites_path)
+		print (png_list)
+		for sprite_path in png_list:
+
+			if object_type == 'GameObject':
+				new_sprite = GameObject._GameObject()
+			if object_type == 'BlockObject':
+				new_sprite = BlockObject._BlockObject()
+			new_sprite._set_sub_class(sub_class)
+			new_sprite._set_image_path(sprite_path)
 			new_sprite._set_image()
-			new_sprite.position = [self.screen_width/2,self.screen_height/20]
 			new_sprite._set_sprite_size(new_sprite.image)
 			new_sprite._set_rect(new_sprite.sprite_size)
-			self.environment_sprites.append(new_sprite)
-	def initialize_power_up_sprites(self):
-		power_up_list = glob.glob('./Assets/PowerUps/*.png')
-		for sprites in power_up_list:
-			new_sprite = GameObject._GameObject()
-			new_sprite._set_sub_class('powerup')
-			new_sprite._set_image_path(sprites)
-			new_sprite._set_image()
-			new_sprite.position = [self.screen_width/2,self.screen_height/20]
-			new_sprite._set_sprite_size(new_sprite.image)
-			new_sprite._set_rect(new_sprite.sprite_size)
-			self.power_up_sprites.append(new_sprite)			
+			sprite_list.append(new_sprite)
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
 		if input_dict['edit'] == '1' and not self.edit_latch:
@@ -218,6 +176,7 @@ class _LevelBuilder:
 					if objects.rect.collidepoint(self.mouse_position):
 						levelObjects.remove(objects)
 						levelHandler.clear_render_buffer = True
+
 	def get_snap_values(self,input_dict,screen,levelObjects,levelHandler,GameObjects):
 
 		self.can_place_block = True
@@ -244,89 +203,55 @@ class _LevelBuilder:
 		#update the screen
 		pygame.display.flip()
 
-		
+	def create_object(self, objectsList,objectType,selectedBlock,levelHandler,collisionList,direction):
+			if objectType == 'GameObject':
+				objectsList.append(GameObject._GameObject())
+			elif objectType == 'BlockObject':
+				objectsList.append(BlockObject._BlockObject())
+
+			objectsList[-1]._set_sub_class(selectedBlock.subClass)
+			objectsList[-1]._set_image_path(selectedBlock._get_image_path())
+			objectsList[-1]._set_image()
+			objectsList[-1]._set_mask()
+			objectsList[-1].position = copy.deepcopy(self.snap_position)
+			objectsList[-1].x_direction = direction
+			objectsList[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
+			objectsList[-1]._set_sprite_size(objectsList[-1].image)
+			objectsList[-1]._set_rect(objectsList[-1].sprite_size)
+			collisionList.append(objectsList[-1])				
+
 	def place_block(self,input_dict,screen,levelObjects,collisionList,levelHandler,GameObjects):
 		selected_block = self.category_container[self.category_selection_index][self.selected_block_index]
 
 		if selected_block._get_sub_class() == 'platform':
-
-			#add first platform
-			levelObjects.append(BlockObject._BlockObject())
-			levelObjects[-1]._set_sub_class(selected_block.subClass)
-			levelObjects[-1]._set_image_path(selected_block._get_image_path())
-			levelObjects[-1]._set_image()
-			levelObjects[-1]._set_mask()
-			levelObjects[-1].position = copy.deepcopy(self.snap_position)
-			levelObjects[-1].x_direction = 0
-			levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
-			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
-			if levelObjects[-1].sprite_size[0] == 16 and levelObjects[-1].sprite_size[1] == 16:
-				levelObjects[-1].image = pygame.transform.scale(levelObjects[-1].image, (levelObjects[-1].sprite_size[0]*2,levelObjects[-1].sprite_size[1]*2))
-			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
-			collisionList.append(levelObjects[-1])
-
+			self.create_object(levelObjects,'BlockObject',selected_block,levelHandler,collisionList,0)
 	
 		if selected_block._get_sub_class() == 'enemy':
-
-			#add GameObjects
-			GameObjects.append(GameObject._GameObject())
-			GameObjects[-1]._set_sub_class(copy.deepcopy(selected_block._get_sub_class()))
-			GameObjects[-1]._set_image_path(copy.deepcopy(selected_block._get_image_path()))
-			GameObjects[-1]._set_image()
-			GameObjects[-1]._set_mask()
-			GameObjects[-1].position = copy.deepcopy(self.snap_position)
-			GameObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
-			GameObjects[-1]._set_sprite_size(GameObjects[-1].image)
-			GameObjects[-1]._set_rect(GameObjects[-1].sprite_size)
-			collisionList.append(GameObjects[-1])	
-
+			self.create_object(GameObjects,"GameObject",selected_block,levelHandler,collisionList,-1)
+	
 		if selected_block._get_sub_class() == 'environment':
-			#add first platform
-			levelObjects.append(GameObject._GameObject())
-			levelObjects[-1]._set_sub_class(selected_block._get_sub_class())
-			levelObjects[-1]._set_image_path(selected_block._get_image_path())
-			levelObjects[-1]._set_image()
-			GameObjects[-1]._set_mask()
-			levelObjects[-1].position = copy.deepcopy(self.snap_position)
-			levelObjects[-1].initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
-			levelObjects[-1]._set_sprite_size(levelObjects[-1].image)
-			levelObjects[-1]._set_rect(levelObjects[-1].sprite_size)
-			levelObjects[-1].scroll_offset = copy.deepcopy((levelHandler.scroll_offset))
+			self.create_object(levelObjects,'GameObject',selected_block,levelHandler,collisionList,0)
+		
+		if selected_block._get_sub_class() == 'powerup':
+			self.create_object(GameObjects, 'BlockObject',selected_block,levelHandler,collisionList,1)
+			self.add_to_object(levelObjects,GameObjects,collisionList)
+				
+		if  selected_block._get_sub_class() == 'item':
+			self.create_object(levelObjects,'BlockObject',selected_block,levelHandler,collisionList,0)
+			self.add_to_object(levelObjects,levelObjects,collisionList)
+			
+	def add_to_object(self,levelObjects,objectsList,collisionList):
+		for objects in levelObjects:
+			if isinstance(objects,BlockObject._BlockObject):
+				if objects.rect.collidepoint(self.snap_position):
+					objects.item = objectsList[-1]
+					objectsList.pop()
+					collisionList.pop()
 
-		if selected_block._get_sub_class() == 'powerup' or selected_block._get_sub_class() == 'item':
-
-			#add GameObjects
-			new_object = BlockObject._BlockObject()
-			new_object._set_sub_class(copy.deepcopy(selected_block._get_sub_class()))
-			new_object._set_image_path(copy.deepcopy(selected_block._get_image_path()))
-			new_object._set_image()
-			new_object._set_mask()
-			new_object.position = copy.deepcopy(self.snap_position)
-			new_object.initial_position = copy.deepcopy((self.snap_position[0]+levelHandler.scroll_offset,self.snap_position[1]))
-			new_object._set_sprite_size(GameObjects[-1].image)
-			new_object._set_rect(GameObjects[-1].sprite_size)
-			add = True
-			for objects in levelObjects:
-				if isinstance(objects,BlockObject._BlockObject):
-					if objects.rect.collidepoint(self.snap_position):
-						objects.item = new_object
-						add = False
-
-			if add and new_object.subClass != 'item':
-				GameObjects.append(new_object)
-				collisionList.append(GameObjects[-1])
-
-			if add and new_object.subClass == 'item':
-				levelObjects.append(new_object)
-				collisionList.append(levelObjects[-1])
 
 	def ui(self,input_dict,screen,levelObjects,collisionList,levelHandler,GraphicsEngine):
-			
-
 		self.limit_selection_index()
-
 		selected_category = self.category_container[self.category_selection_index]
-
 		for uie in self.ui_elements:
 			if uie.item_image_path == selected_category[self.selected_block_index].imagePath:
 				uie.isActive = True
