@@ -97,6 +97,7 @@ class _mario_anim(anim_util._anim_util):
             if animaton_system.reset_animations:
                 self.current_mario_sprites = self.mario_sprites
                 animaton_system.reset_animations = False
+
             if objects.subClass == 'player':
                 if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
 
@@ -177,8 +178,13 @@ class _mario_anim(anim_util._anim_util):
                 if objects.x_direction == 1:
 
                     objects.image = pygame.transform.flip(self.super_mario_transform[0],True,False)
+                else:
+                    objects.image = self.super_mario_transform[0]
+
                 self.set_object(objects)
+            
             self.determine_frame_count()
+            
             if objects.x_direction == 1:
                 objects.image = pygame.transform.flip(self.super_mario_transform[self.frame_index],True,False)
             else:
@@ -190,14 +196,14 @@ class _mario_anim(anim_util._anim_util):
                 self.frame_count = 3
                 levelHandler.trigger_powerup_animation = False
                 self.powerup_frame_captured = False
-                #objects.collisionObject.imagePath = 'None'
+
                 #set flags
-                PlayerEngine.superMario = True
+                PlayerEngine.superMario = True             
 
-                # setup player object image
+                # setup player object sprites
                 if objects.power_up == 1:
-
                     self.current_mario_sprites = self.super_mario_sprites
+
                 if objects.power_up == 2:
                     self.current_mario_sprites = self.flower_power_mario_sprites
 
