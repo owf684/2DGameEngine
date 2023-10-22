@@ -16,39 +16,34 @@ class _LevelBuilder:
 
 
 	def __init__(self):
-
+		# basic variables 
 		self.mouse_position = [0,0]
-		self.scan_block_position = [0,0]
 		self.scan_block_size = 32
 		self.screen_width = 1280
 		self.screen_height = 720
 		self.block_color = (255,255,255)
 		self.grid_size = 32
-		self.grid_color = (255,255,255)
 		self.placement_coords = [0,0]
 		self.snap_position = [0,0]
-		self.can_place_block = True
 		self.scroll_offset_magnitude = 1
-		self.scroll_offset_fudge = 0.5
+		self.spawn_point = [0,0]
 
+		# Level Builder Flags
+		self.reset_animations = False 
 		self.block_select_key = False
-		self.selected_block_index = 0
-		self.last_selected_index = 0
-
-		# level editing save, load, and patch bools
+		self.can_place_block = True
 		self.create_level_select = False
 		self.load_level_select = False
 		self.patch_level_select = False
+		self.edit = False
+		self.edit_latch = True
+		self.category_select_key = False
+
+		# ui variables 
 		self.level_save_ui = list()
 		self.initialize_level_save_ui()
 		self.level_save_button_state = 0 # 1 = yes 2 = no
-		self.save_state = ''
-		self.edit = False
-		self.edit_latch = True
-		self.category_selection_index = 0
-		self.category_select_key = False
-		self.spawn_point = [0,0]
-
+		self.save_state = ''	
 		self.ui_elements = list()
 
 		'''
@@ -67,6 +62,10 @@ class _LevelBuilder:
 		self.initialize_all_sprites()		
 
 		'''Add LevelBuilder sprites to category Container'''
+		self.selected_block_index = 0 
+		self.last_selected_index = 0
+		self.category_selection_index = 0 
+
 		self.category_container = list()
 		self.category_container.append(self.building_blocks)
 		self.category_container.append(self.enemy_sprites)
@@ -128,6 +127,8 @@ class _LevelBuilder:
 	
 		self.initialize_sprites("./Assets/EnemySprites/Goomba/*.png",'GameObject','enemy',self.enemy_sprites)
 	
+		self.initialize_sprites("./Assets/EnemySprites/KoopaTroopa/*.png",'GameObject','enemy',self.enemy_sprites)
+
 		self.initialize_sprites("./Assets/EnvironmentSprites/*.png", 'GameObject','environment',self.environment_sprites)
 
 		self.initialize_sprites('./Assets/PowerUps/*.png', 'GameObject','powerup',self.power_up_sprites)
@@ -149,8 +150,9 @@ class _LevelBuilder:
 			sprite_list.append(new_sprite)
 
 	def main_loop(self,input_dict,screen,levelObjects,collisionList,levelHandler,PlayerEngine,GameObjects,GraphicsEngine):
-		print("level_save_button_state: ", self.level_save_button_state)
 		if input_dict['edit'] == '1' and not self.edit_latch and not levelHandler.trigger_death_animation and not self.level_save_button_state == -1:
+			if self.edit:
+				self.patch_level(levelObjects,GameObjects)
 			if not self.edit:
 				self.load_after_edit(GameObjects,levelObjects,collisionList,'level_1',screen,levelHandler)
 			self.edit = not self.edit
