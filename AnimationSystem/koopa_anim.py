@@ -14,6 +14,7 @@ class _koop_anim(anim_util._anim_util):
                 self.koopa_troopa_walk_right.append(pygame.transform.flip(frames,True,False))
 
             self.koopa_shell = pygame.image.load("./Assets/EnemySprites/KoopaTroopa/states/KoopaShell.png")
+            self.koopa_shell_sprite_sheet = self.extract_frames("./Assets/EnemySprites/KoopaTroopa/states/KoopaShell_revive.png", 2 , 32 , 48)
             self.frame_count = 2
             self.frame_duration = 200
         except Exception as Error:
@@ -23,11 +24,63 @@ class _koop_anim(anim_util._anim_util):
         try:
             self.determine_frame_count()
             if objects.subClass == 'enemy' and "Koopa" in objects.imagePath:
-                self.koopa_walk_animation(objects)
+                if not objects.timer_started:
+
+                    self.koopa_walk_animation(objects)
+
+                self.handle_koopa_damage(objects, EnemyEngine)
 
         except Exception as Error:
             print("ERROR::koopa_anim.py::main_loop()", Error)
-    
+
+    def handle_koopa_damage(self,objects, EnemyEngine):
+        try:
+            if objects.isHit and not objects.timer_started and not objects.fromUnder and objects.hit_state == 0:
+                EnemyEngine.triggerStompAudio = True
+                objects.timer_started = True
+                objects.reset_time_variables()
+                objects.last_frame_time_2 = objects.determine_time_elapsed()
+                objects.image = self.koopa_shell
+                objects.velocityX = 0
+                objects.isHit = False
+                objects.hit_state = 1 
+                #objects.x_direction = 0
+                objects.destroy_time = 3000
+            
+            elif objects.isHit and objects.fromUnder and not objects.timer_started:
+                EnemyEngine.triggerStompAudio = True
+                #flip the image 
+                objects.image = pygame.transform.flip(self.koopa_shell,False,True)
+                objects.timer_started = True
+                objects.reset_time_variables()
+                objects.last_frame_time_2 = objects.determine_time_elapsed()
+                objects.velocityY = 300
+                objects.destroy_time = 10000 
+            elif objects.hit_state == 2:
+                objects.image = self.koopa_shell
+                
+            if objects.timer_started and objects.hit_state == 1:
+                if objects.determine_time_elapsed() > objects.destroy_time and not objects.trigger_next_animation:
+                    objects.reset_time_variables()
+                    objects.last_frame_time_2 = objects.determine_time_elapsed()
+                    objects.trigger_next_animation = True
+                elif objects.determine_time_elapsed() > objects.destroy_time and objects.trigger_next_animation:
+                    objects.timer_started = False
+                    objects.trigger_next_animation = False
+                    objects.isHit = False
+                    objects.hit_state = 0
+                    if objects.x_direction == -1:
+
+                        objects.image = self.koopa_troopa_walk_left[0]
+                    else:
+                        objects.image = self.koopa_troopa_walk_right[0]
+
+                if objects.trigger_next_animation:
+                    objects.image = self.koopa_shell_sprite_sheet[self.frame_index]
+            
+        except Exception as Error:
+            print("ERROR::koopa_anim.py::handle_koopa_damage()", Error)   
+
     def koopa_walk_animation(self,objects):
         try:
 
