@@ -14,7 +14,7 @@ class _Goomba():
     def main_loop(self, GameObjects, PlayerEngine, GraphicsEngine, objects,EnemyEngine):
         self.get_player_attr(objects)
 
-        if not objects.timer_started:
+        if objects.subClass == 'enemy' and not objects.timer_started and 'goomba' in objects.imagePath:
 
             self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine, objects, EnemyEngine)
             self.enemy_ai(GameObjects, PlayerEngine, GraphicsEngine, objects)
