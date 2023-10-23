@@ -29,6 +29,7 @@ class _GameObject(anim_util._anim_util):
 		self.power_up = 0
 		self.destroy = False
 		self.fromUnder = False
+		self.trigger_next_animation = False
 		#scrolling data
 		self.scrollOffset = 0
 		self.scrolling = False
@@ -59,6 +60,7 @@ class _GameObject(anim_util._anim_util):
 		self.collisionObjDirection = 0
 		self.collisionObject = None
 		self.hit = False
+		self.hit_state = 0
 		self.item_released = False
 		#Audio Data
 		self.audioFootSteep = None
