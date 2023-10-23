@@ -186,14 +186,16 @@ class _CollisionEngine:
 
                 if objects.subClass == 'enemy':
                     if objs.subClass == 'player':
-                        if objs.rect.top+5 < objects.rect.centery < objs.rect.bottom-5 and not objects.timer_started and not levelHandler.freeze_damage:
+                        if objs.rect.top+5 < objects.rect.centery < objs.rect.bottom-5 and (not objects.timer_started or objects.hit_state == 2)and not levelHandler.freeze_damage:
                             objs.isHit = True
                             self.save_collision_object(objects,objs)                        
                         return False              
                     elif objs.subClass == 'powerup':
                         return False
                     else:
-                        return True               
+                        return True 
+            elif objects.hit_state == 2 and objs.subClass != 'player':
+                return True              
 
         except Exception as Error:
             print("runtime error in CollisionEngine.py::Function enemy_collision_handler_x: ", Error)
@@ -212,6 +214,10 @@ class _CollisionEngine:
                         if objects.rect.top+5 < objs.rect.centery < objects.rect.bottom-5 and not levelHandler.freeze_damage and not objs.timer_started:
                             objects.isHit = True
                             self.save_collision_object(objects,objs)
+                        elif objects.rect.top+5 < objs.rect.centery < objects.rect.bottom -5 and not levelHandler.freeze_damage and objs.hit_state == 1:
+                            objs.isHit = True
+                            self.save_collision_object(objects,objs)
+
                         return False
                      
                     elif objs.subClass == 'powerup':
@@ -220,6 +226,7 @@ class _CollisionEngine:
                         objects.powerType = objs.imagePath
                         self.save_collision_object(objects,objs)
                         return False
+              
                     
             elif objs.subClass == 'item' and 'coin' in objs.imagePath:
                 objs.destroy = True
@@ -270,7 +277,7 @@ class _CollisionEngine:
    
     def enemy_collision_handler_y(self,objects,objs, levelHandler, Direction):
         try: 
-            if objs.subClass == 'player' and not objects.timer_started  and not levelHandler.freeze_damage and Direction == 'down':
+            if objs.subClass == 'player' and (not objects.timer_started )and not levelHandler.freeze_damage and Direction == 'down':
                 objs.isHit = True
                 return True
             else:
@@ -312,7 +319,7 @@ class _CollisionEngine:
     def player_collision_hanlder_y(self,objects,objs, levelHandler,  Direction):
         try:
 
-            if objs.subClass =='enemy' and not objs.timer_started and objects.subClass == 'player' and Direction == 'down':  
+            if objs.subClass =='enemy' and (not objs.timer_started or objs.hit_state >= 1)and objects.subClass == 'player' and Direction == 'down':  
                 if objs.hit_box.colliderect(objects.kill_box):      
                     objects.onEnemy = True
                     objs.isHit = True
