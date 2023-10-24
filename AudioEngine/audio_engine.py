@@ -1,7 +1,7 @@
 import pygame
-import AudioEngine.mario_fx as mario_fx
-import AudioEngine.block_fx as block_fx
-import AudioEngine.enemy_fx as enemy_fx
+import mario_fx
+import block_fx
+import enemy_fx
 
 class AudioEngine:
 
