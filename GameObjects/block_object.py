@@ -1,4 +1,4 @@
-import GameObjects.game_object as game_object
+import game_object
 import sys
 import pygame
 sys.path.append("./AnimationSystem")
