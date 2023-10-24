@@ -3,24 +3,24 @@ import copy
 import threading
 import sys
 sys.path.append("./GameObjects")
-import BlockObject
+import block_object
 
-class _Koopa():
+class Koopa():
 
     def __init__(self):
         self.player_position = [0,0]
         self.player_direction = 1
 
-    def main_loop(self, GameObjects, PlayerEngine, GraphicsEngine, objects,EnemyEngine):
+    def main_loop(self, l_game_objects, o_player_engine, o_graphics_engine, objects,o_enemy_engine):
         self.get_player_attr(objects)
 
         if objects.subClass == 'enemy' and (not objects.timer_started or objects.hit_state == 2)and 'Koopa' in objects.imagePath:
 
-            self.move_enemy(GameObjects, PlayerEngine, GraphicsEngine, objects, EnemyEngine)
-            self.enemy_ai(GameObjects, PlayerEngine, GraphicsEngine, objects)
+            self.move_enemy(l_game_objects, o_player_engine, o_graphics_engine, objects, o_enemy_engine)
+            self.enemy_ai(l_game_objects, o_player_engine, o_graphics_engine, objects)
         if objects.subClass == 'enemy' and 'Koopa' in objects.imagePath:
             print ("objects.hit_state", objects.hit_state)
-            self.isHit(objects, GameObjects, GraphicsEngine,EnemyEngine)
+            self.isHit(objects, l_game_objects, o_graphics_engine,o_enemy_engine)
             self.handle_enemy_collisions(objects)
 
     def get_player_attr(self,objects):
@@ -28,17 +28,17 @@ class _Koopa():
             self.player_position = objects.position
             self.player_direction = objects.x_direction
 
-    def move_enemy(self, GameObjects, PlayerEngine, GraphicsEngine, objects,EnemyEngine):
+    def move_enemy(self, l_game_objects, o_player_engine, o_graphics_engine, objects,o_enemy_engine):
         if objects.isRendered:
-            self.isHit(objects, GameObjects, GraphicsEngine,EnemyEngine)
+            self.isHit(objects, l_game_objects, o_graphics_engine,o_enemy_engine)
             self.change_direction(objects)
             self.change_position(objects)
 
-    def isHit(self, objects, GameObjects, GraphicsEngine,EnemyEngine):
+    def isHit(self, objects, l_game_objects, o_graphics_engine,o_enemy_engine):
         if objects.destroy:
             objects.destroy = False
-            GameObjects.remove(objects)
-            GraphicsEngine.render_buffer.remove(objects)
+            l_game_objects.remove(objects)
+            o_graphics_engine.render_buffer.remove(objects)
         if objects.isHit and objects.hit_state == 1:
             objects.hit_state = 2
             objects.x_direction = objects.collisionObject.x_direction
@@ -69,14 +69,14 @@ class _Koopa():
                     objects.x_direction = 1
                 if objects.collisionRight:
                     objects.x_direction = -1
-            if isinstance(objects.collisionObject,BlockObject._BlockObject):
+            if isinstance(objects.collisionObject,block_object.BlockObject):
                 if objects.collisionObject.changeHit:
                     objects.isHit = True 
                     objects.fromUnder = True
                     objects.collisionObject.changeHit = False
             
 
-    def enemy_ai(self, GameObjects, PlayerEngine, GraphicsEngine, objects):
+    def enemy_ai(self, l_game_objects, o_player_engine, o_graphics_engine, objects):
         inRangeX = 128
         inRangeY = 32
         x_distance = objects.position[0] - self.player_position[0]

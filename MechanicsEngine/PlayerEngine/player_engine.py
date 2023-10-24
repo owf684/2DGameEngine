@@ -5,11 +5,11 @@ import sys
 sys.path.append('./GameObjects')
 sys.path.append('./AnimationSystem')
 import anim_util
-import BlockObject
-import FirePower
+import block_object
+import fire_power
 
 
-class _PlayerEngine(anim_util._anim_util):
+class PlayerEngine(anim_util.AnimUtil):
 
     def __init__(self):
         super().__init__()
@@ -43,29 +43,29 @@ class _PlayerEngine(anim_util._anim_util):
         self.triggerDeathAudio = False
         self.triggerPowerDownAudio = False
 
-    def main_loop(self, objects, delta_t, input_dict, CollisionEngine, levelHandler,GameObjects):
+    def main_loop(self, objects, delta_t, d_inputs, o_collision_engine, o_level_handler,l_game_objects):
         try:
 
             if objects.subClass == 'player':
 
-                if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
+                if not o_level_handler.pause_for_damage and not o_level_handler.trigger_death_animation and not o_level_handler.trigger_powerup_animation:
                 
-                    self.horizontal_movement(objects, delta_t, input_dict, CollisionEngine, levelHandler)
-                    self.jump(objects, delta_t, input_dict)
-                    self.onEnemy(objects, input_dict, levelHandler)
-                    self.handle_damage(objects, levelHandler)
-                    self.handle_flower_power_action(objects,input_dict,levelHandler,GameObjects)
+                    self.horizontal_movement(objects, delta_t, d_inputs, o_collision_engine, o_level_handler)
+                    self.jump(objects, delta_t, d_inputs)
+                    self.onEnemy(objects, d_inputs, o_level_handler)
+                    self.handle_damage(objects, o_level_handler)
+                    self.handle_flower_power_action(objects,d_inputs,o_level_handler,l_game_objects)
                     if self.time_after_shot:
                         self.shoot_reset()
                     if self.delay_power:
                         self.delay_flower_power()
             
-                self.handle_power_ups(objects, levelHandler)
+                self.handle_power_ups(objects, o_level_handler)
             
-                if levelHandler.pause_for_damage or levelHandler.trigger_death_animation or levelHandler.trigger_powerup_animation:
+                if o_level_handler.pause_for_damage or o_level_handler.trigger_death_animation or o_level_handler.trigger_powerup_animation:
                     self.scroll_level = False
 
-            if isinstance(objects,FirePower._FirePower):
+            if isinstance(objects,fire_power.FirePower):
                 self.handle_flower_power_object(objects)   
 
         except Exception as Error:
@@ -95,26 +95,19 @@ class _PlayerEngine(anim_util._anim_util):
             if objects.collisionDown:
             
                 objects.velocityY = 150
-        
-            '''if (objects.collisionRight or objects.collisionLeft) and objects.collisionObject.subClass != 'player':
-                
-                #if objects.collisionObject.subClass == 'enemy':
-                #    objects.collisionObject.fromUnder = True
-            
-                objects.isHit = True'''
             
         except Exception as Error:
 
             print("runtime error in PlayerEngine.py::handle_flower_power(): ", Error)
 
-    def handle_power_ups(self, objects, levelHandler):
+    def handle_power_ups(self, objects, o_level_handler):
         try:
 
-            if objects.powerUp and not levelHandler.pause_for_damage:
+            if objects.powerUp and not o_level_handler.pause_for_damage:
             
                 if "super_mushroom" in objects.powerType and objects.power_up < 1:
                     objects.powerUp = False
-                    levelHandler.trigger_powerup_animation = True
+                    o_level_handler.trigger_powerup_animation = True
                     objects.powerType = ''
                     self.triggerPowerUpAudio = True
                     objects.power_up = 1
@@ -123,7 +116,7 @@ class _PlayerEngine(anim_util._anim_util):
             
                 if "flower_power" in objects.powerType and not objects.power_up == 2:
                     objects.powerUp = False
-                    levelHandler.trigger_powerup_animation = True
+                    o_level_handler.trigger_powerup_animation = True
                     objects.powerType = ''
                     self.triggerPowerUpAudio = True
                     objects.collisionObject.isHit = True
@@ -134,9 +127,9 @@ class _PlayerEngine(anim_util._anim_util):
 
             print("runtime error in PlayerEngine.py::Function handle_power_ups(): ", Error)
 
-    def handle_flower_power_action(self,objects,input_dict,levelHandler, GameObjects):
+    def handle_flower_power_action(self,objects,d_inputs,o_level_handler, o_game_objects):
         try:
-            if input_dict['attack'] == '1' and not self.latch and objects.power_up == 2 and not self.delay_power:
+            if d_inputs['attack'] == '1' and not self.latch and objects.power_up == 2 and not self.delay_power:
                 self.shots_taken += 1
                 
                 self.latch =   True
@@ -150,7 +143,7 @@ class _PlayerEngine(anim_util._anim_util):
                     self.last_frame_time_2 = self.determine_time_elapsed()
                     self.time_after_shot = True
                     # Create FirePower Object
-                    firePowerObject = FirePower._FirePower()
+                    firePowerObject = fire_power.FirePower()
                     firePowerObject.velocityX = 300
                     firePowerObject.velocityY = 50
                     firePowerObject.position = copy.deepcopy(objects.position)
@@ -170,9 +163,9 @@ class _PlayerEngine(anim_util._anim_util):
                         firePowerObject.position[0] -= 10
                
                    # add to GameObjects to be processed in Render Buffer later
-                    GameObjects.append(firePowerObject)
+                    o_game_objects.append(firePowerObject)
             
-            elif input_dict['attack'] == '0' and self.latch:
+            elif d_inputs['attack'] == '0' and self.latch:
                 
                 self.latch = False
 
@@ -180,44 +173,44 @@ class _PlayerEngine(anim_util._anim_util):
             
             print("runtime error in PlayerEngine.py::Function handle_power(): ", Error)
 
-    def handle_damage(self, objects, levelHandler):
+    def handle_damage(self, objects, o_level_handler):
         try:
 
             if objects.isHit:
             
                 if objects.power_up == 0:
-                    levelHandler.trigger_death_animation = True
+                    o_level_handler.trigger_death_animation = True
                     self.triggerDeathAudio = True
                     objects.jumping = True
                     objects.velocityY = 0
             
                 if objects.power_up > 0:
                     objects.isHit = False
-                    levelHandler.pause_for_damage = True
+                    o_level_handler.pause_for_damage = True
                     self.superMario = False
                     self.triggerPowerDownAudio = True
 
-                elif objects.power_up == 0 and not levelHandler.freeze_damage and not levelHandler.trigger_death_animation:
-                    levelHandler.load_level = True
-                    levelHandler.edit_mode = True
+                elif objects.power_up == 0 and not o_level_handler.freeze_damage and not o_level_handler.trigger_death_animation:
+                    o_level_handler.load_level = True
+                    o_level_handler.edit_mode = True
         
             elif objects.position[1] > self.screen_width:
-                levelHandler.load_level = True
-                levelHandler.edit_mode = True
+                o_level_handler.load_level = True
+                o_level_handler.edit_mode = True
                 self.triggerDeathAudio = True
         
             if objects.power_up == 0 and not objects.powerUp:
                 self.superMario = False
 
-            if levelHandler.decrease_power:
+            if o_level_handler.decrease_power:
                 objects.power_up = 0
-                levelHandler.decrease_power = False
+                o_level_handler.decrease_power = False
 
         except Exception as Error:
             
             print("runtime error in PlayerEngine.py::Function handle_damage(): ", Error)
     
-    def onEnemy(self, objects,input_dict, levelHandler):
+    def onEnemy(self, objects,d_inputs, o_level_handler):
         try:
         
             if objects.subClass == 'player':
@@ -232,10 +225,10 @@ class _PlayerEngine(anim_util._anim_util):
 
             print("runtime error in PlayerEngine.py::Function onEnemy(): ", Error)
 
-    def jump(self, objects, delta_t, input_dict):
+    def jump(self, objects, delta_t, d_inputs):
         try:
 
-            if input_dict['up'] == '1' and not self.reached_max_height:
+            if d_inputs['up'] == '1' and not self.reached_max_height:
                 objects.velocityY = 300
                 objects.jumping = True
                 self.triggerJumpFX = True
@@ -261,19 +254,19 @@ class _PlayerEngine(anim_util._anim_util):
                 self.triggerJumpFX = False
                 if self.reached_max_height:
                 
-                    if input_dict['up'] == '0':
+                    if d_inputs['up'] == '0':
                         self.reached_max_height = False
 
         except Exception as Error:
 
             print("runtime Error in PlayerEngine.py::Function jump(): ", Error)
 
-    def horizontal_movement(self, objects, delta_t, input_dict, CollisionEngine, levelHandler):
+    def horizontal_movement(self, objects, delta_t, d_inputs, o_collision_engine, o_level_handler):
         try:
 
-            self.set_scroll_state(objects, input_dict, levelHandler)
+            self.set_scroll_state(objects, d_inputs, o_level_handler)
 
-            if input_dict['right'] == '1':
+            if d_inputs['right'] == '1':
                 objects.x_direction = 1
 
                 if objects.velocityX >= 100*self.runningFactor:
@@ -281,7 +274,7 @@ class _PlayerEngine(anim_util._anim_util):
                 else:
                     objects.velocityX += 10 * self.runningFactor
 
-            elif input_dict['left'] == '-1':
+            elif d_inputs['left'] == '-1':
                 objects.x_direction = -1
 
                 if objects.velocityX > 100*self.runningFactor:
@@ -296,7 +289,7 @@ class _PlayerEngine(anim_util._anim_util):
                     objects.velocityX += 300*delta_t
                 else:
                     objects.velocityX = 0
-            if input_dict['l-shift'] == '1':
+            if d_inputs['l-shift'] == '1':
                 self.runningFactor = 1.5
             else:
                 self.runningFactor = 1
@@ -308,16 +301,16 @@ class _PlayerEngine(anim_util._anim_util):
             
             print("runtime Error in PlayerEngine.py::Function horizontal_movement(): ", Error)
     
-    def set_scroll_state(self, objects, input_dict, levelHandler):
+    def set_scroll_state(self, objects, d_inputs, o_level_handler):
         try:
 
             # handle level scrolling left
-            if objects.position[0] >= self.screen_width / 2 and self.x_direction > 0 and (input_dict['right'] == '1' or objects.onEnemy):
+            if objects.position[0] >= self.screen_width / 2 and self.x_direction > 0 and (d_inputs['right'] == '1' or objects.onEnemy):
                 self.scroll_level = True
                 objects.scrolling = True
             # handle level scrolling right
-            elif objects.position[0] < self.screen_width / 2 and self.x_direction < 0 and (input_dict[
-                'left'] == '-1' or objects.onEnemy) and levelHandler.scroll_offset > 0:
+            elif objects.position[0] < self.screen_width / 2 and self.x_direction < 0 and (d_inputs[
+                'left'] == '-1' or objects.onEnemy) and o_level_handler.scroll_offset > 0:
                 self.scroll_level = True
                 objects.scrolling = True
             else:

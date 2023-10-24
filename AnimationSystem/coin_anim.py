@@ -3,7 +3,7 @@ import anim_util
 
 
 
-class _coin_anim(anim_util._anim_util):
+class CoinAnim(anim_util.AnimUtil):
 
 
     def __init__(self):

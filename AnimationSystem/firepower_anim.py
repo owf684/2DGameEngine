@@ -2,9 +2,9 @@ import pygame
 import anim_util
 import sys
 sys.path.append("./GameObjects")
-import FirePower
+import fire_power
 
-class _firepower_anim(anim_util._anim_util):
+class FirepowerAnim(anim_util.AnimUtil):
 
     def __init__(self):
         try:
@@ -18,10 +18,10 @@ class _firepower_anim(anim_util._anim_util):
             print("ERROR::firepower_anim.py::__init__()", Error)
 
 
-    def main_loop(self,objects,levelHandler,delta_t,PlayerEngine):
+    def main_loop(self,objects,o_level_handler,delta_t,o_player_engine):
         try:
 
-            if isinstance(objects, FirePower._FirePower):
+            if isinstance(objects, fire_power.FirePower):
                 self.determine_frame_count()
                 objects.image = self.fireball_sprites[self.frame_index]
                     

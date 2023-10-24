@@ -1,32 +1,32 @@
 import pygame
-import MarioFX
-import BlockFX
-import EnemyFX
+import AudioEngine.mario_fx as mario_fx
+import AudioEngine.block_fx as block_fx
+import AudioEngine.enemy_fx as enemy_fx
 
-class _AudioEngine:
+class AudioEngine:
 
     def __init__(self):
-        self.GroundTheme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/GroundTheme.mp3")
-        self.UnderWaterTheme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/UnderWaterTheme.mp3")
-        self.CastleTheme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/CastleTheme.mp3")
-        self.UndergroundTheme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/UndergroundTheme.mp3")
+        self.ground_theme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/GroundTheme.mp3")
+        self.under_water_theme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/UnderWaterTheme.mp3")
+        self.castle_theme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/CastleTheme.mp3")
+        self.underground_theme = pygame.mixer.Sound("./Assets/AudioEffects/Songs/UndergroundTheme.mp3")
 
-        self.MarioFX = MarioFX._MarioFX()
-        self.BlockFX = BlockFX._BlockFX()
-        self.EnemyFX = EnemyFX._EnemyFX()
-        self.over_world_music = self.GroundTheme
+        self.o_mario_fx = mario_fx.MarioFX()
+        self.o_block_fx = block_fx.BlockFX()
+        self.o_enemy_fx = enemy_fx.EnemyFX()
+        self.over_world_music = self.ground_theme
 
-    def main_loop(self,objects,levelHandler,PlayerEngine, EnemyEngine):
+    def main_loop(self,objects,o_level_handler,o_player_engine, o_enemy_engine):
         try:
-            if not levelHandler.trigger_death_animation and self.MarioFX.mario_dies.get_num_channels() == 0:
+            if not o_level_handler.trigger_death_animation and self.o_mario_fx.mario_dies.get_num_channels() == 0:
 
                 self.overWorldMusic()
             else:
                 self.stop_over_world_music()
 
-            self.MarioFX.main_loop(objects,levelHandler,PlayerEngine)
-            self.BlockFX.main_loop(objects,levelHandler,PlayerEngine)
-            self.EnemyFX.main_loop(objects,levelHandler,EnemyEngine)
+            self.o_mario_fx.main_loop(objects,o_level_handler,o_player_engine)
+            self.o_block_fx.main_loop(objects,o_level_handler,o_player_engine)
+            self.o_enemy_fx.main_loop(objects,o_level_handler,o_enemy_engine)
         except Exception as Error:
             print("ERROR::AudioEngine.py::main_loop(): ", Error)
 

@@ -2,7 +2,7 @@ import pygame
 
 
 
-class _MarioFX:
+class MarioFX:
 
     def __init__(self):
 
@@ -23,57 +23,57 @@ class _MarioFX:
 
         self.mario_powerdown = pygame.mixer.Sound("./Assets/AudioEffects/smb_pipe.wav")
         self.number_of_powerdown_plays = 0
-    def main_loop(self,objects,levelHandler,PlayerEngine):
+    def main_loop(self,objects,o_level_handler,o_player_engine):
         if objects.subClass == 'player':
-            self.handle_jump_audio(objects,levelHandler,PlayerEngine)
-            self.handle_flower_power_audio(objects,levelHandler,PlayerEngine)
-            self.handle_powerup_audio(objects,levelHandler,PlayerEngine)
-            self.handle_death_audio(objects,levelHandler,PlayerEngine)
-            self.handle_power_down_audio(objects,levelHandler,PlayerEngine)
-    def handle_jump_audio(self,objects,levelHandler,PlayerEngine):
-        if PlayerEngine.triggerPowerUpAudio:
-            PlayerEngine.triggerJumpFX = False
-        if PlayerEngine.triggerJumpFX and objects.power_up == 0 and not self.mario_jump_playing:
+            self.handle_jump_audio(objects,o_level_handler,o_player_engine)
+            self.handle_flower_power_audio(objects,o_level_handler,o_player_engine)
+            self.handle_powerup_audio(objects,o_level_handler,o_player_engine)
+            self.handle_death_audio(objects,o_level_handler,o_player_engine)
+            self.handle_power_down_audio(objects,o_level_handler,o_player_engine)
+    def handle_jump_audio(self,objects,o_level_handler,o_player_engine):
+        if o_player_engine.triggerPowerUpAudio:
+            o_player_engine.triggerJumpFX = False
+        if o_player_engine.triggerJumpFX and objects.power_up == 0 and not self.mario_jump_playing:
             # Play the sound with an event that triggers when the sound finishes playing
 
             self.mario_jump.play()
             self.mario_jump_playing = True
 
-        elif PlayerEngine.triggerJumpFX and objects.jumping and objects.power_up > 0 and not self.super_mario_jump_playing:
+        elif o_player_engine.triggerJumpFX and objects.jumping and objects.power_up > 0 and not self.super_mario_jump_playing:
 
             self.super_mario_jump.play()
             self.super_mario_jump_playing = True
 
-        if not PlayerEngine.triggerJumpFX and self.mario_jump_playing:
+        if not o_player_engine.triggerJumpFX and self.mario_jump_playing:
             self.mario_jump.stop()
             self.mario_jump_playing = False
 
-        if not PlayerEngine.triggerJumpFX and self.super_mario_jump_playing:
+        if not o_player_engine.triggerJumpFX and self.super_mario_jump_playing:
             self.super_mario_jump.stop()
             self.super_mario_jump_playing = False
 
-        if PlayerEngine.triggerDeathAudio:
+        if o_player_engine.triggerDeathAudio:
             self.super_mario_jump.stop()
 
 
-    def handle_flower_power_audio(self,objects,levelHandler,PlayerEngine):
-        if PlayerEngine.triggerFlowerPowerAudio:
-            PlayerEngine.triggerFlowerPowerAudio = False
+    def handle_flower_power_audio(self,objects,o_level_handler,o_player_engine):
+        if o_player_engine.triggerFlowerPowerAudio:
+            o_player_engine.triggerFlowerPowerAudio = False
             
             self.fireball.play()
             
-    def handle_powerup_audio(self,objects,levelHandler,PlayerEngine):
-        if PlayerEngine.triggerPowerUpAudio:
-            PlayerEngine.triggerPowerUpAudio = False
+    def handle_powerup_audio(self,objects,o_level_handler,o_player_engine):
+        if o_player_engine.triggerPowerUpAudio:
+            o_player_engine.triggerPowerUpAudio = False
             self.powerup.play()
     def handle_death_audio(self,objects,levelHandler,PlayerEngine):
         if PlayerEngine.triggerDeathAudio:
             PlayerEngine.triggerDeathAudio = False
             self.mario_dies.play()
-    def handle_power_down_audio(self,objects,levelHandler,PlayerEngine):
+    def handle_power_down_audio(self,objects,o_level_handler,o_player_engine):
 
-        if PlayerEngine.triggerPowerDownAudio and levelHandler.pause_for_damage:
-            PlayerEngine.triggerPowerDownAudio = False
+        if o_player_engine.triggerPowerDownAudio and o_level_handler.pause_for_damage:
+            o_player_engine.triggerPowerDownAudio = False
             if self.number_of_powerdown_plays == 0:
                 self.mario_powerdown.play()
             self.number_of_powerdown_plays += 1

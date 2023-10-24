@@ -2,7 +2,7 @@ import anim_util
 import pygame
 import copy
 
-class _mario_anim(anim_util._anim_util):
+class MarioAnim(anim_util.AnimUtil):
 
     def __init__(self):
         try:
@@ -92,56 +92,56 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::mario_anim.py::__init__()", Error)
 
-    def main_loop(self, animaton_system, objects, input_dict, levelHandler,delta_t, PlayerEngine):
+    def main_loop(self, o_animation_system, objects, d_inputs, o_level_handler,delta_t, o_player_engine):
         try:
-            if animaton_system.reset_animations:
+            if o_animation_system.reset_animations:
                 self.current_mario_sprites = self.mario_sprites
-                animaton_system.reset_animations = False
+                o_animation_system.reset_animations = False
 
             if objects.subClass == 'player':
-                if not levelHandler.pause_for_damage and not levelHandler.trigger_death_animation and not levelHandler.trigger_powerup_animation:
+                if not o_level_handler.pause_for_damage and not o_level_handler.trigger_death_animation and not o_level_handler.trigger_powerup_animation:
 
                     self.determine_frame_count()
                     if not self.pause_animation:
 
-                        self.handle_run_animations(objects, input_dict)
+                        self.handle_run_animations(objects, d_inputs)
 
-                        self.handle_jump_animations(objects, input_dict)
+                        self.handle_jump_animations(objects, d_inputs)
 
-                        self.handle_idle_animations(objects, input_dict)
+                        self.handle_idle_animations(objects, d_inputs)
 
                     self.handle_power_ups(objects)
 
-                    self.handle_fire_power(objects,input_dict, PlayerEngine)
+                    self.handle_fire_power(objects,d_inputs, o_player_engine)
 
                     objects.image.set_alpha(self.alpha)
 
-                elif levelHandler.pause_for_damage:
+                elif o_level_handler.pause_for_damage:
 
-                    self.damage_animation(objects, levelHandler,delta_t, PlayerEngine)
+                    self.damage_animation(objects, o_level_handler,delta_t, o_player_engine)
 
-                if levelHandler.trigger_death_animation:
-                    self.death_animation(objects,levelHandler,delta_t, PlayerEngine)
+                if o_level_handler.trigger_death_animation:
+                    self.death_animation(objects,o_level_handler,delta_t, o_player_engine)
 
-                if levelHandler.trigger_powerup_animation:
-                    self.power_up_animation(objects,levelHandler,delta_t,PlayerEngine)
+                if o_level_handler.trigger_powerup_animation:
+                    self.power_up_animation(objects,o_level_handler,delta_t,o_player_engine)
 
-                if levelHandler.freeze_damage:
+                if o_level_handler.freeze_damage:
 
                     self.alpha = 128
                     
                     if self.determine_time_elapsed() >1500:
-                        levelHandler.freeze_damage = False
+                        o_level_handler.freeze_damage = False
                 else:
                     self.alpha = 255
 
         except Exception as Error:
             print("ERROR::mario_anim::main_loop()", Error)
 
-    def handle_fire_power(self,objects,input_dict, PlayerEngine):
+    def handle_fire_power(self,objects,d_inputs, o_player_engine):
         try:
 
-            if objects.power_up == 2 and input_dict['attack'] == '1' and not self.shoot_latch and not PlayerEngine.delay_power:
+            if objects.power_up == 2 and d_inputs['attack'] == '1' and not self.shoot_latch and not o_player_engine.delay_power:
             
                 self.reset_time_variables()
                 self.last_frame_time_2 = self.determine_time_elapsed()
@@ -155,7 +155,7 @@ class _mario_anim(anim_util._anim_util):
                 
                     objects.image = self.flower_power_shoot[1]
         
-            elif input_dict['attack'] == '0' and self.shoot_latch:
+            elif d_inputs['attack'] == '0' and self.shoot_latch:
             
                 self.shoot_latch = False
         
@@ -167,7 +167,7 @@ class _mario_anim(anim_util._anim_util):
         
             print("ERROR::mario_anim.py::handle_fire_power() ", Error)
 
-    def power_up_animation(self, objects, levelHandler, delta_t, PlayerEngine):
+    def power_up_animation(self, objects, o_level_handler, delta_t, o_player_engine):
         try:      
             # resets time variables and capture relevant sprites/frame when damaged
             if not self.powerup_frame_captured:
@@ -194,11 +194,11 @@ class _mario_anim(anim_util._anim_util):
                 # reset flags
                 objects.powerUp = False
                 self.frame_count = 3
-                levelHandler.trigger_powerup_animation = False
+                o_level_handler.trigger_powerup_animation = False
                 self.powerup_frame_captured = False
 
                 #set flags
-                PlayerEngine.superMario = True             
+                o_player_engine.superMario = True             
 
                 # setup player object sprites
                 if objects.power_up == 1:
@@ -212,7 +212,7 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::mario_anim.py::powerup_animation(): ", Error)
 
-    def death_animation(self, objects,levelHandler,delta_t, PlayerEngine):
+    def death_animation(self, objects,o_level_handler,delta_t, o_player_engine):
         try:
 
             if not self.damage_frame_captured:
@@ -232,10 +232,10 @@ class _mario_anim(anim_util._anim_util):
             if self.latch:
                 objects.collisionUp = False
             if time_elapsed > 3000:
-                levelHandler.load_level = True
-                levelHandler.trigger_death_animation = False
+                o_level_handler.load_level = True
+                o_level_handler.trigger_death_animation = False
                 self.damage_frame_captured = False
-                PlayerEngine.superMario = False
+                o_player_engine.superMario = False
                 self.latch = False
                 self.current_mario_sprites = self.mario_sprites
                 objects.fromUnder = False
@@ -244,7 +244,7 @@ class _mario_anim(anim_util._anim_util):
 
             print("ERROR::mario_anim.py::death_animation()", Error)
     
-    def damage_animation(self, objects, levelHandler, delta_t, PlayerEngine):
+    def damage_animation(self, objects, o_level_handler, delta_t, o_player_engine):
         try:      
             # resets time variables and capture relevant sprites/frame when damaged
             if not self.damage_frame_captured:
@@ -284,13 +284,13 @@ class _mario_anim(anim_util._anim_util):
             if self.determine_time_elapsed() > 600:
 
                 # reset flags
-                levelHandler.pause_for_damage = False
+                o_level_handler.pause_for_damage = False
                 self.damage_frame_captured = False
-                PlayerEngine.superMario = False
+                o_player_engine.superMario = False
 
                 # set flags
-                levelHandler.decrease_power = True
-                levelHandler.freeze_damage = True
+                o_level_handler.decrease_power = True
+                o_level_handler.freeze_damage = True
 
                 # restart timer for freeze damage
                 self.reset_time_variables()
@@ -326,14 +326,14 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::mario_anim::handle_power_ups()", Error)
 
-    def handle_run_animations(self, objects, input_dict):
+    def handle_run_animations(self, objects, d_inputs):
         try:
-            if input_dict['l-shift'] == '1':
+            if d_inputs['l-shift'] == '1':
                 self.frame_duration = 50
             else:
                 self.frame_duration = 80
 
-            if input_dict['right'] == '1':
+            if d_inputs['right'] == '1':
 
                 if not self.jumping:
                     objects.image = self.current_mario_sprites[4][self.frame_index]
@@ -343,7 +343,7 @@ class _mario_anim(anim_util._anim_util):
                 elif objects.collisionDown and self.jumping:
                     self.jumping = False
 
-            if input_dict['left'] == '-1':
+            if d_inputs['left'] == '-1':
 
                 if not self.jumping:
                     objects.image = self.current_mario_sprites[5][self.frame_index]
@@ -354,10 +354,10 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::mario_anim.py::handle_run_animations()", Error)
 
-    def handle_idle_animations(self, objects, input_dict):
+    def handle_idle_animations(self, objects, d_inputs):
         try:
             
-            if input_dict['right'] == '0' and input_dict['left'] == '0':
+            if d_inputs['right'] == '0' and d_inputs['left'] == '0':
                 if self.x_direction == 1 and not self.jumping:
                     objects.image = self.current_mario_sprites[0]
                     self.current_sprite = 0
@@ -369,7 +369,7 @@ class _mario_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::mario_anim.py::handle_idle_animations()", Error)
     
-    def handle_jump_animations(self, objects, input_dict):
+    def handle_jump_animations(self, objects, d_inputs):
         try:
             if objects.jumping:
                 if objects.x_direction == 1:

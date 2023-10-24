@@ -1,38 +1,38 @@
 import sys
 sys.path.append("./AnimationSystem")
 sys.path.append('./GameObjects')
-import BlockObject
+import block_object
 import math
 
 
-class _break_block():
+class BreakBlock():
 
     def __init__(self):
         self.step = 0.1
 
 
-    def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t, objects):
+    def main_loop(self, l_game_objects, l_level_objects, o_player_engine, delta_t, objects):
         try:
 
-            if isinstance(objects, BlockObject._BlockObject):
-                self.handle_break_blocks(objects, PlayerEngine)
+            if isinstance(objects, block_object.BlockObject):
+                self.handle_break_blocks(objects, o_player_engine)
 
                 if objects.push_block_trigger:
                     self.push_block_animation(objects)
 
                 if objects.release_item_trigger:
-                    self.release_item(objects, GameObjects)
+                    self.release_item(objects, l_game_objects)
 
                 if objects.pauseHit:
                     if objects.determine_time_elapsed() > 300:
                         objects.pauseHit = False
         except Exception as Error:
             print("runtime error in break_block.py::Function main_loop: ", Error)
-    def handle_break_blocks(self, objects, PlayerEngine):
+    def handle_break_blocks(self, objects, o_player_engine):
         try:
 
             if objects.hit:
-                if "break" in objects.imagePath and not PlayerEngine.superMario:
+                if "break" in objects.imagePath and not o_player_engine.superMario:
                     objects.hit = False
                     objects.push_block_trigger = True
                     objects.release_item_trigger = True
@@ -52,7 +52,7 @@ class _break_block():
         except Exception as Error:
             print("runtimer error in break_block.py::Function push_block_animation: ", Error)
 
-    def release_item(self, push_block_object, GameObjects):
+    def release_item(self, push_block_object, l_game_objects):
         try:
 
             if push_block_object.item is not None:
@@ -65,6 +65,6 @@ class _break_block():
                 push_block_object.item = None
                 item._set_mask()
                 self.release_item_trigger = False     
-                GameObjects.append(item)
+                l_game_objects.append(item)
         except Exception as Error:
             print("runtime error in break_block.py::Function release_item(): ", Error)

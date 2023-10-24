@@ -1,7 +1,7 @@
 
 
 
-class _UIEngine:
+class UIEngine:
 
 	def __init__(self):
 		self.ui = None

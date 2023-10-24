@@ -1,7 +1,7 @@
 
 import anim_util
 import pygame
-class _koop_anim(anim_util._anim_util):
+class KoopaAnim(anim_util.AnimUtil):
 
     def __init__(self):
         try:
@@ -20,7 +20,7 @@ class _koop_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::koopa_anim.py::__init__()", Error)
 
-    def main_loop(self,objects, EnemyEngine):
+    def main_loop(self,objects, o_enemy_engine):
         try:
             self.determine_frame_count()
             if objects.subClass == 'enemy' and "Koopa" in objects.imagePath:
@@ -28,15 +28,15 @@ class _koop_anim(anim_util._anim_util):
 
                     self.koopa_walk_animation(objects)
 
-                self.handle_koopa_damage(objects, EnemyEngine)
+                self.handle_koopa_damage(objects, o_enemy_engine)
 
         except Exception as Error:
             print("ERROR::koopa_anim.py::main_loop()", Error)
 
-    def handle_koopa_damage(self,objects, EnemyEngine):
+    def handle_koopa_damage(self,objects, o_enemy_engine):
         try:
             if objects.isHit and not objects.timer_started and not objects.fromUnder and objects.hit_state == 0:
-                EnemyEngine.triggerStompAudio = True
+                o_enemy_engine.triggerStompAudio = True
                 objects.timer_started = True
                 objects.reset_time_variables()
                 objects.last_frame_time_2 = objects.determine_time_elapsed()
@@ -48,7 +48,7 @@ class _koop_anim(anim_util._anim_util):
                 objects.destroy_time = 3000
             
             elif objects.isHit and objects.fromUnder and not objects.timer_started:
-                EnemyEngine.triggerStompAudio = True
+                o_enemy_engine.triggerStompAudio = True
                 #flip the image 
                 objects.image = pygame.transform.flip(self.koopa_shell,False,True)
                 objects.timer_started = True

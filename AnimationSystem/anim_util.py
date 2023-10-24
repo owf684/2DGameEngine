@@ -1,5 +1,5 @@
 import pygame
-class _anim_util:
+class AnimUtil:
 
     def __init__(self):
         try:

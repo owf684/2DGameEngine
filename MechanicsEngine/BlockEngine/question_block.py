@@ -2,11 +2,11 @@ import math
 import sys
 
 sys.path.append('./GameObjects')
-import BlockObject
+import block_object
 
 
 
-class _question_block:
+class QuestionBlock:
 
     def __init__(self):
         self.question_block_trigger = False
@@ -16,21 +16,21 @@ class _question_block:
         self.hit_state_path = './Assets/Platforms/question_block_states/question_block_hit_32x32.png'
         self.release_item_trigger = False
 
-    def main_loop(self, GameObjects, levelObjects, PlayerEngine, delta_t, objects):
+    def main_loop(self, l_game_objects, l_level_objects, o_player_engine, delta_t, objects):
 
-        if isinstance(objects, BlockObject._BlockObject):
+        if isinstance(objects, block_object.BlockObject):
 
-            self.handle_question_blocks(objects, PlayerEngine)
+            self.handle_question_blocks(objects, o_player_engine)
 
             if objects.question_block_trigger:
                 self.question_block_animation(objects)
                 self.question_block_hit(objects)
             if objects.release_item_trigger:
-                self.release_item(objects, GameObjects, levelObjects)
+                self.release_item(objects, l_game_objects, l_level_objects)
             if objects.pauseHit:
                 if objects.determine_time_elapsed() > 300:
                     objects.pauseHit = False
-    def handle_question_blocks(self, objects, PlayerEngine):
+    def handle_question_blocks(self, objects, o_player_engine):
 
         if objects.hit:
             if "Question" in objects.imagePath:
@@ -41,11 +41,11 @@ class _question_block:
                 objects.last_frame_time_2 = objects.determine_time_elapsed()     
     
 
-    def question_block_hit(self, questionBlock):
-        questionBlock.imagePath = self.hit_state_path
-        questionBlock._set_image()
-        questionBlock.image.convert_alpha()
-        questionBlock.hit = True
+    def question_block_hit(self, o_question_block):
+        o_question_block.imagePath = self.hit_state_path
+        o_question_block._set_image()
+        o_question_block.image.convert_alpha()
+        o_question_block.hit = True
 
     def question_block_animation(self, objects):
 
@@ -57,7 +57,7 @@ class _question_block:
             objects.changeHit = False
             objects.theta = 1
 
-    def release_item(self, objects, GameObjects, levelObjects):
+    def release_item(self, objects, l_game_objects, l_level_objects):
 
         if objects.item is not None:
             item = objects.item
@@ -69,4 +69,4 @@ class _question_block:
             item.item_released = True
             objects.item = None
             objects.release_item_trigger = False    
-            GameObjects.append(item)
+            l_game_objects.append(item)

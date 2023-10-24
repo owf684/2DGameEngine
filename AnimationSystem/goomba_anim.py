@@ -3,7 +3,7 @@ import pygame
 
 
 
-class _goomba_anim(anim_util._anim_util):
+class GoombaAnim(anim_util.AnimUtil):
     def __init__(self):
         try:
 
@@ -17,7 +17,7 @@ class _goomba_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::goomba_anim.py::__init__()", Error)
 
-    def main_loop(self,objects,EnemyEngine):
+    def main_loop(self,objects,o_enemy_engine):
         try:
 
             self.determine_frame_count()
@@ -25,7 +25,7 @@ class _goomba_anim(anim_util._anim_util):
                 if not objects.timer_started:
                     self.goomba_walk_animation(objects)
 
-                self.goomba_death_animation(objects, EnemyEngine)
+                self.goomba_death_animation(objects, o_enemy_engine)
         except Exception as Error:
             print('ERROR::goomba_anim.py::main_loop()', Error)
 
@@ -36,11 +36,11 @@ class _goomba_anim(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::goomab_anim.py::goomba_walk_animation()", Error)
 
-    def goomba_death_animation(self,objects, EnemyEngine):
+    def goomba_death_animation(self,objects, o_enemy_engine):
         try:
 
             if objects.isHit and not objects.timer_started and not objects.fromUnder:
-                EnemyEngine.triggerStompAudio = True
+                o_enemy_engine.triggerStompAudio = True
                 objects.timer_started = True
                 objects.reset_time_variables()
                 objects.last_frame_time_2 = objects.determine_time_elapsed()
@@ -50,7 +50,7 @@ class _goomba_anim(anim_util._anim_util):
                 objects.destroy_time = 1000
             
             elif objects.isHit and objects.fromUnder and not objects.timer_started:
-                EnemyEngine.triggerStompAudio = True
+                o_enemy_engine.triggerStompAudio = True
                 #flip the image 
                 objects.image = pygame.transform.flip(self.goomba_idle,False,True)
                 objects.timer_started = True

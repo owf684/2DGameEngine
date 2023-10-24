@@ -4,7 +4,7 @@ import sys
 sys.path.append("./AnimationSystem")
 import anim_util
 
-class _GameObject(anim_util._anim_util):
+class GameObject(anim_util.AnimUtil):
 
 
 	def __init__(self):

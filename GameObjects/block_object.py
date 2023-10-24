@@ -1,10 +1,10 @@
-import GameObject
+import GameObjects.game_object as game_object
 import sys
 import pygame
 sys.path.append("./AnimationSystem")
 import anim_util
 
-class _BlockObject(GameObject._GameObject, anim_util._anim_util):
+class BlockObject(game_object.GameObject, anim_util.AnimUtil):
     def __init__(self):
         super().__init__()
 

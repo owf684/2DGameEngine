@@ -1,6 +1,6 @@
 
 
-class _PlatformsEngine:
+class PlatformsEngine:
 
 	def __init__(self):
 

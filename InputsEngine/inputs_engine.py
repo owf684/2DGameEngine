@@ -1,7 +1,7 @@
 import pygame
 
 
-class _InputsEngine:
+class InputsEngine:
 
 	def __init__(self):
 		self.hold_create =False
@@ -24,9 +24,9 @@ class _InputsEngine:
 			"attack"		: "0"
 		}
 
-	def main_loop(self,GameObjects,delta,pygame_events):
+	def main_loop(self,l_game_objects):
 		posVector = pygame.math.Vector2()
-		for objects in GameObjects:
+		for objects in l_game_objects:
 
 			#inputs geared toward player sprite
 			if objects.subClass == 'player':

@@ -2,7 +2,7 @@ import pygame
 import anim_util
 import copy
 
-class _question_block(anim_util._anim_util):
+class QuestionBlockAnim(anim_util.AnimUtil):
 
     def __init__(self):
         try:
@@ -16,18 +16,18 @@ class _question_block(anim_util._anim_util):
         except Exception as Error:
             print("ERROR::question_block_anim.py::__init__()", Error)
 
-    def main_loop(self, levelHandler):
+    def main_loop(self, o_level_handler):
         try:
 
             self.determine_frame_count()
-            self.question_block_animation(levelHandler)
+            self.question_block_animation(o_level_handler)
         except Exception as Error:
             print("ERROR::question_block_anim.py::main_loop()", Error)
 
-    def question_block_animation(self, levelHandler):
+    def question_block_animation(self, o_level_handler):
         try:
 
-            for qb in levelHandler.question_blocks:
+            for qb in o_level_handler.question_blocks:
                 if not qb.hit:
                     qb.image = self.question_block_frames[self.frame_index]
         except Exception as Error:

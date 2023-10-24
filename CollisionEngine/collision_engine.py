@@ -1,15 +1,15 @@
 import copy
 import sys
 sys.path.append("./GameObjects")
-import BlockObject
-import FirePower
+import block_object
+import fire_power
 
-class _CollisionEngine:
+class CollisionEngine:
 
     def __init__(self):
         self.collision_tolerance = 10
 
-    def main_loop(self, objects, GraphicsEngine, levelHandler):
+    def main_loop(self, objects, o_graphics_engine, o_level_handler):
 
         # Reset collisions 
         objects.collisionDown = False
@@ -18,23 +18,23 @@ class _CollisionEngine:
         objects.collisionUp = False
 
         # iterate through render buffer and determine collision states of variable objects
-        for objs in GraphicsEngine.render_buffer:
+        for objs in o_graphics_engine.render_buffer:
             try:
-                self.updateRectPosition(objects)
+                self.update_rect_position(objects)
                 if objects != objs:
                     if ((   objects.subClass == 'player' or 
                             objects.subClass == 'enemy' or 
                             objects.subClass == 'powerup' or 
-                            isinstance(objects, FirePower._FirePower) or
+                            isinstance(objects, fire_power.FirePower) or
                             objects.subClass == 'item') and 
                             objs.subClass != 'environment'):
                         
-                        self.detectCollisions(objects, objs, levelHandler)
+                        self.detect_collisions(objects, objs, o_level_handler)
     
             except Exception as Error:
                 print("runtime error in CollisionEngine.py. Function main_loop: ", Error)
 
-    def detectCollisions(self, objects, objs, levelHandler):
+    def detect_collisions(self, objects, objs, levelHandler):
         try:
         
             if not objects.fromUnder:
@@ -59,11 +59,10 @@ class _CollisionEngine:
                         if objects.subClass == 'enemy':
                             objects.collisionUp = self.enemy_collision_handler_y(objects,objs, levelHandler, 'up')                 
 
-                        if objects.subClass == 'powerup' or isinstance(objects,FirePower._FirePower) or objects.subClass=='item':
+                        if objects.subClass == 'powerup' or isinstance(objects,fire_power.FirePower) or objects.subClass=='item':
                             objects.collisionUp = self.powerup_collision_handler_y(objects,objs,levelHandler, 'up')                       
 
                         self.save_collision_object(objects, objs)
-                        #self.level_object_hit_box(objects,objs)     
         except Exception as Error:
             print("runtime error in CollisionEngine.py. Function up_collision: ", Error) 
 
@@ -77,7 +76,7 @@ class _CollisionEngine:
                     if objects.subClass == 'enemy':
                         objects.collisionDown = self.enemy_collision_handler_y(objects,objs, levelHandler, 'down')                 
 
-                    if objects.subClass == 'powerup' or isinstance(objects, FirePower._FirePower) or objects.subClass == 'item':
+                    if objects.subClass == 'powerup' or isinstance(objects, fire_power.FirePower) or objects.subClass == 'item':
                         objects.collisionDown = self.powerup_collision_handler_y(objects,objs,levelHandler, 'down')
                         
                     if 'coin' not in objs.imagePath:
@@ -118,7 +117,7 @@ class _CollisionEngine:
                         objects.collisionLeft = self.player_collision_hanlder_x(objects,objs,levelHandler)
                         if objects.collisionLeft:
                             objects.position[0] = objs.rect.right + 5  
-                    elif objects.subClass == 'powerup' or isinstance(objects, FirePower._FirePower):
+                    elif objects.subClass == 'powerup' or isinstance(objects, fire_power.FirePower):
                         objects.collisionLeft = self.powerup_collision_handler_x(objects, objs, levelHandler) 
                                                     
         except Exception as Error:
@@ -147,13 +146,13 @@ class _CollisionEngine:
                         objects.collisionRight = self.player_collision_hanlder_x(objects,objs,levelHandler)
                         if objects.collisionRight:
                             objects.position[0] = objs.rect.left - objects.rect.width - 5 
-                    elif objects.subClass == 'powerup' or isinstance(objects, FirePower._FirePower):
+                    elif objects.subClass == 'powerup' or isinstance(objects, fire_power.FirePower):
                         objects.collisionRight = self.powerup_collision_handler_x(objects, objs, levelHandler)
 
         except Exception as Error:
             print("runtime error in CollisionEngine.py::function right_collision2(): ", Error)
  
-    def updateRectPosition(self, collisionObject):
+    def update_rect_position(self, collisionObject):
         try:
             collisionObject.rect.x = collisionObject.position[0]
             collisionObject.rect.y = collisionObject.position[1]
@@ -239,7 +238,7 @@ class _CollisionEngine:
     
     def powerup_collision_handler_x(self, objects, objs, levelHandler):
         try:     
-            if not isinstance(objects,FirePower._FirePower) and objects.subClass == 'powerup':
+            if not isinstance(objects,fire_power.FirePower) and objects.subClass == 'powerup':
                 objects._set_mask()
                 objs._set_mask()
     
@@ -256,7 +255,7 @@ class _CollisionEngine:
                             return False
                         else:
                             return True
-            elif isinstance(objects,FirePower._FirePower):
+            elif isinstance(objects,fire_power.FirePower):
 
                 if objs.subClass == 'enemy':
                     objs.isHit = True
@@ -264,7 +263,7 @@ class _CollisionEngine:
                     objects.isHit = True
                     return True
             
-                elif isinstance(objs,BlockObject._BlockObject):
+                elif isinstance(objs,block_object.BlockObject):
                     objs.hit = True
                     objects.isHit = True
                     return True                
@@ -288,7 +287,7 @@ class _CollisionEngine:
     def powerup_collision_handler_y(self,objects,objs, levelHandler, Direction):
         try:    
          
-            if objects.rect.colliderect(objs.rect) and not isinstance(objects,FirePower._FirePower):
+            if objects.rect.colliderect(objs.rect) and not isinstance(objects,fire_power.FirePower):
                 if objects.subClass == 'powerup' and objs.subClass == 'player': # Direction does not matter here
                     objects.isHit = True
                     objs.powerUp = True
@@ -297,14 +296,14 @@ class _CollisionEngine:
                     return False
                 else:
                     return True
-            if isinstance(objects,FirePower._FirePower) and objs.subClass != 'player':
+            if isinstance(objects,fire_power.FirePower) and objs.subClass != 'player':
                 
                 if objs.subClass == 'enemy':
                     objs.isHit = True
                     objs.fromUnder = True
                     objects.isHit = True
             
-                elif isinstance(objs,BlockObject._BlockObject):
+                elif isinstance(objs,block_object.BlockObject):
                     objs.hit = True
 
                 return True
@@ -328,7 +327,7 @@ class _CollisionEngine:
             elif objs.subClass == 'enemy' and objs.timer_started and objects.subClass == 'player':
                 return False
 
-            if isinstance(objs, BlockObject._BlockObject) and not objs.pauseHit and Direction == 'up' and objs.subClass != 'item':
+            if isinstance(objs, block_object.BlockObject) and not objs.pauseHit and Direction == 'up' and objs.subClass != 'item':
                 if 'break' in objs.imagePath or 'Question' in objs.imagePath:
                     if (objs.rect.left < objects.rect.centerx < objs.rect.right):
                         objs.hit = True  
@@ -355,13 +354,3 @@ class _CollisionEngine:
 
         except Exception as Error:
             print("ERROR::CollisionEngine.py::game_object_hit_box() ", Error)
-
-    def level_object_hit_box(self,objects,objs):
-        try:
-            if isinstance(objs, BlockObject._BlockObject) and not objs.pauseHit:
-                if (objs.rect.left < objects.rect.centerx < objs.rect.right):
-                    objs.hit = True  
-                    objs.changeHit = True
-                    objs.pauseHit = True          
-        except Exception as Error:
-            print("runtime error in CollisionEngine.py. Function level_object_hit_box: ", Error)

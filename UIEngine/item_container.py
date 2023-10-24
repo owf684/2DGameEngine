@@ -2,7 +2,7 @@ import pygame
 
 
 
-class _ItemContainer:
+class ItemContainer:
 
     def __init__(self):
         self.selected_image_path = None

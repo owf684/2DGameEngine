@@ -2,7 +2,7 @@ import pygame
 
 
 
-class _BlockFX:
+class BlockFX:
 
     def __init__(self):
         pygame.mixer.init()
@@ -22,26 +22,26 @@ class _BlockFX:
         self.number_of_bump_plays = 0
         self.trigger_block_audio = False
         self.trigger_break_block_audio = False
-    def main_loop(self,objects,levelHandler,PlayerEngine):
+    def main_loop(self,objects,o_level_handler,o_player_engine):
 
         if 'Question' in objects.imagePath:
             self.trigger_block_audio = True
-        elif 'break' in objects.imagePath and not PlayerEngine.superMario:
+        elif 'break' in objects.imagePath and not o_player_engine.superMario:
             self.trigger_block_audio = True
-        elif 'break' in objects.imagePath and PlayerEngine.superMario:
+        elif 'break' in objects.imagePath and o_player_engine.superMario:
             self.trigger_break_block_audio = True
         elif 'question_block_hit' in objects.imagePath:
-          self.handle_question_block_hit_audio(objects,levelHandler,PlayerEngine)
+          self.handle_question_block_hit_audio(objects)
 
         if self.trigger_block_audio:
             self.trigger_block_audio = False
-            self.handle_block_audio(objects,levelHandler,PlayerEngine)
+            self.handle_block_audio(objects)
 
         if self.trigger_break_block_audio:
             self.trigger_break_block_audio = False
-            self.handle_break_block_audio(objects,levelHandler,PlayerEngine)
+            self.handle_break_block_audio(o_player_engine)
 
-    def handle_block_audio(self, objects,levelHandler,PlayerEngine):
+    def handle_block_audio(self, objects):
         
         if objects.hit and not self.bump_playing:
             self.bump.play()
@@ -69,12 +69,12 @@ class _BlockFX:
             self.powerup_playing = False
 
 
-    def handle_break_block_audio(self,objects,levelHandler,PlayerEngine):
-        if PlayerEngine.triggerBlockBreakAudio:
-            PlayerEngine.triggerBlockBreakAudio = False
+    def handle_break_block_audio(self,o_player_engine):
+        if o_player_engine.triggerBlockBreakAudio:
+            o_player_engine.triggerBlockBreakAudio = False
             self.break_block.play()
 
-    def handle_question_block_hit_audio(self,objects,levelHandler,PlayerEngine):
+    def handle_question_block_hit_audio(self,objects):
         if objects.isHit:
             #only play audio clip once when not already playing
             if self.number_of_bump_plays == 0 and self.bump.get_num_channels() == 0:

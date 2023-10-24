@@ -1,7 +1,7 @@
 import math
 
 
-class _PhysicsEngine:
+class PhysicsEngine:
 
     def __init__(self):
         self.gravity = 9.8 * 135
@@ -12,10 +12,10 @@ class _PhysicsEngine:
         self.x_decelleration = 0.01
         self.y_displacement = 0
 
-    def main_loop(self, objects, delta_t, levelHandler):
-        if not levelHandler.pause_for_damage:
-            self.simulate_gravity(objects, delta_t, levelHandler)
-            self.x_position(objects, delta_t, levelHandler)
+    def main_loop(self, objects, delta_t, o_level_handler):
+        if not o_level_handler.pause_for_damage:
+            self.simulate_gravity(objects, delta_t, o_level_handler)
+            self.x_position(objects, delta_t, o_level_handler)
 
     def simulate_gravity(self, objects, delta_t, levelHandler):
 
