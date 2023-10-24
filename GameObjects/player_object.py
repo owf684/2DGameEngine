@@ -1,5 +1,5 @@
 import pygame
-import GameObjects.game_object as game_object
+import game_object
 
 
 class PlayerObject(game_object.GameObject):
